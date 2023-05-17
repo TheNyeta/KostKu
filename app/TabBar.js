@@ -11,9 +11,8 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
       <Tab.Navigator
-        initialRouteName="Home"
+        initialRouteName="Dashboard"
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: '#FFB700',
@@ -31,7 +30,7 @@ export default function App() {
           }
         }}>
         <Tab.Screen
-          name="Home"
+          name="Dashboard"
           component={DashboardPage}
           options={{
             tabBarLabel: 'Home',
@@ -61,7 +60,6 @@ export default function App() {
           }}
         />
       </Tab.Navigator>
-    </NavigationContainer>
   );
 }
 
