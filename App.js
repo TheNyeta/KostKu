@@ -11,7 +11,7 @@ import HomePage from './app/TabBar';
 
 function App() {
   return (
-    <HomePage/>
+    <RegisterScreen/>
   );
 }
 
