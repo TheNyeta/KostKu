@@ -3,14 +3,42 @@ import { View, TextInput, StyleSheet, Text, TouchableOpacity, ToastAndroid, Imag
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState('');
+const LoginScreen = ({navigation}) => {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [secure, setSecure] = useState(true);
+  const [usernameError, setUsernameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const handleLogin = () => {
     // Code to handle login
-    ToastAndroid.show('login', 1)
+    let error = false
+
+    if (username.length < 3) {
+      setUsernameError('Minimal 3 karakter')
+      error = true
+    } else if (username.length >= 50) {
+      setUsernameError('Maksimal 50 karakter')
+      error = true
+    } else if (!usernamere.test(username)) {
+      setUsernameError('Nama hanya boleh alphabet')
+      error = true
+    } else {
+      setUsernameError('')
+    }
+
+    if (password.length < 8) {
+      setPasswordError('Minimal 8 digit')
+      error = true
+    } else {
+      setPasswordError('')
+    }
+
+    if (!error) {
+      navigation.navigate('Home')
+    }
+    navigation.navigate('Home')
+
   }
 
   const forgotPassword = () => {
@@ -20,7 +48,7 @@ const LoginScreen = () => {
 
   const goToRegister = () => {
     // Code to handle login
-    ToastAndroid.show('register', 1)
+    navigation.navigate('Register')
   }
 
   return (
@@ -28,18 +56,18 @@ const LoginScreen = () => {
       <Image source={require('../assets/image/kostkuLogo150.png')} style={{ height: 120, width: 120, marginTop: 30 }} />
       <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 50, color: 'black' }} >Masuk</Text>
       <View style={{ alignItems: 'center', justifyContent: 'center', width: '70%' }}>
-        <View style={styles.form}>
-          <Icon size={18} name='login' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
-          <TextInput
-            style={styles.input}
-            placeholder="Masukan Email/Nomor HP"
-            placeholderTextColor='#ccc'
-            
-            onChangeText={setEmail}
-            value={email}
-          />
-        </View>
-        <View style={styles.form}>
+      <View style={[styles.form, { borderColor: usernameError ? 'red' : '#FFB700' }]}>
+            <Icon size={18} name='pencil' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              placeholderTextColor='#ccc'
+              onChangeText={setUsername}
+              value={username}
+            />
+          </View>
+          { usernameError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5 }} >{usernameError}</Text> : null }
+        <View style={[styles.form, { borderColor: passwordError ? 'red' : '#FFB700' }]}>
           <Icon size={18} name='lock' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
           <TextInput
             style={styles.input}
@@ -53,6 +81,7 @@ const LoginScreen = () => {
             <Icon size={18} name={`eye${secure ? '' : '-off'}`} color='#FFB700' />
           </TouchableOpacity>
         </View>
+        { passwordError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5 }} >{passwordError}</Text> : null }
         <TouchableOpacity style={{ alignSelf: 'flex-end' }} onPress={() => forgotPassword()}>
           <Text style={{ color: '#cccccc', fontSize: 13, textAlign: 'right' }}>Lupa Password?</Text>
         </TouchableOpacity>
@@ -74,7 +103,7 @@ const LoginScreen = () => {
   );
 };
 
-const RegisterScreen = () => {
+const RegisterScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -129,18 +158,21 @@ const RegisterScreen = () => {
 
     if (password.length < 8) {
       setPasswordError('Minimal 8 digit')
+      error = true
     } else {
       setPasswordError('')
     }
 
     if (!error) {
       ToastAndroid.show('register', 1)
+      navigation.navigate('Home')
     }
 
   } 
 
   const goToLogin = () => {
     ToastAndroid.show('go to login', 1)
+    navigation.navigate('Login')
   }
 
   const syaratDanKetentuan = () => {
