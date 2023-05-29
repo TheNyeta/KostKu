@@ -23,8 +23,6 @@ export default function App() {
             right: 50,
             bottom: 30,
             borderRadius: 30,
-            shadowOpacity: 0,
-            shadowRadius: 5,
             elevation: 10,
             shadowColor: '#FFB700',
           }
