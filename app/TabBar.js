@@ -25,6 +25,7 @@ export default function App() {
             borderRadius: 30,
             elevation: 10,
             shadowColor: '#FFB700',
+            borderTopWidth: 0,
           }
         }}>
         <Tab.Screen
@@ -32,8 +33,8 @@ export default function App() {
           component={DashboardPage}
           options={{
             tabBarLabel: 'Home',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="home-outline" color={color} size={size} />
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="home-outline" color={color} size={32} />
             ),
           }}
         />
@@ -42,8 +43,8 @@ export default function App() {
           component={CalendarPage}
           options={{
             tabBarLabel: 'Calendar',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="calendar-outline" color={color} size={size} />
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="calendar-outline" color={color} size={32} />
             ),
           }}
         />
@@ -52,8 +53,8 @@ export default function App() {
           component={SettingPage}
           options={{
             tabBarLabel: 'Setting',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="cog-outline" color={color} size={32} />
             ),
           }}
         />

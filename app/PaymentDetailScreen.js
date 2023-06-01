@@ -13,7 +13,7 @@ const PaymentDetailScreen = () => {
         </TouchableOpacity>
         <View style={{ flexDirection: 'column' }}>
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 32, color: 'black'}} >Rincian bayaran</Text>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Reguler', fontSize: 15, color: 'black'}} >RIncian pembayaran</Text>
+          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >RIncian pembayaran</Text>
         </View>
       </View>
       <View style={{ flexDirection: 'column', marginVertical: 20 , alignSelf: 'flex-start' }} >
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     padding: 20
   }
 });

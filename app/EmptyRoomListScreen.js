@@ -1,16 +1,14 @@
 import React, { useState }  from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { TabView, TabBar } from 'react-native-tab-view';
 
-const RoomListScreen = ({navigation}) => {
+const EmptyRoomListScreen = ({navigation}) => {
   const [search, setSearch] = useState('')
+
 
   const goBack = () => {
     navigation.goBack()
-  }
-
-  const goToCreateRoom = () => {
-    navigation.navigate('CreateRoom')
   }
 
   const data = [
@@ -64,6 +62,51 @@ const RoomListScreen = ({navigation}) => {
     )
   }
 
+  const FirstRoute = () => (
+    <View>
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        style={{ width: '100%', marginVertical: 10 }}/>
+    </View>
+  );
+  
+  const SecondRoute = () => (
+    <View>
+      <Text>tes aja 2</Text>
+    </View>
+  );
+
+  //react tab view
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'first', title: 'Kosong' },
+    { key: 'second', title: 'Tidak Bisa Digunakan' },
+  ]);
+
+  const renderTabBar = props => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ borderColor: '#FFB700', borderWidth: 1, borderRadius: 10 }}
+      style={{ backgroundColor: 'white', elevation: 0, shadowOffset: { width: 0, height: 0 }, width: '100%', alignSelf: 'center' }}
+      activeColor='#FFB700'
+      inactiveColor='#FFDB80'
+      pressColor='transparent'
+      labelStyle={{ fontFamily: 'PlusJakartaSans-Bold', textTransform: 'none' }}
+    />
+  );
+
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case 'first':
+        return <FirstRoute />;
+      case 'second':
+        return <SecondRoute />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', width: '100%' }} >
@@ -90,34 +133,19 @@ const RoomListScreen = ({navigation}) => {
           <Icon size={20} name='close' color='#ccc' style={{ alignSelf: 'center' }} />
         </TouchableOpacity>
       </View>
-      <View style={{ flexDirection: 'row', width: '100%', borderRadius: 100, justifyContent: 'space-between' }} >
-        <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '48%', alignItems: 'center' }} >
-          <View style={{ flexDirection: 'column' }} >
-            <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>4</Text>
-            <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Kamar</Text>
-          </View>
-          <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
-            <Icon size={25} name='door' color='#FFB700' style={{ alignSelf: 'center' }} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '48%', alignItems: 'center' }} >
-          <View style={{ flexDirection: 'column' }} >
-            <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>5</Text>
-            <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Penghuni</Text>
-          </View>
-          <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
-            <Icon size={25} name='account-multiple' color='#FFB700' style={{ alignSelf: 'center' }} />
-          </View>
-        </TouchableOpacity>
-      </View>
-      <FlatList
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: Dimensions.get('window').width }}
+        style={{ width: '100%' }}
+        renderTabBar={renderTabBar}
+      />
+      {/* <FlatList
         data={data}
         renderItem={renderItem}
         style={{ width: '100%', marginVertical: 20 }}
-      />
-      <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 10, position: 'absolute', right: 20, bottom: 40 }} onPress={() => goToCreateRoom()} >
-        <Icon size={35} name='plus' color='white' style={{ alignSelf: 'center' }} />
-      </TouchableOpacity>
+      /> */}
     </View>
   );
 };
@@ -137,4 +165,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RoomListScreen;
+export default EmptyRoomListScreen;

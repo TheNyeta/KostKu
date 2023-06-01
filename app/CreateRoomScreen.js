@@ -29,24 +29,21 @@ const CreateRoomScreen = ({navigation}) => {
   return (
     <KeyboardAwareScrollView>
       <View style={styles.container} >
-      <View style={{ height: 'auto', width: '100%', backgroundColor: '#FFB700', borderBottomLeftRadius: 20, borderBottomRightRadius: 20, alignItems: 'center', paddingBottom: 10 }} >
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 5 , width: '100%'}}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity onPress={() => goBack()} >
-              <Icon size={22} name='arrow-left' color='white' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
-            </TouchableOpacity>
-            <Text style={{ color: 'white', fontSize: 24, fontFamily: 'PlusJakartaSans-SemiBold' }} >Data Penghuni</Text>
+        <View style={{ height: 'auto', width: '100%', backgroundColor: '#FFB700', borderBottomLeftRadius: 20, borderBottomRightRadius: 20, alignItems: 'center', paddingBottom: 10 }} >
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', padding: 5 , width: '100%'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity onPress={() => goBack()} >
+                <Icon size={22} name='arrow-left' color='white' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
+              </TouchableOpacity>
+              <Text style={{ color: 'white', fontSize: 24, fontFamily: 'PlusJakartaSans-SemiBold' }} >Data Penghuni</Text>
+            </View>
           </View>
-          <TouchableOpacity>
-            <Icon size={25} name='dots-horizontal' color='white' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
-          </TouchableOpacity>
+          <Image source={require('../assets/image/Large.png')} style={{ margin: 10 , borderRadius: 100}} />
+          <View style={{ backgroundColor: '#FFDB80', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
+            <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >101</Text>
+          </View>
         </View>
-        <Image source={require('../assets/image/Large.png')} style={{ margin: 10 , borderRadius: 100}} />
-        <View style={{ backgroundColor: '#FFDB80', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
-          <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >101</Text>
-        </View>
-      </View>
-      <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
+        <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', marginVertical: 10 }} >Data Kamar</Text>
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Nomor Kamar</Text>
           <View style={styles.form}>
@@ -138,7 +135,7 @@ const CreateRoomScreen = ({navigation}) => {
               value={email}
             />
           </View>
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginVertical: 5 }} onPress={() => {setCollapKtp(!collapKtp)}} >
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginVertical: 5 }} onPress={() => setCollapKtp(!collapKtp)} >
             <View style={{ flexDirection: 'row' }} >
               <Icon size={18} name='credit-card-outline' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
               <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Foto KTP</Text>
@@ -148,7 +145,7 @@ const CreateRoomScreen = ({navigation}) => {
           <Collapsible collapsed={collapKtp} >
             <Text>test aja</Text>
           </Collapsible>
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginVertical: 5 }} onPress={() => {setCollapBukuNikah(!collapBukuNikah)}} >
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginVertical: 5 }} onPress={() => setCollapBukuNikah(!collapBukuNikah)} >
             <View style={{ flexDirection: 'row' }} >
               <Icon size={18} name='credit-card-outline' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
               <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Foto Buku Nikah</Text>
@@ -224,6 +221,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     // justifyContent: 'center'
   },
   input: {
