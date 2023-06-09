@@ -17,10 +17,13 @@ import LaporanListScreen from './app/LaporanListScreen';
 import LaporanDetailScreen from './app/LaporanDetailScreen';
 import RatingListScreen from './app/RatingListScreen';
 import HomePage from './app/TabBar';
+import RoleSelectScreen from './app/RoleSelectScreen';
+import SplashScreen from './app/SplashScreen';
+import OnBoardingScreen from './app/OnBoardingScreen';
+import CreateKostScreen from './app/CreateKostScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeBaseProvider } from 'native-base';
-
 
 const Stack = createNativeStackNavigator()
 
@@ -34,8 +37,12 @@ function App() {
             cardStyle: { backgroundColor: '#FFFFFF' }
           }} 
         >
+          <Stack.Screen name="Splash" component={SplashScreen} />
+          <Stack.Screen name="RoleSelect" component={RoleSelectScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="OnBoarding" component={OnBoardingScreen} />
+          <Stack.Screen name="CreateKost" component={CreateKostScreen} />
           <Stack.Screen name="Home" component={HomePage} />
           <Stack.Screen name="RatingList" component={RatingListScreen} />
           <Stack.Screen name="RoomList" component={RoomListScreen} />

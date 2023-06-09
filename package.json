@@ -21,6 +21,7 @@
     "native-base": "^3.4.28",
     "react": "18.2.0",
     "react-native": "0.71.6",
+    "react-native-calendars": "^1.1298.0",
     "react-native-collapsible": "^1.6.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-modal": "^13.0.1",
@@ -28,6 +29,7 @@
     "react-native-ratings": "^8.1.0",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.20.0",
+    "react-native-splash-screen": "^3.3.0",
     "react-native-svg": "^12.1.1",
     "react-native-tab-view": "^3.5.1",
     "react-native-vector-icons": "^9.2.0"

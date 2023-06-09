@@ -1,9 +1,12 @@
-import React, { useState }  from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-native';
+import React, { useState, useEffect }  from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import axios from 'axios';
 
 const RoomListScreen = ({navigation}) => {
   const [search, setSearch] = useState('')
+  const [roomData, setRoomData] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
 
   const goBack = () => {
     navigation.goBack()
@@ -13,50 +16,61 @@ const RoomListScreen = ({navigation}) => {
     navigation.navigate('CreateRoom')
   }
 
-  const data = [
-    {
-      num: '101',
-      name: 'test a',
-      date: '5 Desemqweber',
-      price: 'Rp 12.000.000'
-    },
-    {
-      num: '102',
-      name: 'test b',
-      date: '22 Desemeber',
-      price: 'Rp 1.000.000'
-    },
-    {
-      num: '103',
-      name: 'test c',
-      date: '31 Desemasdber',
-      price: 'Rp 11.000.000'
-    }
-  ]
+  useEffect(() => {
+    axios.get('https://api-kostku.pharmalink.id/skripsi/kostku?find=kamar&RumahID=RMH2300012')
+        .then(({data}) => {
+          console.log(data, 'test aja nih')
+          setRoomData(data)
+          setIsLoading(false)
+        })
+  }, [])
+
+  
+
+  // const data = [
+  //   {
+  //     num: '101',
+  //     name: 'test a',
+  //     date: '5 Desemqweber',
+  //     price: 'Rp 12.000.000'
+  //   },
+  //   {
+  //     num: '102',
+  //     name: 'test b',
+  //     date: '22 Desemeber',
+  //     price: 'Rp 1.000.000'
+  //   },
+  //   {
+  //     num: '103',
+  //     name: 'test c',
+  //     date: '31 Desemasdber',
+  //     price: 'Rp 11.000.000'
+  //   }
+  // ]
 
   const RoomItem = ({room}) => {
     return (
       <TouchableOpacity style={{ flexDirection: 'row', paddingVertical: 8 }} >
         <View style={{ backgroundColor: '#FFB700', padding: 10, borderRadius: 15, paddingHorizontal: 25}} >
-          <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{room.num}</Text>
+          <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{room.Kamar_Nomor}</Text>
         </View>
         <View style={{ marginHorizontal: 5, width: '42%' }} >
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} >{room.name}</Text>
           <View style={{flexDirection: 'row' }} >
             <Icon size={15} name='calendar-blank-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
-            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{room.date}</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{room.Kamar_}</Text>
           </View>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'flex-end' }} >
           <Icon size={15} name='cash-multiple' color='black' style={{ paddingHorizontal: 4 }} />
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{room.price}</Text>
+          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{room.Kamar_Harga}</Text>
         </View>
       </TouchableOpacity>
     )
   }
 
   const renderItem = ({item}) => {
-
+    console.log(item, 'test item')
     return (
       <RoomItem
         room={item}
@@ -110,11 +124,15 @@ const RoomListScreen = ({navigation}) => {
           </View>
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        style={{ width: '100%', marginVertical: 20 }}
-      />
+      { isLoading ? 
+        <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
+        : 
+        <FlatList
+          data={roomData.data}
+          renderItem={renderItem}
+          style={{ width: '100%', marginVertical: 20 }}
+        />
+      }
       <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 10, position: 'absolute', right: 20, bottom: 40 }} onPress={() => goToCreateRoom()} >
         <Icon size={35} name='plus' color='white' style={{ alignSelf: 'center' }} />
       </TouchableOpacity>
