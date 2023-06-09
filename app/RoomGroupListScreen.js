@@ -59,7 +59,7 @@ const RoomGroupListScreen = ({navigation}) => {
         </TouchableOpacity>
         <View style={{ flexDirection: 'column' }}>
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Daftar Kamar</Text>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Reguler', fontSize: 15, color: 'black'}} >Pilih lantai/kelompok kamar kost</Text>
+          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Pilih lantai/kelompok kamar kost</Text>
         </View>
       </View>
       <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginVertical: 20, borderRadius: 100 }} >
@@ -73,7 +73,9 @@ const RoomGroupListScreen = ({navigation}) => {
             value={search}
           />
         </View>
-        <Icon size={20} name='close' color='#ccc' style={{ alignSelf: 'center' }} />
+        <TouchableOpacity style={{ alignSelf: 'center', padding: 5 }} onPress={() => setSearch('')}>
+          <Icon size={20} name='close' color='#ccc' style={{ alignSelf: 'center' }} />
+        </TouchableOpacity>
       </View>
       <View style={{ flexDirection: 'row', width: '100%', borderRadius: 100, justifyContent: 'space-between' }} >
         <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '48%', alignItems: 'center' }} >
@@ -108,6 +110,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     padding: 20
   },
   search: {

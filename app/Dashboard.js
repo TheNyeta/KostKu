@@ -31,9 +31,32 @@ const DashboardPage = ({navigation}) => {
   //   });
   // }, []);
 
+  const goToRatingList = () => {
+    navigation.navigate('RatingList')
+  }
+
   const goToRoomGroupList = () => {
-    // Code to handle login
     navigation.navigate('RoomGroupList')
+  }
+
+  const goToEmptyRoomList = () => {
+    navigation.navigate('EmptyRoomList')
+  }
+
+  const goToJatuhTempoList = () => {
+    navigation.navigate('JatuhTempoList')
+  }
+
+  const goToKeluhanList = () => {
+    navigation.navigate('KeluhanList')
+  }
+
+  const goToLaporanList = () => {
+    navigation.navigate('LaporanList')
+  }
+
+  const goToBroadcast = () => {
+    navigation.navigate('Broadcast')
   }
 
   return (
@@ -44,8 +67,10 @@ const DashboardPage = ({navigation}) => {
             <Text style={{ color: 'black', fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold' }}>kostku</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
               <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }}>Jakarta Pusat</Text>
-              <Icon size={15} name='star' color='#FFB700' style={{ alignSelf: 'center', paddingHorizontal: 2 }} />
-              <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>4</Text>
+              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => goToRatingList()} >
+                <Icon size={15} name='star' color='#FFB700' style={{ alignSelf: 'center', paddingHorizontal: 2 }} />
+                <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>4</Text>
+              </TouchableOpacity>
             </View>
           </View>
           <Image source={require('../assets/image/Large.png')} style={{height: 50, width: 50}} />
@@ -59,7 +84,7 @@ const DashboardPage = ({navigation}) => {
         </TouchableOpacity>
         <View style={{ flexDirection: 'column', width: '100%' }} >
           <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', marginBottom: 20 }} >
-            <TouchableOpacity style={{ flexDirection: 'column', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '47%' }} >
+            <TouchableOpacity style={{ flexDirection: 'column', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '47%' }} onPress={() => goToEmptyRoomList()} >
               <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
                 <Icon size={25} name='door' color='#FFB700' style={{ alignSelf: 'center' }} />
               </View>
@@ -74,27 +99,27 @@ const DashboardPage = ({navigation}) => {
               <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jumlah penghuni</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: 20 }} >
+          <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => goToJatuhTempoList()} >
             <View style={{ flexDirection: 'column' }} >
-              <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>5</Text>
-              <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Penghuni</Text>
+              <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>12</Text>
+              <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Kamar jatuh tempo</Text>
             </View>
             <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
-              <Icon size={25} name='account-multiple' color='#FFB700' style={{ alignSelf: 'center' }} />
+              <Icon size={25} name='calendar' color='#FFB700' style={{ alignSelf: 'center' }} />
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center' }} >
             <View style={{ flexDirection: 'column' }} >
               <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>5</Text>
-              <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Penghuni</Text>
+              <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Penghuni baru</Text>
             </View>
             <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
-              <Icon size={25} name='account-multiple' color='#FFB700' style={{ alignSelf: 'center' }} />
+              <Icon size={25} name='account-search-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
             </View>
           </TouchableOpacity>
         </View>
         <Text style={{ color: 'black', fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', alignSelf: 'flex-start', marginVertical: 20 }}>Notifikasi</Text>
-        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} >
+        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToKeluhanList()} >
           <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Keluhan dari penghuni</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }} >
             <View style={{ backgroundColor: '#CC3300', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10 }} >
@@ -103,7 +128,7 @@ const DashboardPage = ({navigation}) => {
             <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} >
+        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToLaporanList()} >
           <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Laporan kost</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }} >
             <View style={{ backgroundColor: '#FF7A00', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10 }} >
@@ -112,7 +137,7 @@ const DashboardPage = ({navigation}) => {
             <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5, marginBottom: 80 }} >
+        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5, marginBottom: 80 }} onPress={() => goToBroadcast()} >
           <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Pesan broadcast</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }} >
             {/* <View style={{ backgroundColor: '#CC3300', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10 }} >

@@ -1,44 +1,90 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Text, TouchableOpacity, ToastAndroid, Image } from 'react-native';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity, ToastAndroid, Image, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import axios from 'axios';
 
-const LoginScreen = ({navigation}) => {
-  const [username, setUsername] = useState('');
+const LoginScreen = ({navigation, route}) => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secure, setSecure] = useState(true);
-  const [usernameError, setUsernameError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
   const handleLogin = () => {
     // Code to handle login
     let error = false
+    let emailre = /\S+@\S+\.\S+/
+    let role = route.params.role
 
-    if (username.length < 3) {
-      setUsernameError('Minimal 3 karakter')
+    if (email == '') {
+      setEmailError('Email tidak boleh kosong')
       error = true
-    } else if (username.length >= 50) {
-      setUsernameError('Maksimal 50 karakter')
-      error = true
-    } else if (!usernamere.test(username)) {
-      setUsernameError('Nama hanya boleh alphabet')
+    } else if (!emailre.test(email)) {
+      setEmailError('Format email tidak valid')
       error = true
     } else {
-      setUsernameError('')
+      setEmailError('')
     }
 
     if (password.length < 8) {
-      setPasswordError('Minimal 8 digit')
+      setPasswordError('Minimal 8 karakter')
       error = true
     } else {
       setPasswordError('')
     }
 
     if (!error) {
-      navigation.navigate('Home')
-    }
-    navigation.navigate('Home')
 
+      let data = {}
+      let url = ''
+
+      switch (role) {
+        case 'penghuni':
+          data = {
+            Penghuni_Email: email,
+            Penghuni_Password: password
+          }
+          url = 'https://api-kostku.pharmalink.id/skripsi/kostku?login=penghuni'
+          break;
+
+        case 'pengelola':
+          data = {
+            Pengelola_Email: email,
+            Pengelola_Password: password
+          }
+          url = 'https://api-kostku.pharmalink.id/skripsi/kostku?login=pengelola'
+          break;
+
+        case 'penjaga':
+          data = {
+            Penjaga_Email: email,
+            Penjaga_Password: password
+          }
+          url = 'https://api-kostku.pharmalink.id/skripsi/kostku?login=penjaga'
+          break;
+      
+        default:
+          break;
+      }
+      
+      // let data = {
+      //   Pengelola_Email: email,
+	    //   Pengelola_Password: password
+      // }
+
+      axios.post(url, data)
+        .then(({data}) => {
+          console.log(data, 'test aja nih')
+          if (data.error.msg == '') {
+            navigation.replace('Home')
+          } else {
+            ToastAndroid.show(data.error.msg, 1)
+          }
+        })
+    }
+    // navigation.navigate('Home')
+    navigation.navigate('OnBoarding')
   }
 
   const forgotPassword = () => {
@@ -54,19 +100,19 @@ const LoginScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/image/kostkuLogo150.png')} style={{ height: 120, width: 120, marginTop: 30 }} />
-      <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 50, color: 'black' }} >Masuk</Text>
+      <Text style={{ fontSize: 30, fontFamily: 'PlusJakartaSans-Bold', marginBottom: 50, color: 'black' }} >Masuk</Text>
       <View style={{ alignItems: 'center', justifyContent: 'center', width: '70%' }}>
-      <View style={[styles.form, { borderColor: usernameError ? 'red' : '#FFB700' }]}>
-            <Icon size={18} name='pencil' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
-            <TextInput
-              style={styles.input}
-              placeholder="Username"
-              placeholderTextColor='#ccc'
-              onChangeText={setUsername}
-              value={username}
-            />
-          </View>
-          { usernameError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5 }} >{usernameError}</Text> : null }
+      <View style={[styles.form, { borderColor: emailError ? 'red' : '#FFB700' }]}>
+        <Icon size={18} name='pencil' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor='#ccc'
+          onChangeText={setEmail}
+          value={email}
+        />
+      </View>
+      { emailError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{emailError}</Text> : null }
         <View style={[styles.form, { borderColor: passwordError ? 'red' : '#FFB700' }]}>
           <Icon size={18} name='lock' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
           <TextInput
@@ -81,21 +127,23 @@ const LoginScreen = ({navigation}) => {
             <Icon size={18} name={`eye${secure ? '' : '-off'}`} color='#FFB700' />
           </TouchableOpacity>
         </View>
-        { passwordError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5 }} >{passwordError}</Text> : null }
-        <TouchableOpacity style={{ alignSelf: 'flex-end' }} onPress={() => forgotPassword()}>
-          <Text style={{ color: '#cccccc', fontSize: 13, textAlign: 'right' }}>Lupa Password?</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: passwordError ? 'space-between' : 'flex-end', width: '100%' }}>
+          { passwordError ? <Text style={{ color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{passwordError}</Text> : null }
+          <TouchableOpacity onPress={() => forgotPassword()}>
+            <Text style={{ color: '#cccccc', fontSize: 13, textAlign: 'right', marginTop: -5, fontFamily: 'PlusJakartaSans-Regular', alignSelf: 'flex-end' }}>Lupa Password</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       {/* <Button style={{ borderRadius: 10 }} title="Masuk" onPress={handleLogin} /> */}
       <TouchableOpacity onPress={() => handleLogin()} style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '40%', borderRadius: 5, marginTop: 30 }}>
-        <Text style={{ fontSize: 17, color: 'white', fontWeight: 'bold' }}>Masuk</Text>
+        <Text style={{ fontSize: 17, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }}>Masuk</Text>
       </TouchableOpacity>
       <View style={{ marginTop: 60 }}>
-        <Text style={{ textAlign: 'center'}} >Belum punya akun?</Text>
+        <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular' }} >Belum punya akun?</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ textAlign: 'center'}} >Daftar </Text>
+          <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular' }} >Daftar </Text>
           <TouchableOpacity onPress={() => goToRegister()}>
-            <Text style={{ color: '#FFB700', fontWeight: 'bold' }} >di sini</Text>
+            <Text style={{ color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >di sini</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -157,21 +205,36 @@ const RegisterScreen = ({navigation}) => {
     }
 
     if (password.length < 8) {
-      setPasswordError('Minimal 8 digit')
+      setPasswordError('Minimal 8 karakter')
       error = true
     } else {
       setPasswordError('')
     }
 
     if (!error) {
-      ToastAndroid.show('register', 1)
-      navigation.navigate('Home')
+
+      let data = {
+        Pengelola_Name: username,
+        Pengelola_Email: email,
+	      Pengelola_Number: phone,
+	      Pengelola_Password: password
+      }
+
+      axios.post('https://api-kostku.pharmalink.id/skripsi/kostku?register=pengelola', data)
+        .then(({data}) => {
+          console.log(data, 'test aja nih')
+          if (data.error.msg == '') {
+            navigation.navigate('Login')
+          } else {
+            ToastAndroid.show(data.error.msg, 1)
+          }
+        })
+
     }
 
   } 
 
   const goToLogin = () => {
-    ToastAndroid.show('go to login', 1)
     navigation.navigate('Login')
   }
 
@@ -180,10 +243,10 @@ const RegisterScreen = ({navigation}) => {
   }
 
   return (
-    <KeyboardAwareScrollView >
+    <KeyboardAwareScrollView>
       <View style={styles.container}>
         <Image source={require('../assets/image/kostkuLogo150.png')} style={{ height: 120, width: 120, marginTop: 30 }} />
-        <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 50, color: 'black' }} >Daftar</Text>
+        <Text style={{ fontSize: 30, fontFamily: 'PlusJakartaSans-Bold', marginBottom: 50, color: 'black' }} >Daftar</Text>
         <View style={{ alignItems: 'center', justifyContent: 'center', width: '70%' }}>
           <View style={[styles.form, { borderColor: usernameError ? 'red' : '#FFB700' }]}>
             <Icon size={18} name='pencil' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
@@ -195,7 +258,7 @@ const RegisterScreen = ({navigation}) => {
               value={username}
             />
           </View>
-          { usernameError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5 }} >{usernameError}</Text> : null }
+          { usernameError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{usernameError}</Text> : null }
           <View style={[styles.form, { borderColor: phoneError ? 'red' : '#FFB700' }]}>
             <Icon size={18} name='cellphone' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
             <TextInput
@@ -207,7 +270,7 @@ const RegisterScreen = ({navigation}) => {
               keyboardType='numeric'
             />
           </View>
-          { phoneError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5 }} >{phoneError}</Text> : null }
+          { phoneError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{phoneError}</Text> : null }
           <View style={[styles.form, { borderColor: emailError ? 'red' : '#FFB700' }]}>
             <Icon size={18} name='email-outline' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
             <TextInput
@@ -218,7 +281,7 @@ const RegisterScreen = ({navigation}) => {
               value={email}
             />
           </View>
-          { emailError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5 }} >{emailError}</Text> : null }
+          { emailError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{emailError}</Text> : null }
           <View style={[styles.form, { borderColor: passwordError ? 'red' : '#FFB700' }]}>
             <Icon size={18} name='lock' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
             <TextInput
@@ -233,27 +296,18 @@ const RegisterScreen = ({navigation}) => {
               <Icon size={18} name={`eye${secure ? '' : '-off'}`} color='#FFB700' />
             </TouchableOpacity>
           </View>
-          { passwordError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5 }} >{passwordError}</Text> : null }
+          { passwordError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{passwordError}</Text> : null }
         </View>
         {/* <Button style={{ borderRadius: 10 }} title="Masuk" onPress={handleLogin} /> */}
         <TouchableOpacity onPress={() => handleRegister()} style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '40%', borderRadius: 5, marginTop: 20 }}>
-          <Text style={{ fontSize: 17, color: 'white', fontWeight: 'bold' }}>Daftar</Text>
+          <Text style={{ fontSize: 17, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }}>Daftar</Text>
         </TouchableOpacity>
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ textAlign: 'center'}} >Dengan mendaftar Anda setuju dengan</Text>
+        <View style={{ marginTop: 30 }}>
+          <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular' }} >Sudah punya akun?</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <TouchableOpacity onPress={() => syaratDanKetentuan()}>
-              <Text style={{ color: '#FFB700', fontWeight: 'bold' }} >Syarat & Ketentuan</Text>
-            </TouchableOpacity>
-            <Text style={{ textAlign: 'center'}} > Kostku</Text>
-          </View>
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ textAlign: 'center'}} >Sudah punya akun?</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ textAlign: 'center'}} >Masuk </Text>
+            <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular' }} >Masuk </Text>
             <TouchableOpacity onPress={() => goToLogin()}>
-              <Text style={{ color: '#FFB700', fontWeight: 'bold' }} >di sini</Text>
+              <Text style={{ color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >di sini</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -266,6 +320,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    height: Dimensions.get('window').height
     // justifyContent: 'center'
   },
   input: {
@@ -273,7 +329,8 @@ const styles = StyleSheet.create({
     width: '80%',
     marginVertical: 10,
     padding: 10,
-    alignSelf:  'center'
+    alignSelf:  'center',
+    fontFamily: 'PlusJakartaSans-Regular'
   },
   form: {
     width: '100%',
