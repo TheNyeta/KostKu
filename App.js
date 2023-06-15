@@ -21,6 +21,7 @@ import RoleSelectScreen from './app/RoleSelectScreen';
 import SplashScreen from './app/SplashScreen';
 import OnBoardingScreen from './app/OnBoardingScreen';
 import CreateKostScreen from './app/CreateKostScreen';
+import CreateEventScreen from './app/CreateEventScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeBaseProvider } from 'native-base';
@@ -44,6 +45,7 @@ function App() {
           <Stack.Screen name="OnBoarding" component={OnBoardingScreen} />
           <Stack.Screen name="CreateKost" component={CreateKostScreen} />
           <Stack.Screen name="Home" component={HomePage} />
+          <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
           <Stack.Screen name="RatingList" component={RatingListScreen} />
           <Stack.Screen name="RoomList" component={RoomListScreen} />
           <Stack.Screen name="JatuhTempoList" component={JatuhTempoListScreen} />

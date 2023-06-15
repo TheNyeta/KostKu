@@ -2,13 +2,26 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Switch, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Collapsible from 'react-native-collapsible';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SettingPage = () => {
+const SettingPage = ({navigation}) => {
   const [collapNotif, setCollapNotif] = useState(true)
   const [bayaranToggle, setBayaranTogle] = useState(false)
   const [keluhanToggle, setKeluhanTogle] = useState(false)
   const [laporanToggle, setLaporanTogle] = useState(false)
   
+  const logout = async () => {
+    try {
+      await AsyncStorage.multiRemove(['@user_data', '@kost_data'])
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'RoleSelect'}],
+      })
+    } catch(e) {
+      console.log(e, 'error logout')
+    }
+  
+  }
 
   return (
     <View style={styles.container}>
@@ -81,7 +94,7 @@ const SettingPage = () => {
         </View>
         <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
       </TouchableOpacity>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} >
+      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => logout()}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
           <Icon size={25} name='logout' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Keluar</Text>

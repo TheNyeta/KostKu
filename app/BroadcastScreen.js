@@ -28,6 +28,20 @@ const BroadcastScreen = ({navigation}) => {
       text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum'
     },
     {
+      num: '101',
+      name: 'Pesan terkirim',
+      date: 'Sabtu 3 December 2022 - 17:00',
+      price: 'Rp 12.000.000',
+      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum'
+    },
+    {
+      num: '101',
+      name: 'Pesan terkirim',
+      date: 'Sabtu 3 December 2022 - 17:00',
+      price: 'Rp 12.000.000',
+      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum'
+    },
+    {
       num: '102',
       name: 'test b',
       date: '22 Desemeber',
@@ -84,7 +98,9 @@ const BroadcastScreen = ({navigation}) => {
       <FlatList
         data={data}
         renderItem={renderItem}
-        style={{ width: '100%', marginVertical: 10 }}/>
+        style={{ width: '100%', marginVertical: 10 }}
+        onEndReachedThreshold={0.1}
+      />
     </View>
   );
   

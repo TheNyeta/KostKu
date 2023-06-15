@@ -1,20 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Collapsible from 'react-native-collapsible';
 import Modal from 'react-native-modal';
 
-const KeluhanDetailScreen = ({navigation}) => {
+const KeluhanDetailScreen = ({navigation, route}) => {
+  const [noKamar, setNoKamar] = useState('')
   const [nama, setNama] = useState('')
   const [nohp, setNoHp] = useState('')
   const [pekerjaan, setPekerjaan] = useState('')
   const [tanggal, setTanggal] = useState('')
   const [jam, setJam] = useState('')
   const [detail, setDetail] = useState('')
-  const [collapDetail, setCollapDetail] = useState(true)
+  const [collapDetail, setCollapDetail] = useState(false)
   const [collapFoto, setCollapFoto] = useState(true)
   const [modal, setModal] = useState(false)
+  const keluhan = route.params.keluhan
+
+  useEffect(() => {
+    init()
+  }, [])
+
+  const init = () => {
+    setNoKamar(keluhan.Kamar_Nomor)
+    setNama(keluhan.Penghuni_Name)
+    setNoHp(keluhan.Penghuni_Number)
+    setPekerjaan(keluhan.Penghuni_Pekerjaan)
+    setTanggal(keluhan.Tgl_Keluhan)
+    setJam(keluhan.Jam_Keluhan)
+    setDetail(keluhan.Detail_Keluhan)
+
+  }
 
   const goBack = () => {
     navigation.goBack()
@@ -34,7 +51,7 @@ const KeluhanDetailScreen = ({navigation}) => {
         </View>
         <Image source={require('../assets/image/Large.png')} style={{ margin: 10 , borderRadius: 100}} />
         <View style={{ backgroundColor: '#FFDB80', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
-          <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >101</Text>
+          <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >{noKamar}</Text>
         </View>
       </View>
       <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
@@ -75,24 +92,24 @@ const KeluhanDetailScreen = ({navigation}) => {
               editable={false}
             />
           </View>
-          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Jam laporan</Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Tanggal laporan</Text>
           <View style={styles.form}>
             <Icon size={18} name='calendar-blank-outline' color='black' style={{ alignSelf: 'center' }} />
             <TextInput
               style={styles.input}
-              placeholder='Email'
+              placeholder='Tanggal laporan'
               placeholderTextColor='#ccc'
               onChangeText={setTanggal}
               value={tanggal}
               editable={false}
             />
           </View>
-          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Tanggal laporan</Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Jam laporan</Text>
           <View style={styles.form}>
             <Icon size={18} name='clock-outline' color='black' style={{ alignSelf: 'center' }} />
             <TextInput
               style={styles.input}
-              placeholder='Tanggal'
+              placeholder='Jam laporan'
               placeholderTextColor='#ccc'
               onChangeText={setJam}
               value={jam}
@@ -109,7 +126,7 @@ const KeluhanDetailScreen = ({navigation}) => {
           <Collapsible collapsed={collapDetail} >
             <View style={{ width: Dimensions.get('window').width*0.9, marginTop: 5, borderWidth: 1, borderColor: 'black', borderRadius: 5, marginBottom: 20 }}>
               <TextInput
-                style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 200, textAlignVertical: 'top', padding: 5 }}
+                style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 200, textAlignVertical: 'top', padding: 10 }}
                 placeholder='Isi pesan'
                 placeholderTextColor='#ccc'
                 onChangeText={setDetail}
