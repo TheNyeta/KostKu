@@ -86,36 +86,37 @@ const LoginScreen = ({navigation, route}) => {
 
             let jsonValue = JSON.stringify(data.data)
             AsyncStorage.setItem('@user_data', jsonValue)
+            AsyncStorage.setItem('@user_role', role).then(() => {
+              if (role == 'Pengelola') {
+                axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rumah&PengelolaID=${data.data.Pengelola_ID}`)
+                  .then(({data}) => {
+                    if (data.error.msg == '') {
 
-            if (role == 'Pengelola') {
-              axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rumah&PengelolaID=${data.data.Pengelola_ID}`)
-                .then(({data}) => {
-                  // console.log(data,'wih dapet')
-                  if (data.error.msg == '') {
+                      let jsonValue = JSON.stringify(data.data)
+                      AsyncStorage.setItem('@kost_data', jsonValue) 
 
-                    let jsonValue = JSON.stringify(data.data)
-                    AsyncStorage.setItem('@kost_data', jsonValue) 
+                      navigation.reset({
+                        index: 0,
+                        routes: [{name: 'Home'}],
+                      })
+                      
+                    } else {
+                      navigation.reset({
+                        index: 0,
+                        routes: [{name: 'OnBoarding'}],
+                      })
+                    }
+                  })
 
-                    navigation.reset({
-                      index: 0,
-                      routes: [{name: 'Home'}],
-                    })
-                    
-                  } else {
-                    navigation.reset({
-                      index: 0,
-                      routes: [{name: 'OnBoarding'}],
-                    })
-                  }
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{name: 'OnBoarding'}],
                 })
 
-            } else {
-              navigation.reset({
-                index: 0,
-                routes: [{name: 'OnBoarding'}],
-              })
+              }
+            })
 
-            }
 
           } else if (data.error.code == 12) {
             setModalTitle('Password Anda salah')
@@ -149,7 +150,7 @@ const LoginScreen = ({navigation, route}) => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/image/kostkuLogo150.png')} style={{ height: 120, width: 120, marginTop: 30 }} />
-      <Text style={{ fontSize: 30, fontFamily: 'PlusJakartaSans-Bold', marginBottom: 0, color: 'black' }} >Masuk</Text>
+      <Text style={{ fontSize: 30, fontFamily: 'PlusJakartaSans-Bold', color: 'black' }} >Masuk</Text>
       <Text style={{ fontSize: 16, fontFamily: 'PlusJakartaSans-Regular', marginBottom: 50, color: 'black' }} >Sebagai {role}</Text>
       <View style={{ alignItems: 'center', justifyContent: 'center', width: '70%' }}>
       <View style={[styles.form, { borderColor: emailError ? 'red' : '#FFB700' }]}>
@@ -366,7 +367,8 @@ const RegisterScreen = ({navigation, route}) => {
     <KeyboardAwareScrollView>
       <View style={styles.container}>
         <Image source={require('../assets/image/kostkuLogo150.png')} style={{ height: 120, width: 120, marginTop: 30 }} />
-        <Text style={{ fontSize: 30, fontFamily: 'PlusJakartaSans-Bold', marginBottom: 50, color: 'black' }} >Daftar</Text>
+        <Text style={{ fontSize: 30, fontFamily: 'PlusJakartaSans-Bold', color: 'black' }} >Daftar</Text>
+        <Text style={{ fontSize: 16, fontFamily: 'PlusJakartaSans-Regular', marginBottom: 50, color: 'black' }} >Sebagai {role}</Text>
         <View style={{ alignItems: 'center', justifyContent: 'center', width: '70%' }}>
           <View style={[styles.form, { borderColor: usernameError ? 'red' : '#FFB700' }]}>
             <Icon size={18} name='pencil' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />

@@ -7,6 +7,7 @@ const RatingListScreen = ({navigation, route}) => {
   const [search, setSearch] = useState('')
   const [rating, setRating] = useState('')
   const ratings = route.params.ratings
+  const dataRumah = route.params.dataRumah
 
   useEffect(() => {
     setRating(averageRating(ratings))
@@ -20,7 +21,7 @@ const RatingListScreen = ({navigation, route}) => {
     return (
       <View style={{ flexDirection: 'column', padding: 15, backgroundColor: 'white', elevation: 5, marginVertical: 10, width: '90%', borderRadius: 15, alignItems: 'center', alignSelf: 'center' }} >
         <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }} >
-        <Image source={require('../assets/image/Large.png')} style={{ borderRadius: 50, width: 50, height: 50 }} />
+        <Image source={review.Penghuni_Image == '' ? require('../assets/image/Large.png') : {uri: review.Penghuni_Image}} style={{ borderRadius: 50, width: 50, height: 50 }} />
           <View style={{ marginHorizontal: 5, width: '70%' }} >
             <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} >{review.Penghuni_Name}</Text>
             <Rating 
@@ -34,12 +35,12 @@ const RatingListScreen = ({navigation, route}) => {
             />
           </View>
           <View style={{ backgroundColor: '#FFB700', padding: 2, paddingHorizontal: 10, borderRadius: 50 }} >
-            <Text style={{ fontFamily: 'UbuntuTitling-Bold', color: 'white', fontSize: 15 }} >{review.num}</Text>
+            <Text style={{ fontFamily: 'UbuntuTitling-Bold', color: 'white', fontSize: 15 }} >{review.Kamar_Nomor}</Text>
           </View>
         </View>
         <View style={{ alignSelf: 'flex-start', width: '100%' }} >
           <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 15 }} >{review.Ulasan_Rating}</Text>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 15, alignSelf: 'flex-end' }} >{review.date}</Text>
+          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 15, alignSelf: 'flex-end' }} >{review.Tanggal_Buat}</Text>
         </View>
       </View>
     )
@@ -60,7 +61,7 @@ const RatingListScreen = ({navigation, route}) => {
       sum = sum + item.Nilai_Rating
     })
 
-    return sum/rating.length
+    return (sum/rating.length).toFixed(1)
   }
 
   return (
@@ -75,7 +76,7 @@ const RatingListScreen = ({navigation, route}) => {
             <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Ulasan & komentar dari penghuni</Text>
           </View>
         </View>
-        <Image source={require('../assets/image/Large.png')} style={{ borderRadius: 50, width: 50, height: 50 }} />
+        <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ borderRadius: 50, width: 50, height: 50 }} />
       </View>
       <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 20 }} >
         <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black' }} >Nama kost</Text>

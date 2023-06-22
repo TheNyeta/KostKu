@@ -1,18 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Switch, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Collapsible from 'react-native-collapsible';
+import Modal from 'react-native-modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UpdateContext } from './GlobalState';
+import { useIsFocused } from '@react-navigation/native';
 
 const SettingPage = ({navigation}) => {
-  const [collapNotif, setCollapNotif] = useState(true)
-  const [bayaranToggle, setBayaranTogle] = useState(false)
-  const [keluhanToggle, setKeluhanTogle] = useState(false)
-  const [laporanToggle, setLaporanTogle] = useState(false)
-  
+  const [image, setImage] = useState('')
+  const [modal, setModal] = useState(false)
+  const [isUpdate, setIsUpdate] = useContext(UpdateContext)
+  const isFocused = useIsFocused()
+
+  useEffect(() => {
+    init()
+  }, [])
+
+  useEffect(() => {
+    if (isFocused) {
+      if (isUpdate.updateSetting == true) {
+        init()
+      }
+    }
+  }, [isFocused])
+
+  const init = () => {
+    AsyncStorage.getItem('@user_data').then((data) => {
+      const value = JSON.parse(data)
+      setImage(value.Pengelola_Image)
+      setIsUpdate({
+        ...isUpdate,
+        updateSetting: false
+      })
+    })
+  }
+
   const logout = async () => {
     try {
-      await AsyncStorage.multiRemove(['@user_data', '@kost_data'])
+      await AsyncStorage.multiRemove(['@user_data', '@kost_data', '@user_role'])
       navigation.reset({
         index: 0,
         routes: [{name: 'RoleSelect'}],
@@ -23,70 +49,43 @@ const SettingPage = ({navigation}) => {
   
   }
 
+  const goToUserProfile = () => {
+    navigation.navigate('UserProfile')
+  }
+
+  const goToKostDetail = () => {
+    navigation.navigate('Kost')
+  }
+
+  const goToPenjagaKost = () => {
+    navigation.navigate('PenjagaKost')
+  }
+
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: 20 }} >
         <View style={{ flexDirection: 'column' }}>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Daftar Kamar</Text>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Kelompok Kamar</Text>
+          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Pengaturan</Text>
+          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Atur akun dan lainnya</Text>
         </View>
-        <Image source={require('../assets/image/Large.png')} style={{ width: 50, height: 50 }} />
+        <TouchableOpacity onPress={() => goToUserProfile()}>
+          <Image source={image == '' ? require('../assets/image/Large.png') : { uri: image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} >
+      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => goToKostDetail()} >
         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
           <Icon size={25} name='home-city-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Rumah kost</Text>
         </View>
         <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
       </TouchableOpacity>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} >
+      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => goToPenjagaKost()} >
         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
           <Icon size={25} name='account-multiple-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Akun penjaga</Text>
         </View>
         <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
       </TouchableOpacity>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => setCollapNotif(!collapNotif)}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-          <Icon size={25} name='bell-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Notifikasi</Text>
-        </View>
-        <Icon size={30} name={collapNotif ? 'chevron-down' : 'chevron-up' } color='black' style={{ alignSelf: 'center' }} />
-      </TouchableOpacity>
-      <Collapsible collapsed={collapNotif} style={{ flexDirection: 'column', width: Dimensions.get('window').width-40 }} >
-        {/* <View style={{ flexDirection: 'column', backgroundColor: 'gray', width: '100%' }} > */}
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: 10 }} onPress={() => setBayaranTogle(!bayaranToggle)}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Bayaran</Text>
-            <Switch 
-              trackColor={{false: '#D1D5DB', true: '#FFB700'}}
-              thumbColor={bayaranToggle ? '#FFB700' : '#f4f3f4'}
-              style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
-              onValueChange={() => setBayaranTogle(!bayaranToggle)}
-              value={bayaranToggle}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: 10 }} onPress={() => setKeluhanTogle(!keluhanToggle)}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Keluhan baru</Text>
-            <Switch 
-              trackColor={{false: '#D1D5DB', true: '#FFB700'}}
-              thumbColor={keluhanToggle ? '#FFB700' : '#f4f3f4'}
-              style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
-              onValueChange={() => setKeluhanTogle(!keluhanToggle)}
-              value={keluhanToggle}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: 10 }} onPress={() => setLaporanTogle(!laporanToggle)}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Laporan baru</Text>
-            <Switch 
-              trackColor={{false: '#D1D5DB', true: '#FFB700'}}
-              thumbColor={laporanToggle ? '#FFB700' : '#f4f3f4'}
-              style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
-              onValueChange={() => setLaporanTogle(!laporanToggle)}
-              value={laporanToggle}
-            />
-          </TouchableOpacity>
-        {/* </View> */}
-      </Collapsible>
       <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} >
         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
           <Icon size={25} name='help-circle-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
@@ -94,13 +93,29 @@ const SettingPage = ({navigation}) => {
         </View>
         <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
       </TouchableOpacity>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => logout()}>
+      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => setModal(true)}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
           <Icon size={25} name='logout' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Keluar</Text>
         </View>
         <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
       </TouchableOpacity>
+      <Modal
+        isVisible={modal}
+        onBackdropPress={() => setModal(false)}
+      >
+        <View style={{flexDirection: 'column', alignSelf: 'center', alignItems: 'center', backgroundColor: 'white', paddingVertical: 30, paddingHorizontal: 20, borderRadius: 20, width: '90%' }}>
+          <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
+          <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Keluar dari akun?</Text>
+          <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Anda akan keluar dan tidak dapat melihat data rumah kost. Apakah Anda yakin?</Text>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => logout()}>
+            <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
+            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Kembali</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };

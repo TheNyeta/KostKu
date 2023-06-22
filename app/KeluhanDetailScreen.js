@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions, Modal as Modal1 } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Collapsible from 'react-native-collapsible';
 import Modal from 'react-native-modal';
+import axios from 'axios';
+import moment from 'moment';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const KeluhanDetailScreen = ({navigation, route}) => {
   const [noKamar, setNoKamar] = useState('')
+  const [image, setImage] = useState('')
+  const [imageKeluhan, setImageKeluhan] = useState('')
   const [nama, setNama] = useState('')
   const [nohp, setNoHp] = useState('')
   const [pekerjaan, setPekerjaan] = useState('')
   const [tanggal, setTanggal] = useState('')
   const [jam, setJam] = useState('')
   const [detail, setDetail] = useState('')
+  const [status, setStatus] = useState('')
   const [collapDetail, setCollapDetail] = useState(false)
   const [collapFoto, setCollapFoto] = useState(true)
   const [modal, setModal] = useState(false)
+  const [modal2, setModal2] = useState(false)
   const keluhan = route.params.keluhan
+  const dataRumah = route.params.dataRumah
 
   useEffect(() => {
     init()
@@ -30,11 +38,28 @@ const KeluhanDetailScreen = ({navigation, route}) => {
     setTanggal(keluhan.Tgl_Keluhan)
     setJam(keluhan.Jam_Keluhan)
     setDetail(keluhan.Detail_Keluhan)
+    setStatus(keluhan.Status_Keluhan)
+    setImage(keluhan.Penghuni_Image)
+    setImageKeluhan(keluhan.Foto_Keluhan)
 
   }
 
   const goBack = () => {
     navigation.goBack()
+  }
+
+  const updateKeluhan = () => {
+    setModal(false)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?keluhan=selesai&KeluhanID=${keluhan.Keluhan_ID}`)
+      .then(({data}) => {
+        if (data.error.msg == '') {
+          // init()
+          goBack()
+          navigation.replace('KeluhanList', {dataRumah: dataRumah})
+        }
+      }).catch((e) => {
+        console.log(e, 'error update keluhan')
+      })
   }
 
   return (
@@ -49,8 +74,8 @@ const KeluhanDetailScreen = ({navigation, route}) => {
             <Text style={{ color: 'white', fontSize: 24, fontFamily: 'PlusJakartaSans-SemiBold' }} >Data Keluhan</Text>
           </View>
         </View>
-        <Image source={require('../assets/image/Large.png')} style={{ margin: 10 , borderRadius: 100}} />
-        <View style={{ backgroundColor: '#FFDB80', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
+        <Image source={image == '' ? require('../assets/image/Large.png') : { uri: image }} style={{ height: 100, width: 100, borderRadius: 100, marginVertical: 5 }} />
+        <View style={{ backgroundColor: '#FF7A00', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
           <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >{noKamar}</Text>
         </View>
       </View>
@@ -145,12 +170,23 @@ const KeluhanDetailScreen = ({navigation, route}) => {
             <Icon size={18} name={collapFoto ? 'chevron-down' : 'chevron-up' } color='black' style={{ alignSelf: 'center' }} />
           </TouchableOpacity>
           <Collapsible collapsed={collapFoto} >
-            <Text>test aja</Text>
+          { imageKeluhan == '' ?
+              <Icon size={50} name='image-off' color='lightgray' style={{ alignSelf: 'center' }} />
+            :
+              <View style={{ width: Dimensions.get('window').width*0.9, height: Dimensions.get('window').height*0.5 }}>
+                <TouchableOpacity onPress={() => setModal2(true)} style={{ width: '100%' }}>
+                  <Image source={{ uri: imageKeluhan }} style={{ width: '100%', height: '100%' }} resizeMode={'contain'} />
+                </TouchableOpacity>
+              </View>
+          }
           </Collapsible>
         </View>
-        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginVertical: 20 }} onPress={() => setModal(true)} >
-          <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Tandai Selesai</Text>
-        </TouchableOpacity>
+        { status == 'Dilaporkan' ?
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginVertical: 20 }} onPress={() => setModal(true)} >
+            <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Tandai Selesai</Text>
+          </TouchableOpacity>
+          : null
+        }
       </View>
       <Modal
         isVisible={modal}
@@ -160,7 +196,7 @@ const KeluhanDetailScreen = ({navigation, route}) => {
           <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
           <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Tandai sebagai selesai</Text>
           <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Apakah Anda yakin untuk tandai keluhan ini telah selesai teratasi?</Text>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => {}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => updateKeluhan()}>
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
@@ -168,6 +204,13 @@ const KeluhanDetailScreen = ({navigation, route}) => {
           </TouchableOpacity>
         </View>
       </Modal>
+      <Modal1
+        visible={modal2}
+        transparent={true}
+        onRequestClose={() => setModal2(false)}
+      >
+        <ImageViewer imageUrls={[{ url: imageKeluhan }]} />
+      </Modal1>
     </KeyboardAwareScrollView>
   );
 };
@@ -177,6 +220,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
+    paddingBottom: 30
     // justifyContent: 'center'
   },
   input: {

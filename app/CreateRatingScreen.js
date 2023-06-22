@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Modal from 'react-native-modal';
 import axios from 'axios';
 
-const CreateRoomGroupScreen = ({navigation, route}) => {
+const CreateRatingScreen = ({navigation, route}) => {
   const [namaKelompok, setNamaKelompok] = useState('');
   const [namaKelompokError, setNamaKelompokError] = useState('');
   const [modal, setModal] = useState(false)
@@ -170,4 +170,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default CreateRoomGroupScreen;
+export default CreateRatingScreen;

@@ -1,25 +1,78 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native'
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions, Modal as Modal1 } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Collapsible from 'react-native-collapsible';
 import Modal from 'react-native-modal';
+import axios from 'axios';
+import moment from 'moment';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import { UpdateContext } from './GlobalState';
 
-const LaporanDetailScreen = ({navigation}) => {
+const LaporanDetailScreen = ({navigation, route}) => {
+  const [image, setImage] = useState('')
+  const [imageLaporan, setImageLaporan] = useState('')
+  const [noKamar, setNoKamar] = useState('')
   const [nama, setNama] = useState('')
   const [perihal, setPerihal] = useState('')
   const [nohp, setNoHp] = useState('')
   const [pekerjaan, setPekerjaan] = useState('')
+  const [bulan, setBulan] = useState('')
   const [tanggal, setTanggal] = useState('')
+  const [tanggalKeluar, setTanggalKeluar] = useState('')
   const [jam, setJam] = useState('')
   const [detail, setDetail] = useState('')
-  const [collapDetail, setCollapDetail] = useState(true)
+  const [status, setStatus] = useState('')
+  const [collapDetail, setCollapDetail] = useState(false)
   const [collapFoto, setCollapFoto] = useState(true)
   const [modal, setModal] = useState(false)
   const [modal2, setModal2] = useState(false)
+  const [modal3, setModal3] = useState(false)
+  const [isUpdate, setIsUpdate] = useContext(UpdateContext)
+  const laporan = route.params.laporan
+  const dataRumah = route.params.dataRumah
+
+  useEffect(() => {
+    init()
+  }, [])
+
+  const init = () => {
+    setImage(laporan.Penghuni_Image)
+    setNoKamar(laporan.Kamar_Nomor)
+    setNama(laporan.Penghuni_Name)
+    setPerihal(laporan.Perihal_Laporan)
+    setNoHp(laporan.Penghuni_Number)
+    setPekerjaan(laporan.Penghuni_Pekerjaan)
+    setBulan(laporan.Pembayaran_Bulan)
+    setTanggal(laporan.Tanggal_Laporan)
+    setTanggalKeluar(moment(laporan.Tanggal_Keluar, 'YYYY/MM/DD').format('dddd, D MMMM YYYY'))
+    setJam(laporan.Jam_Laporan)
+    setDetail(laporan.Pesan_Laporan)
+    setStatus(laporan.Status_Laporan)
+    setImageLaporan(laporan.Perihal_Laporan == 'Pembayaran' ? laporan.Bukti_Transfer : laporan.Foto_Laporan)
+
+  }
 
   const goBack = () => {
     navigation.goBack()
+  }
+
+  const updateLaporan = (status) => {
+    setModal(false)
+    setModal2(false)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?laporan=${status}&LaporanID=${laporan.Laporan_ID}`)
+      .then(({data}) => {
+        if (data.error.msg == '') {
+          setIsUpdate({
+            ...isUpdate,
+            updateDashboard: true
+          })
+          goBack()
+          navigation.replace('LaporanList', {dataRumah: dataRumah})
+        }
+      }).catch((e) => {
+        console.log(e, 'error update laporan')
+      })
   }
 
   return (
@@ -34,9 +87,9 @@ const LaporanDetailScreen = ({navigation}) => {
             <Text style={{ color: 'white', fontSize: 24, fontFamily: 'PlusJakartaSans-SemiBold' }} >Data Laporan</Text>
           </View>
         </View>
-        <Image source={require('../assets/image/Large.png')} style={{ margin: 10 , borderRadius: 100}} />
-        <View style={{ backgroundColor: '#FFDB80', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
-          <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >101</Text>
+        <Image source={image == '' ? require('../assets/image/Large.png') : { uri: image }} style={{ height: 100, width: 100, borderRadius: 100, marginVertical: 5 }} />
+        <View style={{ backgroundColor: '#FF7A00', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
+          <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >{noKamar}</Text>
         </View>
       </View>
       <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
@@ -53,7 +106,7 @@ const LaporanDetailScreen = ({navigation}) => {
               editable={false}
             />
           </View>
-          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >No.HP</Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Perihal</Text>
           <View style={styles.form}>
             <Icon size={18} name='playlist-edit' color='black' style={{ alignSelf: 'center' }} />
             <TextInput
@@ -89,30 +142,66 @@ const LaporanDetailScreen = ({navigation}) => {
               editable={false}
             />
           </View>
-          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Jam laporan</Text>
+          { perihal == 'Pembayaran' ? 
+              <>
+                <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Pembayaran Bulan</Text>
+                <View style={styles.form}>
+                  <Icon size={18} name='calendar-blank-outline' color='black' style={{ alignSelf: 'center' }} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder='Pekerjaan'
+                    placeholderTextColor='#ccc'
+                    onChangeText={setBulan}
+                    value={bulan}
+                    editable={false}
+                  />
+                </View>
+              </>
+            :
+              null
+            }
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Tanggal laporan</Text>
           <View style={styles.form}>
             <Icon size={18} name='calendar-blank-outline' color='black' style={{ alignSelf: 'center' }} />
             <TextInput
               style={styles.input}
-              placeholder='Email'
+              placeholder='Tanggal'
               placeholderTextColor='#ccc'
               onChangeText={setTanggal}
               value={tanggal}
               editable={false}
             />
           </View>
-          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Tanggal laporan</Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Jam laporan</Text>
           <View style={styles.form}>
             <Icon size={18} name='clock-outline' color='black' style={{ alignSelf: 'center' }} />
             <TextInput
               style={styles.input}
-              placeholder='Tanggal'
+              placeholder='Jam'
               placeholderTextColor='#ccc'
               onChangeText={setJam}
               value={jam}
               editable={false}
             />
           </View>
+          { perihal == 'Info Keluar Kost' ? 
+              <>
+                <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Tanggal Keluar</Text>
+                <View style={styles.form}>
+                  <Icon size={18} name='calendar-blank-outline' color='black' style={{ alignSelf: 'center' }} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder='Pekerjaan'
+                    placeholderTextColor='#ccc'
+                    onChangeText={setTanggalKeluar}
+                    value={tanggalKeluar}
+                    editable={false}
+                  />
+                </View>
+              </>
+            :
+              null
+            }
           <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginVertical: 5 }} onPress={() => {setCollapDetail(!collapDetail)}} >
             <View style={{ flexDirection: 'row' }} >
               <Icon size={25} name='playlist-edit' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
@@ -123,7 +212,7 @@ const LaporanDetailScreen = ({navigation}) => {
           <Collapsible collapsed={collapDetail} >
             <View style={{ width: Dimensions.get('window').width*0.9, marginTop: 5, borderWidth: 1, borderColor: 'black', borderRadius: 5, marginBottom: 20 }}>
               <TextInput
-                style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 200, textAlignVertical: 'top', padding: 5 }}
+                style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 200, textAlignVertical: 'top', padding: 10 }}
                 placeholder='Isi pesan'
                 placeholderTextColor='#ccc'
                 onChangeText={setDetail}
@@ -134,23 +223,43 @@ const LaporanDetailScreen = ({navigation}) => {
               />
             </View>
           </Collapsible>
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginVertical: 5 }} onPress={() => {setCollapFoto(!collapFoto)}} >
-            <View style={{ flexDirection: 'row' }} >
-              <Icon size={25} name='image-outline' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
-              <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Foto laporan</Text>
-            </View>
-            <Icon size={18} name={collapFoto ? 'chevron-down' : 'chevron-up' } color='black' style={{ alignSelf: 'center' }} />
-          </TouchableOpacity>
-          <Collapsible collapsed={collapFoto} >
-            <Text>test aja</Text>
-          </Collapsible>
+          { perihal == 'Info Keluar Kost' ?
+              null
+            :
+              <>
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginVertical: 5 }} onPress={() => {setCollapFoto(!collapFoto)}} >
+                  <View style={{ flexDirection: 'row' }} >
+                    <Icon size={25} name='image-outline' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
+                    <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >{perihal == 'Pembayaran' ? 'Foto Bukti Transfer' : 'Foto Laporan'}</Text>
+                  </View>
+                  <Icon size={18} name={collapFoto ? 'chevron-down' : 'chevron-up' } color='black' style={{ alignSelf: 'center' }} />
+                </TouchableOpacity>
+                <Collapsible collapsed={collapFoto} >
+                { imageLaporan == '' ?
+                    <Icon size={50} name='image-off' color='lightgray' style={{ alignSelf: 'center' }} />
+                  :
+                    <View style={{ width: Dimensions.get('window').width*0.9, height: Dimensions.get('window').height*0.5 }}>
+                      <TouchableOpacity onPress={() => setModal3(true)} style={{ width: '100%' }}>
+                        <Image source={{ uri: imageLaporan }} style={{ width: '100%', height: '100%' }} resizeMode={'contain'} />
+                      </TouchableOpacity>
+                    </View>
+                }
+                </Collapsible>
+              </>
+          }
         </View>
-        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginTop: 20 }} onPress={() => setModal(true)} >
-          <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Terima Laporan</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, width: '50%', borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginBottom: 20, marginTop: 10 }} onPress={() => setModal2(true)} >
-          <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tolak Laporan</Text>
-        </TouchableOpacity>
+        {status != 'Dilaporkan' ? 
+          null
+        :
+          <>
+            <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginTop: 20 }} onPress={() => setModal(true)} >
+              <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Terima Laporan</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, width: '50%', borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginBottom: 20, marginTop: 10 }} onPress={() => setModal2(true)} >
+              <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tolak Laporan</Text>
+            </TouchableOpacity>
+          </>
+        }
       </View>
       <Modal
         isVisible={modal}
@@ -160,11 +269,11 @@ const LaporanDetailScreen = ({navigation}) => {
           <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
           <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Terima laporan</Text>
           <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Apakah Anda yakin untuk tandai terima laporan ini?</Text>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => {}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => updateLaporan('diterima')}>
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
-            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Kembali</Text>
+            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -176,14 +285,21 @@ const LaporanDetailScreen = ({navigation}) => {
           <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
           <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Tolak laporan</Text>
           <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Apakah Anda yakin untuk tolak laporan ini? Penghuni perlu membuat laporan baru setelahnya</Text>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => {}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => updateLaporan('ditolak')}>
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal2(false)}}>
-            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Kembali</Text>
+            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
           </TouchableOpacity>
         </View>
       </Modal>
+      <Modal1
+        visible={modal3}
+        transparent={true}
+        onRequestClose={() => setModal3(false)}
+      >
+        <ImageViewer imageUrls={[{ url: imageLaporan }]} />
+      </Modal1>
     </KeyboardAwareScrollView>
   );
 };
@@ -193,6 +309,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
+    paddingBottom: 20
     // justifyContent: 'center'
   },
   input: {

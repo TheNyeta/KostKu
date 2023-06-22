@@ -10,10 +10,16 @@ const SplashScreen = ({navigation}) => {
     setTimeout(async () => {
       const user_data = await getData('@user_data')
       const kost_data = await getData('@kost_data')
+      const order_id = await getData('@order_id')
+      const penghuni_data = await getData('@penghuni_data')
       if (kost_data !== null) {
         navigation.replace('Home')
+      } else if (penghuni_data !== null) {
+        navigation.replace('HomePenghuni')
+      } else if (order_id !== null) {
+        navigation.replace('Waiting')
       } else if (user_data !== null) {
-        navigation.replace('OnBoarding')
+        navigation.replace('OnBoarding') //ntar ganti ke onboarding
       } else {
         navigation.replace('RoleSelect')
       }

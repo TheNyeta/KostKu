@@ -23,7 +23,7 @@ const CreateKostScreen = ({navigation}) => {
   const [modal, setModal] = useState(false)
   const [modal2, setModal2] = useState(false)
 
-  
+
   const openLibrary = () => {
     launchImageLibrary({ includeBase64: true }, (res) => {
       console.log('test', res)
@@ -102,49 +102,51 @@ const CreateKostScreen = ({navigation}) => {
     }
 
     if (!error) {
-
-
-      AsyncStorage.getItem('@user_data').then((res) => {
-        const value = JSON.parse(res)
-
-        let data = {
-          Pengelola_ID: value.Pengelola_ID,
-          Nama_Rumah: nama,
-          Lokasi_Rumah: alamat,
-          Kota_Name:  kota,
-          Special_Code: kode,
-          Nomor_Hp_Rumah: nomor,
-          Rumah_Image: image
-        }
-        
-        axios.post('https://api-kostku.pharmalink.id/skripsi/kostku?register=rumah', data)
-          .then(({data}) => {
-            console.log(data, 'test aja nih')
-            if (data.error.msg == '') {
-              axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rumah&PengelolaID=${value.Pengelola_ID}`)
-                .then(({data}) => {
-                  console.log(data, 'test aja nih')
-                  if (data.error.msg == '') {
-                    let jsonValue = JSON.stringify(data.data)
-                    AsyncStorage.setItem('@kost_data', jsonValue).then(() => {
-                      navigation.reset({
-                        index: 0,
-                        routes: [{name: 'Home'}],
-                      })
-                    })
-                  }
-                })
-            } else if (data.error.code == 409) {
-              setKodeError('Kode kost sudah digunakan')
-              // setModal2(true)
-            }
-
-          })
-      })
+      addRumahKost()
     }
 
     // navigation.navigate('Home')
   } 
+
+  const addRumahKost = () => {
+    AsyncStorage.getItem('@user_data').then((res) => {
+      const value = JSON.parse(res)
+
+      let data = {
+        Pengelola_ID: value.Pengelola_ID,
+        Nama_Rumah: nama,
+        Lokasi_Rumah: alamat,
+        Kota_Name:  kota,
+        Special_Code: kode,
+        Nomor_Hp_Rumah: nomor,
+        Rumah_Image: image
+      }
+      
+      axios.post('https://api-kostku.pharmalink.id/skripsi/kostku?register=rumah', data)
+        .then(({data}) => {
+          console.log(data, 'test aja nih')
+          if (data.error.msg == '') {
+            axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rumah&PengelolaID=${value.Pengelola_ID}`)
+              .then(({data}) => {
+                console.log(data, 'test aja nih')
+                if (data.error.msg == '') {
+                  let jsonValue = JSON.stringify(data.data)
+                  AsyncStorage.setItem('@kost_data', jsonValue).then(() => {
+                    navigation.reset({
+                      index: 0,
+                      routes: [{name: 'Home'}],
+                    })
+                  })
+                }
+              })
+          } else if (data.error.code == 409) {
+            setKodeError('Kode kost sudah digunakan')
+            // setModal2(true)
+          }
+
+        })
+    })
+  }
 
   const dataKota = [
     "Pilih Kota",
@@ -314,7 +316,7 @@ const CreateKostScreen = ({navigation}) => {
           </View>
           { kotaError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{kotaError}</Text> : null }
           <View style={[styles.form, { borderColor: alamatError ? 'red' : '#FFB700' }]}>
-            <Icon size={18} name='email-outline' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
+            <Icon size={18} name='directions' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
             <TextInput
               style={styles.input}
               placeholder="Alamat"
@@ -355,7 +357,7 @@ const CreateKostScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </Modal>
-      <Modal
+      {/* <Modal
         isVisible={modal2}
         onBackdropPress={() => setModal2(false)}
       >
@@ -367,7 +369,7 @@ const CreateKostScreen = ({navigation}) => {
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Mengerti</Text>
           </TouchableOpacity>
         </View>
-      </Modal>
+      </Modal> */}
     </KeyboardAwareScrollView>
   );
 };

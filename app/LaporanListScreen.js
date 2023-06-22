@@ -1,54 +1,84 @@
-import React, { useState }  from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Dimensions } from 'react-native';
+import React, { useState, useEffect }  from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Dimensions, Image, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { TabView, TabBar } from 'react-native-tab-view';
 import Modal from 'react-native-modal';
+import axios from 'axios';
+import moment from 'moment';
+import 'moment/locale/id'
 
-const LaporanListScreen = ({navigation}) => {
+const LaporanListScreen = ({navigation, route}) => {
+  const [data1, setData1] = useState([])
+  const [data2, setData2] = useState([])
+  const [data3, setData3] = useState([])
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const dataRumah = route.params.dataRumah
+  const kostImage = dataRumah.Rumah_Image
+
+  useEffect(() => {
+    init()
+    // navigation.addListener('focus', () => {init()})
+  }, [])
+
+  const init = () => {
+    setIsLoading(true)
+    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=laporan&RumahID=${dataRumah.Rumah_ID}`)
+      .then(({data}) => {
+        if (data.error.msg == '' && data.data != null) {
+          let data1 = []
+          let data2 = []
+          let data3 = []
+
+          data.data.forEach((item) => {
+            if (item.Status_Laporan == 'Ditolak') {
+              data3.push(item)
+            } else if (item.Status_Laporan == 'Dilaporkan') {
+              if (item.Perihal_Laporan == 'Pembayaran') {
+              data2.push(item)
+              }
+              data1.push(item)
+            }
+            
+          })
+
+          setData1(data1)
+          setData2(data2)
+          setData3(data3)
+          // setRefreshing(false)
+        }
+        setIsLoading(false)
+      }).catch((e) => {
+        console.log(e, 'error get laporan')
+      })
+  }
 
   const goBack = () => {
     navigation.goBack()
   }
 
-  const goToLaporanDetail = () => {
-    navigation.navigate('LaporanDetail')
+  const goToLaporanDetail = (item) => {
+    navigation.navigate('LaporanDetail', {laporan: item, dataRumah: dataRumah})
   }
 
-  const data = [
-    {
-      num: '101',
-      name: 'test awwww wwwwwww wwwww wwwwwwww wwwwwwwwwwww',
-      date: '5 Desemqweber www wwwww wwwwww',
-      price: 'Rp 12.000.000'
-    },
-    {
-      num: '102',
-      name: 'test b',
-      date: '22 Desemeber',
-      price: 'Rp 1.000.000'
-    },
-    {
-      num: '103',
-      name: 'test c',
-      date: '31 Desemasdber',
-      price: 'Rp 11.000.000'
-    }
-  ]
+  const formatDate = (date) => {
+    // moment.locale('id')
+    return moment(date, 'YYYY/M/D').format('dddd, D MMMM YYYY')
+  }
 
-  const RoomItem = ({room}) => {
+  const RoomItem = ({item}) => {
     return (
-      <TouchableOpacity style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center', justifyContent: 'space-between' }} onPress={() => goToLaporanDetail()} >
+      <TouchableOpacity style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center', justifyContent: 'space-between' }} onPress={() => goToLaporanDetail(item)} >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ backgroundColor: '#FFB700', padding: 8, borderRadius: 10, width: '22%', alignItems: 'center' }} >
-            <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{room.num}</Text>
+            <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{item.Kamar_Nomor}</Text>
           </View>
           <View style={{ marginLeft: 5, width: '65%' }} >
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} numberOfLines={1} >{room.name}</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} numberOfLines={1} >{item.Perihal_Laporan}</Text>
             <View style={{flexDirection: 'row', width: '100%' }} >
-              <Icon size={15} name='alert-octagon-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
-              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} numberOfLines={1} >{room.date}</Text>
+              <Icon size={15} name={item.Perihal_Laporan == 'Pembayaran' ? 'calendar-blank-outline' : 'account-multiple' } color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
+              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} numberOfLines={1} >{item.Perihal_Laporan == 'Pembayaran' ? item.Tanggal_Laporan : item.Perihal_Laporan == 'Info Keluar Kost' ? item.Penghuni_Name : item.Pesan_Laporan }</Text>
             </View>
           </View>
         </View>
@@ -60,34 +90,61 @@ const LaporanListScreen = ({navigation}) => {
   }
 
   const renderItem = ({item}) => {
-
-    return (
-      <RoomItem
-        room={item}
-      />
-    )
+    if (search == '') {
+      return <RoomItem item={item}/>
+    } 
+    if (item.Kamar_Nomor.toLowerCase().includes(search.toLowerCase()) || item.Pesan_Laporan.toLowerCase().includes(search.toLowerCase())) {
+      return <RoomItem item={item}/>
+    }
   }
 
-  const FirstRoute = () => (
-    <View>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        style={{ width: '100%', marginVertical: 10 }}/>
-    </View>
-  );
+  const FirstRoute = () => { 
+    return (
+      isLoading ? 
+        <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
+      :
+        <View>
+          <FlatList
+            data={data1}
+            renderItem={({item}) => <RoomItem item={item}/>}
+            style={{ width: '100%', marginVertical: 10 }}
+            ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
+          />
+        </View>
+    )
+  };
   
-  const SecondRoute = () => (
-    <View>
-      <Text>tes aja 2</Text>
-    </View>
-  );
+  const SecondRoute = () => { 
+    return (
+      isLoading ? 
+        <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
+      :
+        <View>
+          <FlatList
+            data={data2}
+            renderItem={({item}) => <RoomItem item={item}/>}
+            style={{ width: '100%', marginVertical: 10 }}
+            ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
+          /> 
+        </View>
+    )
+  };
 
-  const ThirdRoute = () => (
-    <View>
-      <Text>tes aja 3</Text>
-    </View>
-  );
+  const ThirdRoute = () => { 
+    return (
+      isLoading ? 
+        <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
+      :
+        <View>
+          <FlatList
+            data={data3}
+            renderItem={renderItem}
+            style={{ width: '100%', marginVertical: 10 }}
+            ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
+          />
+        </View>
+    )
+  };
 
   //react tab view
   const [index, setIndex] = React.useState(0);
@@ -124,14 +181,17 @@ const LaporanListScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', width: '100%' }} >
-        <TouchableOpacity onPress={() => goBack()} >
-          <Icon size={25} name='arrow-left' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'column' }}>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Laporan kost</Text>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Klik nomor untuk melihat detail</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }} >
+        <View style={{flexDirection: 'row', alignItems: 'center' }} >
+          <TouchableOpacity onPress={() => goBack()} >
+            <Icon size={25} name='arrow-left' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
+          </TouchableOpacity>
+          <View style={{ flexDirection: 'column' }}>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Laporan kost</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Klik nomor untuk melihat detail</Text>
+          </View>
         </View>
+        <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 50, width: 50, borderRadius: 100}} />
       </View>
       <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginVertical: 20, borderRadius: 100 }} >
         <View style={{ flexDirection: 'row' }} >

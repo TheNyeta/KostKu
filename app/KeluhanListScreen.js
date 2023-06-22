@@ -6,27 +6,40 @@ import Modal from 'react-native-modal';
 import axios from 'axios';
 
 const KeluhanListScreen = ({navigation, route}) => {
-  const [data, setData] = useState({})
+  const [data, setData] = useState([])
+  const [data2, setData2] = useState([])
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [keluhanId, setKeluhanId] = useState('')
+  const dataRumah = route.params.dataRumah
+  const kostImage = dataRumah.Rumah_Image
 
   useEffect(() => {
     init()
+    // navigation.addListener('focus', () => {init()})
   }, [])
 
   const init = () => {
     setIsLoading(true)
-    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=keluhan&RumahID=${route.params.rumahId}`)
+    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=keluhan&RumahID=${dataRumah.Rumah_ID}`)
       .then(({data}) => {
-        if (data.error.msg == '') {
-          setData(data.data)
-          setIsLoading(false)
-          setRefreshing(false)
+        if (data.error.msg == '' && data.data != null) {
+          let data1 = []
+          let data2 = []
+
+          data.data.forEach((item) => {
+            if (item.Status_Keluhan == 'Dilaporkan') data1.push(item)
+            if (item.Status_Keluhan == 'Selesai') data2.push(item)
+          })
+
+          setData(data1)
+          setData2(data2)
+          // setRefreshing(false)
         }
+        setIsLoading(false)
       }).catch((e) => {
-        console.log(e, 'error dashboard')
+        console.log(e, 'error get keluhan')
       })
   }
 
@@ -35,16 +48,12 @@ const KeluhanListScreen = ({navigation, route}) => {
   }
 
   const goToKeluhanDetail = (item) => {
-    navigation.navigate('KeluhanDetail', {keluhan: item})
+    navigation.navigate('KeluhanDetail', {keluhan: item, dataRumah: dataRumah})
   }
 
   const updateKeluhan = () => {
     setModal(false)
-    let data = {
-      Keluhan_ID: keluhanId,
-      Status_Keluhan: 'Selesai'
-    }
-    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=keluhan`, data)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?keluhan=selesai&KeluhanID=${keluhan.Keluhan_ID}`)
       .then(({data}) => {
         if (data.error.msg == '') {
           init()
@@ -69,48 +78,50 @@ const KeluhanListScreen = ({navigation, route}) => {
             </View>
           </View>
         </View>
-        <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => {setKeluhanId(item.Keluhan_ID); setModal(true)}} disabled={item.Status_Keluhan == 'Baru' ? false : true} >
-          <Icon size={40} name={item.Status_Keluhan == 'Baru' ? 'check-circle-outline' : 'check-circle' } color='#FFB700' style={{ alignSelf: 'center' }} />
+        <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => {setKeluhanId(item.Keluhan_ID); setModal(true)}} disabled={item.Status_Keluhan == 'Dilaporkan' ? false : true} >
+          <Icon size={40} name={item.Status_Keluhan == 'Dilaporkan' ? 'check-circle-outline' : 'check-circle' } color='#FFB700' style={{ alignSelf: 'center' }} />
         </TouchableOpacity>
       </TouchableOpacity>
     )
   }
 
-  const renderItem = ({item}) => {
-    if (item.Status_Keluhan == status)
+  const FirstRoute = () => { 
     return (
-      <RoomItem
-        item={item}
-      />
+      isLoading ? 
+        <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
+      :
+        <View>
+          <FlatList
+            data={data}
+            renderItem={({item}) => <RoomItem item={item}/>}
+            style={{ width: '100%', marginVertical: 10 }}
+            ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
+            />
+            
+        </View>
     )
-  }
-
-  const FirstRoute = () => (
-    <View>
-      <FlatList
-        data={data}
-        renderItem={({item}) => {
-          if (item.Status_Keluhan == 'Baru') return (<RoomItem item={item}/>)
-        }}
-        style={{ width: '100%', marginVertical: 10 }}/>
-    </View>
-  );
+  };
   
-  const SecondRoute = () => (
-    <View>
-      <FlatList
-        data={data}
-        renderItem={({item}) => {
-          if (item.Status_Keluhan == 'Selesai') return (<RoomItem item={item}/>)
-        }}
-        style={{ width: '100%', marginVertical: 10 }}/>
-    </View>
-  );
+  const SecondRoute = () => { 
+    return (
+      isLoading ? 
+        <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
+      :
+        <View>
+          <FlatList
+            data={data2}
+            renderItem={({item}) => <RoomItem item={item}/>}
+            style={{ width: '100%', marginVertical: 10 }}
+            ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
+            />
+        </View>
+    )
+  };
 
   //react tab view
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'first', title: 'Baru' },
+    { key: 'first', title: 'Dilaporkan' },
     { key: 'second', title: 'Selesai' },
   ]);
 
@@ -129,9 +140,9 @@ const KeluhanListScreen = ({navigation, route}) => {
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'first':
-        return <FirstRoute />;
+        return <FirstRoute/>;
       case 'second':
-        return <SecondRoute />;
+        return <SecondRoute/>;
       default:
         return null;
     }
@@ -149,7 +160,7 @@ const KeluhanListScreen = ({navigation, route}) => {
             <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Klik nomor untuk melihat detail</Text>
           </View>
         </View>
-        <Image source={require('../assets/image/Large.png')} style={{ borderRadius: 50, width: 50, height: 50 }} />
+        <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 50, width: 50, borderRadius: 100}} />
       </View>
       <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginVertical: 20, borderRadius: 100 }} >
         <View style={{ flexDirection: 'row' }} >
@@ -166,9 +177,7 @@ const KeluhanListScreen = ({navigation, route}) => {
           <Icon size={20} name='close' color='#ccc' style={{ alignSelf: 'center' }} />
         </TouchableOpacity>
       </View>
-      { isLoading ? 
-        <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
-        :
+      
         <TabView
           navigationState={{ index, routes }}
           renderScene={renderScene}
@@ -177,7 +186,7 @@ const KeluhanListScreen = ({navigation, route}) => {
           style={{ width: '100%' }}
           renderTabBar={renderTabBar}
         />
-      }
+      
       <Modal
         isVisible={modal}
         onBackdropPress={() => setModal(false)}
