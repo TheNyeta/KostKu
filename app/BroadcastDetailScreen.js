@@ -1,12 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Modal from 'react-native-modal';
 
-const BroadcastDetailScreen = ({navigation}) => {
+const BroadcastDetailScreen = ({navigation, route}) => {
   const [judul, setJudul] = useState('');
   const [pesan, setPesan] = useState('');
+  const [pengirim, setPengirim] = useState('');
+  const [tanggal, setTanggal] = useState('');
+  const [jam, setJam] = useState('');
+  const dataRumah = route.params.dataRumah
+  const broadcast = route.params.broadcast
+
+  useEffect(() => {
+    init()
+  }, [])
+
+  const init = () => {
+    setJudul(broadcast.Judul_Broadcast)
+    setPesan(broadcast.Pesan_Broadcast)
+    setPengirim(broadcast.Pengirim_Broadcast)
+    setTanggal(broadcast.Tanggal_Buat)
+    setJam(broadcast.Jam_Buat)
+
+  }
 
   const goBack = () => {
     navigation.goBack()
@@ -24,24 +42,24 @@ const BroadcastDetailScreen = ({navigation}) => {
               <Text style={{ color: 'white', fontSize: 24, fontFamily: 'PlusJakartaSans-SemiBold' }} >Broadcast Terkirim</Text>
             </View>
           </View>
-          <Image source={require('../assets/image/Large.png')} style={{ margin: 10 , borderRadius: 100}} />
-          <View style={{ backgroundColor: '#FFDB80', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
-            <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >nama kost</Text>
+          <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ margin: 10 , borderRadius: 100, width: 100, height: 100}} />
+          <View style={{ backgroundColor: '#FF7A00', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
+            <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >{dataRumah.Nama_Rumah}</Text>
           </View>
         </View>
         <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', marginVertical: 10 }} >Pesan Broadcast</Text>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginVertical: 6 }} >
             <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Pengirim</Text>
-            <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >Penjaga</Text>
+            <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >{pengirim}</Text>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginVertical: 6 }} >
             <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Tanggal kirim</Text>
-            <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >Sabtu 8 December 2021</Text>
+            <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >{tanggal}</Text>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginVertical: 6 }} >
             <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Waktu kirim</Text>
-            <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >15:02</Text>
+            <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >{jam}</Text>
           </View>
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Judul broadcast</Text>
           <View style={styles.form}>
@@ -61,7 +79,7 @@ const BroadcastDetailScreen = ({navigation}) => {
           </View>
           <View style={{ width: '100%', marginTop: 5, borderWidth: 1, borderColor: 'black', borderRadius: 5, marginBottom: 20 }}>
             <TextInput
-              style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 200, textAlignVertical: 'top', padding: 5 }}
+              style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 200, textAlignVertical: 'top', padding: 10 }}
               placeholder='Isi pesan'
               placeholderTextColor='#ccc'
               onChangeText={setPesan}

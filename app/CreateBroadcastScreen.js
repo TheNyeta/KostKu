@@ -3,14 +3,62 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'reac
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Modal from 'react-native-modal';
+import axios from 'axios';
 
-const CreateBroadcastScreen = ({navigation}) => {
+const CreateBroadcastScreen = ({navigation, route}) => {
   const [judul, setJudul] = useState('');
+  const [judulError, setJudulError] = useState('');
   const [pesan, setPesan] = useState('');
+  const [pesanError, setPesanError] = useState('');
   const [modal, setModal] = useState(false)
+  const dataRumah = route.params.dataRumah
 
   const goBack = () => {
     navigation.goBack()
+  }
+
+  const createBroadcast = () => {
+    let error = false
+
+    if (judul == '') {
+      setJudulError('Masukan judul broadcast')
+      error = true
+    } else if (judul.length > 32) {
+      setJudulError('Maksimal 32 karakter')
+      error = true
+    } else {
+      setJudulError('')
+    }
+
+    if (pesan == '') {
+      setPesanError('Masukan pesan broadcast')
+      error = true
+    } else if (pesan.length > 255) {
+      setPesanError('Maksimal 255 karakter')
+      error = true
+    } else {
+      setPesanError('')
+    }
+
+    if (!error) {
+
+      let data = {
+        Rumah_ID:dataRumah.Rumah_ID,
+        Pengirim_Broadcast: "Pengelola",
+        Judul_Broadcast: judul,
+        Pesan_Broadcast: pesan
+      }
+
+      axios.post(`https://api-kostku.pharmalink.id/skripsi/kostku?register=broadcast`, data)
+      .then(({data}) => {
+        if (data.error.msg == '') {
+          goBack()
+        }
+      }).catch((e) => {
+        console.log(e, 'error dashboard')
+      })
+    }
+
   }
 
   return (
@@ -25,15 +73,15 @@ const CreateBroadcastScreen = ({navigation}) => {
               <Text style={{ color: 'white', fontSize: 24, fontFamily: 'PlusJakartaSans-SemiBold' }} >Buat Broadcast</Text>
             </View>
           </View>
-          <Image source={require('../assets/image/Large.png')} style={{ margin: 10 , borderRadius: 100}} />
-          <View style={{ backgroundColor: '#FFDB80', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
-            <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >nama kost</Text>
+          <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ margin: 10 , borderRadius: 100, width: 100, height: 100}} />
+          <View style={{ backgroundColor: '#FF7A00', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
+            <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >{dataRumah.Nama_Rumah}</Text>
           </View>
         </View>
         <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', marginVertical: 10 }} >Pesan Broadcast</Text>
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Judul broadcast</Text>
-          <View style={styles.form}>
+          <View style={[styles.form, { borderColor: judulError ? 'red' : 'black' }]}>
             <Icon size={18} name='pencil' color='black' style={{ alignSelf: 'center' }} />
             <TextInput
               style={styles.input}
@@ -43,24 +91,29 @@ const CreateBroadcastScreen = ({navigation}) => {
               value={judul}
             />
           </View>
+          { judulError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{judulError}</Text> : null }
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', width: '100%', marginVertical: 10 }} >
             <Icon size={25} name='playlist-edit' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
             <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Isi pesan</Text>
           </View>
-          <View style={{ width: '100%', marginTop: 5, borderWidth: 1, borderColor: 'black', borderRadius: 5 }}>
+          <View style={{ width: '100%', marginTop: 5, borderWidth: 1, borderColor: pesanError ? 'red' : 'black', borderRadius: 5 }}>
             <TextInput
-              style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 200, textAlignVertical: 'top', padding: 5 }}
+              style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 200, textAlignVertical: 'top', padding: 10 }}
               placeholder='Isi pesan'
               placeholderTextColor='#ccc'
               onChangeText={setPesan}
               value={pesan}
               multiline
-              maxLength={500}
+              // maxLength={255}
             />
           </View>
-          <Text style={{ alignSelf: 'flex-end', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >{pesan.length}/500</Text>
+          <View style={{ flexDirection: 'row', justifyContent: pesanError ? 'space-between' : 'flex-end', width: '100%' }}>
+            { pesanError ? <Text style={{ color: 'red', margin: 5, marginTop: -2, fontFamily: 'PlusJakartaSans-Regular' }} >{pesanError}</Text> : null }
+            
+            <Text style={{ alignSelf: 'flex-end', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >{pesan.length}/255</Text>
+          </View>
         </View>
-        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} >
+        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} onPress={() => createBroadcast()} >
           <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Simpan</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, width: '35%', borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginBottom: 20, marginTop: 10 }} onPress={() => setModal(true)} >
@@ -79,7 +132,7 @@ const CreateBroadcastScreen = ({navigation}) => {
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
-            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Kembali</Text>
+            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
           </TouchableOpacity>
         </View>
       </Modal>

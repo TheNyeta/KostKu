@@ -1,32 +1,38 @@
-import React, { useState }  from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-native';
+import React, { useState, useEffect }  from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Image, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import moment from 'moment';
+import 'moment/locale/id'
 
-const JatuhTempoListScreen = ({navigation}) => {
+const JatuhTempoListScreen = ({navigation, route}) => {
   const [search, setSearch] = useState('')
+  const [data, setData] = useState([])
+  const dataRumah = route.params.dataRumah
+  const kostImage = dataRumah.Rumah_Image
+  const jatuhTempo = route.params.jatuhTempo
 
   const goBack = () => {
     navigation.goBack()
   }
 
-  const RoomItem = ({room}) => {
+  const RoomItem = ({item}) => {
     return (
-      <TouchableOpacity style={{ flexDirection: 'row', paddingVertical: 8 }} >
-        <View style={{ backgroundColor: '#FFB700', padding: 10, borderRadius: 15, paddingHorizontal: 25}} >
-          <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{room.num}</Text>
+      <View style={{ flexDirection: 'row', paddingVertical: 8 }} >
+        <View style={{ backgroundColor: '#FFB700', padding: 10, borderRadius: 15, width: 80, alignItems: 'center' }} >
+          <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{item.Kamar_Nomor}</Text>
         </View>
         <View style={{ marginHorizontal: 5, width: '42%' }} >
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} >{room.name}</Text>
+          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} >{item.DataPenghuni.Penghuni_Name}</Text>
           <View style={{flexDirection: 'row' }} >
             <Icon size={15} name='calendar-blank-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
-            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{room.date}</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{moment(item.Tanggal_Berakhir, 'YYYY MM DD').format('D MMMM')}</Text>
           </View>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'flex-end' }} >
-          <Icon size={15} name='cash-multiple' color='black' style={{ paddingHorizontal: 4 }} />
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{room.price}</Text>
+          <Icon size={15} name='clock-outline' color='black' style={{ paddingHorizontal: 4 }} />
+          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{moment().diff(moment(item.Tanggal_Berakhir, 'YYYY MM DD'), 'day')} hari</Text>
         </View>
-      </TouchableOpacity>
+      </View>
     )
   }
 
@@ -34,65 +40,33 @@ const JatuhTempoListScreen = ({navigation}) => {
 
     return (
       <RoomItem
-        room={item}
+        item={item}
       />
     )
   }
 
-  const data = [
-    {
-      num: '101',
-      name: 'test a',
-      date: '5 Desemqweber',
-      price: 'Rp 12.000.000'
-    },
-    {
-      num: '102',
-      name: 'test b',
-      date: '22 Desemeber',
-      price: 'Rp 1.000.000'
-    },
-    {
-      num: '103',
-      name: 'test c',
-      date: '31 Desemasdber',
-      price: 'Rp 11.000.000'
-    }
-  ]
-
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', width: '100%' }} >
-        <TouchableOpacity onPress={() => goBack()}>
-          <Icon size={25} name='arrow-left' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'column' }}>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 32, color: 'black'}} >Jatuh tempo</Text>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Daftar kamar jatuh tempo</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }} >
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => goBack()}>
+            <Icon size={25} name='arrow-left' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
+          </TouchableOpacity>
+          <View style={{ flexDirection: 'column' }}>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 32, color: 'black'}} >Jatuh tempo</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Daftar kamar jatuh tempo</Text>
+          </View>
         </View>
-      </View>
-      <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginTop: 20, borderRadius: 100 }} >
-        <View style={{ flexDirection: 'row' }} >
-          <Icon size={25} name='magnify' color='black' style={{ alignSelf: 'center', paddingLeft: 15 }} />
-          <TextInput
-            style={styles.search}
-            placeholder='Cari nama penghuni/nomor kamar'
-            placeholderTextColor='#ccc'
-            onChangeText={setSearch}
-            value={search}
-          />
-        </View>
-        <TouchableOpacity style={{ alignSelf: 'center', padding: 5 }} onPress={() => setSearch('')}>
-          <Icon size={20} name='close' color='#ccc' style={{ alignSelf: 'center' }} />
-        </TouchableOpacity>
+        <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 50, width: 50, borderRadius: 100}} />
       </View>
       <View style={{ flexDirection: 'column', marginVertical: 10 , alignSelf: 'flex-start' }} >
-        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black' }} >Hari ini</Text>
+        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black' }} >Kamar jatuh tempo</Text>
       </View>
       <FlatList
-        data={data}
+        data={jatuhTempo}
         renderItem={renderItem}
         style={{ width: '100%' }}
+        ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
       />
     </View>
   );

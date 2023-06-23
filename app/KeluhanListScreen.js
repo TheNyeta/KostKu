@@ -1,92 +1,127 @@
-import React, { useState }  from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Dimensions } from 'react-native';
+import React, { useState, useEffect }  from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Dimensions, Image, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { TabView, TabBar } from 'react-native-tab-view';
 import Modal from 'react-native-modal';
+import axios from 'axios';
 
-const KeluhanListScreen = ({navigation}) => {
+const KeluhanListScreen = ({navigation, route}) => {
+  const [data, setData] = useState([])
+  const [data2, setData2] = useState([])
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [keluhanId, setKeluhanId] = useState('')
+  const dataRumah = route.params.dataRumah
+  const kostImage = dataRumah.Rumah_Image
+
+  useEffect(() => {
+    init()
+    // navigation.addListener('focus', () => {init()})
+  }, [])
+
+  const init = () => {
+    setIsLoading(true)
+    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=keluhan&RumahID=${dataRumah.Rumah_ID}`)
+      .then(({data}) => {
+        if (data.error.msg == '' && data.data != null) {
+          let data1 = []
+          let data2 = []
+
+          data.data.forEach((item) => {
+            if (item.Status_Keluhan == 'Dilaporkan') data1.push(item)
+            if (item.Status_Keluhan == 'Selesai') data2.push(item)
+          })
+
+          setData(data1)
+          setData2(data2)
+          // setRefreshing(false)
+        }
+        setIsLoading(false)
+      }).catch((e) => {
+        console.log(e, 'error get keluhan')
+      })
+  }
 
   const goBack = () => {
     navigation.goBack()
   }
 
-  const goToKeluhanDetail = () => {
-    navigation.navigate('KeluhanDetail')
+  const goToKeluhanDetail = (item) => {
+    navigation.navigate('KeluhanDetail', {keluhan: item, dataRumah: dataRumah})
   }
 
-  const data = [
-    {
-      num: '101',
-      name: 'test awwww wwwwwww wwwww wwwwwwww wwwwwwwwwwww',
-      date: '5 Desemqweber www wwwww wwwwww',
-      price: 'Rp 12.000.000'
-    },
-    {
-      num: '102',
-      name: 'test b',
-      date: '22 Desemeber',
-      price: 'Rp 1.000.000'
-    },
-    {
-      num: '103',
-      name: 'test c',
-      date: '31 Desemasdber',
-      price: 'Rp 11.000.000'
-    }
-  ]
+  const updateKeluhan = () => {
+    setModal(false)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?keluhan=selesai&KeluhanID=${keluhan.Keluhan_ID}`)
+      .then(({data}) => {
+        if (data.error.msg == '') {
+          init()
+        }
+      }).catch((e) => {
+        console.log(e, 'error dashboard')
+      })
+  }
 
-  const RoomItem = ({room}) => {
+  const RoomItem = ({item}) => {
     return (
-      <TouchableOpacity style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center', justifyContent: 'space-between' }} onPress={() => goToKeluhanDetail()} >
+      <TouchableOpacity style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center', justifyContent: 'space-between' }} onPress={() => goToKeluhanDetail(item)} >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ backgroundColor: '#FFB700', padding: 8, borderRadius: 10, width: '22%', alignItems: 'center' }} >
-            <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{room.num}</Text>
+            <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{item.Kamar_Nomor}</Text>
           </View>
           <View style={{ marginLeft: 5, width: '65%' }} >
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} numberOfLines={1} >{room.name}</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} numberOfLines={1} >{item.Penghuni_Name}</Text>
             <View style={{flexDirection: 'row', width: '100%' }} >
               <Icon size={15} name='alert-octagon-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
-              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} numberOfLines={1} >{room.date}</Text>
+              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} numberOfLines={1} >{item.Detail_Keluhan}</Text>
             </View>
           </View>
         </View>
-        <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => setModal(true)} >
-          <Icon size={40} name='check-circle-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
+        <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => {setKeluhanId(item.Keluhan_ID); setModal(true)}} disabled={item.Status_Keluhan == 'Dilaporkan' ? false : true} >
+          <Icon size={40} name={item.Status_Keluhan == 'Dilaporkan' ? 'check-circle-outline' : 'check-circle' } color='#FFB700' style={{ alignSelf: 'center' }} />
         </TouchableOpacity>
       </TouchableOpacity>
     )
   }
 
-  const renderItem = ({item}) => {
-
+  const FirstRoute = () => { 
     return (
-      <RoomItem
-        room={item}
-      />
+      isLoading ? 
+        <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
+      :
+        <View>
+          <FlatList
+            data={data}
+            renderItem={({item}) => <RoomItem item={item}/>}
+            style={{ width: '100%', marginVertical: 10 }}
+            ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
+            />
+            
+        </View>
     )
-  }
-
-  const FirstRoute = () => (
-    <View>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        style={{ width: '100%', marginVertical: 10 }}/>
-    </View>
-  );
+  };
   
-  const SecondRoute = () => (
-    <View>
-      <Text>tes aja 2</Text>
-    </View>
-  );
+  const SecondRoute = () => { 
+    return (
+      isLoading ? 
+        <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
+      :
+        <View>
+          <FlatList
+            data={data2}
+            renderItem={({item}) => <RoomItem item={item}/>}
+            style={{ width: '100%', marginVertical: 10 }}
+            ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
+            />
+        </View>
+    )
+  };
 
   //react tab view
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'first', title: 'Baru' },
+    { key: 'first', title: 'Dilaporkan' },
     { key: 'second', title: 'Selesai' },
   ]);
 
@@ -105,9 +140,9 @@ const KeluhanListScreen = ({navigation}) => {
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'first':
-        return <FirstRoute />;
+        return <FirstRoute/>;
       case 'second':
-        return <SecondRoute />;
+        return <SecondRoute/>;
       default:
         return null;
     }
@@ -115,14 +150,17 @@ const KeluhanListScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', width: '100%' }} >
-        <TouchableOpacity onPress={() => goBack()} >
-          <Icon size={25} name='arrow-left' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'column' }}>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Daftar keluhan</Text>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Klik nomor untuk melihat detail</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }} >
+        <View style={{flexDirection: 'row', alignItems: 'center' }} >
+          <TouchableOpacity onPress={() => goBack()} >
+            <Icon size={25} name='arrow-left' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
+          </TouchableOpacity>
+          <View style={{ flexDirection: 'column' }}>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Daftar keluhan</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Klik nomor untuk melihat detail</Text>
+          </View>
         </View>
+        <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 50, width: 50, borderRadius: 100}} />
       </View>
       <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginVertical: 20, borderRadius: 100 }} >
         <View style={{ flexDirection: 'row' }} >
@@ -139,19 +177,16 @@ const KeluhanListScreen = ({navigation}) => {
           <Icon size={20} name='close' color='#ccc' style={{ alignSelf: 'center' }} />
         </TouchableOpacity>
       </View>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: Dimensions.get('window').width }}
-        style={{ width: '100%' }}
-        renderTabBar={renderTabBar}
-      />
-      {/* <FlatList
-        data={data}
-        renderItem={renderItem}
-        style={{ width: '100%', marginVertical: 20 }}
-      /> */}
+      
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: Dimensions.get('window').width }}
+          style={{ width: '100%' }}
+          renderTabBar={renderTabBar}
+        />
+      
       <Modal
         isVisible={modal}
         onBackdropPress={() => setModal(false)}
@@ -160,10 +195,10 @@ const KeluhanListScreen = ({navigation}) => {
           <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
           <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Tandai sebagai selesai</Text>
           <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Apakah Anda yakin untuk tandai keluhan ini telah selesai teratasi?</Text>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => {}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => updateKeluhan()}>
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => setModal(false)}>
             <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Kembali</Text>
           </TouchableOpacity>
         </View>

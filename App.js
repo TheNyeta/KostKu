@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { LoginScreen, RegisterScreen } from './app/loginregister';
 import CreateRoomScreen from './app/CreateRoomScreen';
 import RoomListScreen from './app/RoomListScreen';
@@ -18,18 +18,43 @@ import LaporanDetailScreen from './app/LaporanDetailScreen';
 import RatingListScreen from './app/RatingListScreen';
 import HomePage from './app/TabBar';
 import RoleSelectScreen from './app/RoleSelectScreen';
+import NewPenghuniListScreen from './app/NewPenghuniListScreen';
+import NewPenghuniDetailScreen from './app/NewPenghuniDetailScreen';
 import SplashScreen from './app/SplashScreen';
+import UserProfileScreen from './app/UserProfileScreen';
+import UserProfileEditScreen from './app/UserProfileEditScreen';
 import OnBoardingScreen from './app/OnBoardingScreen';
 import CreateKostScreen from './app/CreateKostScreen';
+import CreateEventScreen from './app/CreateEventScreen';
+import KostScreen from './app/KostScreen';
+import KostDetailScreen from './app/KostDetailScreen';
+import KostEditScreen from './app/KostEditScreen';
+import PenjagaKostScreen from './app/PenjagaKostScreen';
+
+import HomePagePenghuni from './app/TabBarPenghuni';
+import EnterCodeScreen from './app/EnterCodeScreen'
+import PusatInformasiScreen from './app/PusatInformasiScreen';
+import EnterRumahKostScreen from './app/EnterRumahKostScreen';
+import WaitingScreen from './app/WaitingScreen';
+import CreateRatingScreen from './app/CreateRatingScreen';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NativeBaseProvider } from 'native-base';
+import { UpdateContext } from './app/GlobalState';
 
 const Stack = createNativeStackNavigator()
 
+
 function App() {
+  const [update, setUpdate] = useState({
+    updateDashboard: true,
+    updateCalendar: false,
+    updateSetting: false
+  })
+
   return (
-    <NativeBaseProvider>
+    <UpdateContext.Provider value={[update, setUpdate]} >
+      <>
       <NavigationContainer>
         <Stack.Navigator 
           screenOptions={{
@@ -44,6 +69,15 @@ function App() {
           <Stack.Screen name="OnBoarding" component={OnBoardingScreen} />
           <Stack.Screen name="CreateKost" component={CreateKostScreen} />
           <Stack.Screen name="Home" component={HomePage} />
+          <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+          <Stack.Screen name="UserProfileEdit" component={UserProfileEditScreen} />
+          <Stack.Screen name="Kost" component={KostScreen} />
+          <Stack.Screen name="KostDetail" component={KostDetailScreen} />
+          <Stack.Screen name="KostEdit" component={KostEditScreen} />
+          <Stack.Screen name="PenjagaKost" component={PenjagaKostScreen} />
+          <Stack.Screen name="NewPenghuniList" component={NewPenghuniListScreen} />
+          <Stack.Screen name="NewPenghuniDetail" component={NewPenghuniDetailScreen} />
+          <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
           <Stack.Screen name="RatingList" component={RatingListScreen} />
           <Stack.Screen name="RoomList" component={RoomListScreen} />
           <Stack.Screen name="JatuhTempoList" component={JatuhTempoListScreen} />
@@ -60,9 +94,19 @@ function App() {
           <Stack.Screen name="CreateRoom" component={CreateRoomScreen} />
           <Stack.Screen name="PaymentDetail" component={PaymentDetailScreen} />
           <Stack.Screen name="RoomDetail" component={RoomDetailScreen} />
+
+          <Stack.Screen name="HomePenghuni" component={HomePagePenghuni} />
+          <Stack.Screen name="EnterCode" component={EnterCodeScreen} />
+          <Stack.Screen name="PusatInformasi" component={PusatInformasiScreen} />
+          <Stack.Screen name="EnterRumahKost" component={EnterRumahKostScreen} />
+          <Stack.Screen name="Waiting" component={WaitingScreen} />
+          <Stack.Screen name="CreateRating" component={CreateRatingScreen} />
+
+
         </Stack.Navigator>
       </NavigationContainer>
-    </NativeBaseProvider>
+      </>
+    </UpdateContext.Provider>
   );
 }
 

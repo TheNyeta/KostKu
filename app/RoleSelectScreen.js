@@ -23,15 +23,15 @@ const RoleSelectScreen = ({navigation}) => {
       </View>
       <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black', alignSelf: 'flex-start', marginVertical: 10}} >Masuk sebagai</Text>
       <View style={{ flex: 1, flexDirection: 'column',  width: '100%', alignItems: 'center', justifyContent: 'space-between' }} >
-        <TouchableOpacity style={{ flexDirection: 'row', height: '30%', width: '100%', alignItems: 'center', borderRadius: 20, borderWidth: 2, borderColor: '#FFB700', elevation: 10, backgroundColor: 'white', shadowColor: '#FFB700', justifyContent: 'center' }} onPress={() => navigate('penghuni')} >
+        <TouchableOpacity style={{ flexDirection: 'row', height: '30%', width: '100%', alignItems: 'center', borderRadius: 20, borderWidth: 2, borderColor: '#FFB700', elevation: 10, backgroundColor: 'white', shadowColor: '#FFB700', justifyContent: 'center' }} onPress={() => navigate('Penghuni')} >
           <Image source={require('../assets/image/Role1_Penghuni.png')} style={{ width: 150, height: 150 }} />
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: '#FF7A00'}} >Penghuni Kost</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: 'row', height: '30%', width: '100%', alignItems: 'center', borderRadius: 20, borderWidth: 2, borderColor: '#FFB700', elevation: 10, backgroundColor: 'white', shadowColor: '#FFB700', justifyContent: 'center' }} onPress={() => navigate('pengelola')} >
+        <TouchableOpacity style={{ flexDirection: 'row', height: '30%', width: '100%', alignItems: 'center', borderRadius: 20, borderWidth: 2, borderColor: '#FFB700', elevation: 10, backgroundColor: 'white', shadowColor: '#FFB700', justifyContent: 'center' }} onPress={() => navigate('Pengelola')} >
           <Image source={require('../assets/image/Role2_Pemilik.png')} style={{ width: 150, height: 150 }} />
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: '#FF7A00'}} >Pemilik Kost</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: 'row', height: '30%', width: '100%', alignItems: 'center', borderRadius: 20, borderWidth: 2, borderColor: '#FFB700', elevation: 10, backgroundColor: 'white', shadowColor: '#FFB700', justifyContent: 'center' }} onPress={() => navigate('penjaga')} >
+        <TouchableOpacity style={{ flexDirection: 'row', height: '30%', width: '100%', alignItems: 'center', borderRadius: 20, borderWidth: 2, borderColor: '#FFB700', elevation: 10, backgroundColor: 'white', shadowColor: '#FFB700', justifyContent: 'center' }} onPress={() => navigate('Penjaga')} >
           <Image source={require('../assets/image/Role3_Penjaga.png')} style={{ width: 150, height: 150 }} />
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: '#FF7A00'}} >Penjaga Kost</Text>
         </TouchableOpacity>
