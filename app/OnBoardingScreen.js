@@ -152,7 +152,7 @@ const OnBoardingScreen = ({navigation}) => {
               dan maksimalkan rumah kostmu!
             </Text>
           </View>
-          <TouchableOpacity style={{ backgroundColor: '#FFB700', alignItems: 'center', width: '50%', borderRadius: 10, padding: 5 }} onPress={() => {navigation.replace('CreateKost')}}>
+          <TouchableOpacity style={{ backgroundColor: '#FFB700', alignItems: 'center', width: '50%', borderRadius: 10, padding: 5 }} onPress={() => {navigation.replace('Home')}}>
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'white'}} >Mulai</Text>
           </TouchableOpacity>
         </View>

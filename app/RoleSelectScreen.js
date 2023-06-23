@@ -32,7 +32,7 @@ const RoleSelectScreen = ({navigation}) => {
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: '#FF7A00'}} >Pemilik Kost</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ flexDirection: 'row', height: '30%', width: '100%', alignItems: 'center', borderRadius: 20, borderWidth: 2, borderColor: '#FFB700', elevation: 10, backgroundColor: 'white', shadowColor: '#FFB700', justifyContent: 'center' }} onPress={() => navigate('penjaga')} >
-          <Image source={require('../assets/image/Role2_Penjaga.png')} style={{ width: 150, height: 150 }} />
+          <Image source={require('../assets/image/Role3_Penjaga.png')} style={{ width: 150, height: 150 }} />
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: '#FF7A00'}} >Penjaga Kost</Text>
         </TouchableOpacity>
       </View>

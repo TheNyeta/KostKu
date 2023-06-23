@@ -77,14 +77,14 @@ const LoginScreen = ({navigation, route}) => {
         .then(({data}) => {
           console.log(data, 'test aja nih')
           if (data.error.msg == '') {
-            navigation.replace('Home')
+            navigation.replace('OnBoarding')
           } else {
             ToastAndroid.show(data.error.msg, 1)
           }
         })
     }
     // navigation.navigate('Home')
-    navigation.navigate('OnBoarding')
+    // navigation.navigate('OnBoarding')
   }
 
   const forgotPassword = () => {
