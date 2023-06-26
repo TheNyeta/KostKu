@@ -5,13 +5,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Modal from 'react-native-modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const UserProfileScreen = ({navigation}) => {
+const UserProfileScreen = ({navigation, route}) => {
   const [isLoading, setIsLoading] = useState(true)
   const [image, setImage] = useState('')
   const [nama, setNama] = useState('')
   const [nohp, setNoHp] = useState('')
   const [email, setEmail] = useState('')
   const [dataUser, setDataUser] = useState({})
+  const role = route.params.role
 
   useEffect(() => {
     init()
@@ -24,10 +25,10 @@ const UserProfileScreen = ({navigation}) => {
       const value = JSON.parse(data)
       setIsLoading(false)
       setDataUser(value)
-      setImage(value.Pengelola_Image)
-      setNama(value.Pengelola_Name)
-      setNoHp(value.Pengelola_Number)
-      setEmail(value.Pengelola_Email)
+      setImage(role == 'Pengelola' ? value.Pengelola_Image : role == 'Penghuni' ? value.Penghuni_Image : value.Penjaga_Image)
+      setNama(role == 'Pengelola' ? value.Pengelola_Name : role == 'Penghuni' ? value.Penghuni_Name : value.Penjaga_Name)
+      setNoHp(role == 'Pengelola' ? value.Pengelola_Number : role == 'Penghuni' ? value.Penghuni_Number : value.Penjaga_Number)
+      setEmail(role == 'Pengelola' ? value.Pengelola_Email : role == 'Penghuni' ? value.Penghuni_Email : value.Penjaga_Email)
     })
   }
 
@@ -36,7 +37,7 @@ const UserProfileScreen = ({navigation}) => {
   }
 
   const goToUserProfileEdit = () => {
-    navigation.navigate('UserProfileEdit', {dataUser: dataUser})
+    navigation.navigate('UserProfileEdit', {dataUser: dataUser, role: role})
   }
 
   return (

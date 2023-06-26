@@ -153,6 +153,18 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
       })
   }
 
+  const terima = () => {
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=orderBerhasil&OrderID=${data.Order_ID}&KamarID=${kamar.Kamar_ID}&tanggalMasuk=${tanggalMasuk}&tanggalKeluar=${moment(tanggalMasuk, 'YYYY MM DD').add(1, 'months')}&kamarStatus=Terisi`)
+      .then(({data}) => {
+        if (data.error.msg == '') {
+          goBack()
+          navigation.replace('NewPenghuniList', {dataRumah: dataRumah})
+        }
+      }).catch((e) => {
+        console.log(e, 'error get list kamar kosong')
+      })
+  }
+
   const formatHarga = (price) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(price)
   }

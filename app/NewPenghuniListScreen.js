@@ -11,8 +11,8 @@ const NewPenghuniListScreen = ({navigation, route}) => {
   const kostImage = dataRumah.Rumah_Image
 
   useEffect(() => {
-    // init()
-    navigation.addListener('focus', () => {init()})
+    init()
+    // navigation.addListener('focus', () => {init()})
   }, [])
 
   const init = () => {
@@ -23,7 +23,6 @@ const NewPenghuniListScreen = ({navigation, route}) => {
         if (data.error.msg == '' && data.data != null) {
 
           setData(data.data)
-          // setRefreshing(false)
         }
         setIsLoading(false)
       }).catch((e) => {

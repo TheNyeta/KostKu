@@ -5,10 +5,10 @@ import moment from 'moment';
 import 'moment/locale/id'
 
 const PaymentDetailScreen = ({navigation, route}) => {
-  const [search, setSearch] = useState('')
   const dataRumah = route.params.dataRumah
-  const kostImage = dataRumah.Rumah_Image
+  const dataPenghuni = route.params.dataPenghuni
   const kamar = route.params.kamar
+  const role = route.params.role
 
   const goBack = () => {
     navigation.goBack()
@@ -26,11 +26,15 @@ const PaymentDetailScreen = ({navigation, route}) => {
             <Icon size={25} name='arrow-left' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
           </TouchableOpacity>
           <View style={{ flexDirection: 'column' }}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Rincian bayaran</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >{`Rincian pembayaran kamar ${kamar.Kamar_Nomor}`}</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 25, color: 'black'}} >Rincian pembayaran</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >{role == 'Penghuni' ? 'Rincian pembayaran bulanan' : `Rincian pembayaran kamar ${kamar.Kamar_Nomor}`}</Text>
           </View>
         </View>
-        <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 50, width: 50, borderRadius: 100}} />
+        { role == 'Penghuni' ?
+            <Image source={dataPenghuni.Penghuni_Image == '' ? require('../assets/image/Large.png') : { uri: dataPenghuni.Penghuni_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+          : 
+            <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+        }
       </View>
       <View style={{ flexDirection: 'column', marginVertical: 20 , alignSelf: 'flex-start' }} >
         <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black' }} >Pembagian pembayaran</Text>

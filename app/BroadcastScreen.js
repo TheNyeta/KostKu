@@ -13,7 +13,8 @@ const BroadcastScreen = ({navigation, route}) => {
   const [data2, setData2] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const dataRumah = route.params.dataRumah
-  const kostImage = route.params.kostImage
+  const role = route.params.role
+  const dataPenghuni = route.params.dataPenghuni
 
   useEffect(() => {
     // init()
@@ -30,9 +31,7 @@ const BroadcastScreen = ({navigation, route}) => {
 
           data.data.forEach((item) => {
             const now = moment()
-            const broadcastDate = moment(item.Tanggal_Format, 'YYYY-MM-DD')
-            console.log(now, 'test')
-            console.log(broadcastDate, 'test')
+            const broadcastDate = moment(item.Tanggal_Format, 'YYYY MM DD')
             const range = moment.range(broadcastDate, now)
             if (range.diff('day') <= 7) {
               data1.push(item)
@@ -41,7 +40,7 @@ const BroadcastScreen = ({navigation, route}) => {
             }
           })
 
-          setData1(data1)
+          setData1(data1.reverse())
           setData2(data2)
           // setRefreshing(false)
         }
@@ -74,10 +73,7 @@ const BroadcastScreen = ({navigation, route}) => {
           </View>
           <View style={{ marginHorizontal: 5, width: '70%' }} >
             <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} >Pesan terkirim</Text>
-            <View style={{flexDirection: 'row' }} >
-              <Icon size={15} name='calendar-blank-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
-              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{item.Tanggal_Buat} - {item.Jam_Buat}</Text>
-            </View>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{item.Tanggal_Buat} - {item.Jam_Buat}</Text>
           </View>
         </View>
         <View style={{ alignSelf: 'flex-start' }} >
@@ -180,7 +176,11 @@ const BroadcastScreen = ({navigation, route}) => {
             <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Kirim pesan broadcast untuk penghuni</Text>
           </View>
         </View>
-        <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 50, width: 50, borderRadius: 100}} />
+        { role == 'Penghuni' ?
+            <Image source={dataPenghuni.Penghuni_Image == '' ? require('../assets/image/Large.png') : { uri: dataPenghuni.Penghuni_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+          :
+            <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+        }
       </View>
       <TabView
         navigationState={{ index, routes }}
@@ -190,14 +190,13 @@ const BroadcastScreen = ({navigation, route}) => {
         style={{ width: Dimensions.get('window').width }}
         renderTabBar={renderTabBar}
       />
-      <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 10, position: 'absolute', right: 20, bottom: 40 }} onPress={() => goToCreateBroadcast()} >
-        <Icon size={35} name='plus' color='white' style={{ alignSelf: 'center' }} />
-      </TouchableOpacity>
-      {/* <FlatList
-        data={data}
-        renderItem={renderItem}
-        style={{ width: '100%', marginVertical: 20 }}
-      /> */}
+      { role == 'Penghuni' ?
+          null
+        :
+          <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 10, position: 'absolute', right: 20, bottom: 40 }} onPress={() => goToCreateBroadcast()} >
+            <Icon size={35} name='plus' color='white' style={{ alignSelf: 'center' }} />
+          </TouchableOpacity>
+      }
     </View>
   );
 };

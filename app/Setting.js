@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Switch, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Switch, Dimensions, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Collapsible from 'react-native-collapsible';
 import Modal from 'react-native-modal';
@@ -7,9 +7,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UpdateContext } from './GlobalState';
 import { useIsFocused } from '@react-navigation/native';
 
-const SettingPage = ({navigation}) => {
+const SettingPage = ({navigation, route}) => {
   const [image, setImage] = useState('')
+  const [role, setRole] = useState('')
   const [modal, setModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [isUpdate, setIsUpdate] = useContext(UpdateContext)
   const isFocused = useIsFocused()
 
@@ -26,19 +28,24 @@ const SettingPage = ({navigation}) => {
   }, [isFocused])
 
   const init = () => {
-    AsyncStorage.getItem('@user_data').then((data) => {
-      const value = JSON.parse(data)
-      setImage(value.Pengelola_Image)
-      setIsUpdate({
-        ...isUpdate,
-        updateSetting: false
+    AsyncStorage.getItem('@user_role').then((data) => {
+      let role = data
+      setRole(role)
+      AsyncStorage.getItem('@user_data').then((data) => {
+        const value = JSON.parse(data)
+        setImage(role == 'Pengelola' ? value.Pengelola_Image : value.Penghuni_Image)
+        setIsUpdate({
+          ...isUpdate,
+          updateSetting: false
+        })
+        setIsLoading(false)
       })
     })
   }
 
   const logout = async () => {
     try {
-      await AsyncStorage.multiRemove(['@user_data', '@kost_data', '@user_role'])
+      await AsyncStorage.multiRemove(['@user_data', '@kost_data', '@user_role', '@penghuni_data', '@order_id'])
       navigation.reset({
         index: 0,
         routes: [{name: 'RoleSelect'}],
@@ -50,7 +57,7 @@ const SettingPage = ({navigation}) => {
   }
 
   const goToUserProfile = () => {
-    navigation.navigate('UserProfile')
+    navigation.navigate('UserProfile', {role: role})
   }
 
   const goToKostDetail = () => {
@@ -68,38 +75,57 @@ const SettingPage = ({navigation}) => {
           <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Pengaturan</Text>
           <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Atur akun dan lainnya</Text>
         </View>
-        <TouchableOpacity onPress={() => goToUserProfile()}>
-          <Image source={image == '' ? require('../assets/image/Large.png') : { uri: image }} style={{ height: 50, width: 50, borderRadius: 100}} />
-        </TouchableOpacity>
+        <Image source={image == '' ? require('../assets/image/Large.png') : { uri: image }} style={{ height: 50, width: 50, borderRadius: 100}} />
       </View>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => goToKostDetail()} >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-          <Icon size={25} name='home-city-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Rumah kost</Text>
-        </View>
-        <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
-      </TouchableOpacity>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => goToPenjagaKost()} >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-          <Icon size={25} name='account-multiple-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Akun penjaga</Text>
-        </View>
-        <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
-      </TouchableOpacity>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-          <Icon size={25} name='help-circle-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Bantuan</Text>
-        </View>
-        <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
-      </TouchableOpacity>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => setModal(true)}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-          <Icon size={25} name='logout' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Keluar</Text>
-        </View>
-        <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
-      </TouchableOpacity>
+      { isLoading ?
+          <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', margin: 150 }} />
+        :
+          <>
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => goToUserProfile()} >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                <Icon size={25} name='home-city-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
+                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Profil</Text>
+              </View>
+              <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+            </TouchableOpacity>
+            { role == 'Penghuni' ? 
+                null
+              :
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => goToKostDetail()} >
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                    <Icon size={25} name='home-city-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
+                    <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Rumah kost</Text>
+                  </View>
+                  <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+                </TouchableOpacity>
+            }
+            { role == 'Pengelola' ?
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => goToPenjagaKost()} >
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                    <Icon size={25} name='account-multiple-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
+                    <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Akun penjaga</Text>
+                  </View>
+                  <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+                </TouchableOpacity>
+              :
+                null
+            }
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                <Icon size={25} name='help-circle-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
+                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Bantuan</Text>
+              </View>
+              <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+            </TouchableOpacity>
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => setModal(true)}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                <Icon size={25} name='logout' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
+                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Keluar</Text>
+              </View>
+              <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+            </TouchableOpacity>
+          </>
+      }
       <Modal
         isVisible={modal}
         onBackdropPress={() => setModal(false)}

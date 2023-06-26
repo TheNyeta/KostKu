@@ -15,7 +15,9 @@ const LaporanListScreen = ({navigation, route}) => {
   const [modal, setModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const dataRumah = route.params.dataRumah
-  const kostImage = dataRumah.Rumah_Image
+  const role = route.params.role
+  const dataPenghuni = route.params.dataPenghuni
+  const dataKamar = route.params.dataKamar
 
   useEffect(() => {
     init()
@@ -23,8 +25,16 @@ const LaporanListScreen = ({navigation, route}) => {
   }, [])
 
   const init = () => {
+    let url = ''
     setIsLoading(true)
-    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=laporan&RumahID=${dataRumah.Rumah_ID}`)
+
+    if (role == 'Penghuni') {
+      url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=laporan&PenghuniID=${dataPenghuni.Penghuni_ID}`
+    } else {
+      url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=laporan&RumahID=${dataRumah.Rumah_ID}`
+    }
+
+    axios.get(url)
       .then(({data}) => {
         if (data.error.msg == '' && data.data != null) {
           let data1 = []
@@ -43,9 +53,9 @@ const LaporanListScreen = ({navigation, route}) => {
             
           })
 
-          setData1(data1)
-          setData2(data2)
-          setData3(data3)
+          setData1(data1.reverse())
+          setData2(data2.reverse())
+          setData3(data3.reverse())
           // setRefreshing(false)
         }
         setIsLoading(false)
@@ -57,9 +67,13 @@ const LaporanListScreen = ({navigation, route}) => {
   const goBack = () => {
     navigation.goBack()
   }
-
+  
   const goToLaporanDetail = (item) => {
-    navigation.navigate('LaporanDetail', {laporan: item, dataRumah: dataRumah})
+    navigation.navigate('LaporanDetail', {laporan: item, dataRumah: dataRumah, role: role})
+  }
+
+  const goToCreateLaporan = (item) => {
+    navigation.navigate('CreateLaporan', {dataRumah: dataRumah, dataPenghuni: dataPenghuni, dataKamar: dataKamar})
   }
 
   const formatDate = (date) => {
@@ -191,7 +205,11 @@ const LaporanListScreen = ({navigation, route}) => {
             <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Klik nomor untuk melihat detail</Text>
           </View>
         </View>
-        <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 50, width: 50, borderRadius: 100}} />
+        { role == 'Penghuni' ?
+            <Image source={dataPenghuni.Penghuni_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataPenghuni.Penghuni_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+          :
+            <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+        }
       </View>
       <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginVertical: 20, borderRadius: 100 }} >
         <View style={{ flexDirection: 'row' }} >
@@ -216,11 +234,13 @@ const LaporanListScreen = ({navigation, route}) => {
         style={{ width: '100%' }}
         renderTabBar={renderTabBar}
       />
-      {/* <FlatList
-        data={data}
-        renderItem={renderItem}
-        style={{ width: '100%', marginVertical: 20 }}
-      /> */}
+      { role == 'Penghuni' ?
+          <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 10, position: 'absolute', right: 20, bottom: 40 }} onPress={() => goToCreateLaporan()} >
+            <Icon size={35} name='plus' color='white' style={{ alignSelf: 'center' }} />
+          </TouchableOpacity>
+        :
+          null
+      }
       <Modal
         isVisible={modal}
         onBackdropPress={() => setModal(false)}

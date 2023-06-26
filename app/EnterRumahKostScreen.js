@@ -165,7 +165,7 @@ const EnterRumahKostScreen = ({navigation, route}) => {
     }
 
     if (namaDarurat == '') {
-      setNamaDaruratError('Masukan namaDarurat')
+      setNamaDaruratError('Masukan nama darurat')
       error = true
     } else if (namaDarurat.length < 3) {
       setNamaDaruratError('Minimal 3 karakter')

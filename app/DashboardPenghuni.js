@@ -31,20 +31,20 @@ const DashboardPenghuniPage = ({navigation}) => {
 
   const init = () => {
     // setIsLoading(true)
-    AsyncStorage.getItem('@kost_data').then((data) => {
+    AsyncStorage.getItem('@user_data').then((data) => {
       const value = JSON.parse(data)
-      axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rumahAll&RumahID=RMH2300032`) //ntar ganti
+      axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=penghuniDashboard&PenghuniID=${value.Penghuni_ID}`)
       .then(({data}) => {
+        console.log(data, 'data')
         if (data.error.msg == '') {
-          console.log(data.data.DataRumah.Rumah_Image, 'test')
           setData(data.data)
-          setIsLoading(false)
           setIsUpdate({
             ...isUpdate,
             updateDashboard: false
           })
           // setRefreshing(false)
         }
+        setIsLoading(false)
       }).catch((e) => {
         console.log(e, 'error dashboard')
       })
@@ -52,48 +52,60 @@ const DashboardPenghuniPage = ({navigation}) => {
 
   }
 
-  const goToRatingList = () => {
-    navigation.navigate('RatingList', {dataRumah: data.DataRumah, ratings: data.DataRating })
+  const BroadcastItem = ({item}) => {
+    return (
+      <View style={{ flexDirection: 'column', padding: 15, backgroundColor: 'white', elevation: 5, marginVertical: 10, width: '100%', borderRadius: 15, alignItems: 'center' }} >
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', width: '100%' }} >
+          <View style={{ backgroundColor: '#EFF1F3', padding: 10, borderRadius: 100 }} >
+            <Icon size={25} name='message-text-outline' color='#FFB700' style={{  }} />
+          </View>
+          <View style={{ marginHorizontal: 5, width: '70%' }} >
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} >{item.Judul_Broadcast}</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{item.Tanggal_Buat} - {item.Jam_Buat}</Text>
+          </View>
+        </View>
+        <View style={{ alignSelf: 'flex-start' }} >
+          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 15, marginVertical: 10 }} >{item.Pesan_Broadcast}</Text>
+        </View>
+        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '45%', borderRadius: 7, marginTop: 20 }} onPress={() => goToBroadcastDetail(item)}>
+          <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Lihat Pesan</Text>
+        </TouchableOpacity>
+      </View>
+      
+    )
   }
-
-  const goToRoomGroupList = () => {
-    navigation.navigate('RoomGroupList', {dataRumah: data.DataRumah})
+  
+  const goToPusatInformasi = () => {
+    navigation.navigate('PusatInformasi', {dataRumah: data.DataRumah, enter: false, dataPenghuni: data.DataPenghuni})
   }
-
-  const goToEmptyRoomList = () => {
-    navigation.navigate('EmptyRoomList', {dataRumah: data.DataRumah})
+  
+  const goToPaymentLogList = () => {
+    navigation.navigate('PaymentLogList', {dataRumah: data.DataRumah, dataPenghuni: data.DataPenghuni, dataKamar: data.DataKamar, role: 'Penghuni'})
   }
-
-  const goToJatuhTempoList = () => {
-    navigation.navigate('JatuhTempoList', {dataRumah: data.DataRumah, jatuhTempo: jatuhtempo})
-  }
-
+  
   const goToPaymentDetail = () => {
-    navigation.navigate('PaymentDetail', {dataRumah: data.DataRumah})
+    navigation.navigate('PaymentDetail', {kamar: data.DataKamar})
   }
-
+  
   const goToKeluhanList = () => {
-    navigation.navigate('KeluhanList', {dataRumah: data.DataRumah})
+    navigation.navigate('KeluhanList', {dataRumah: data.DataRumah, dataPenghuni: data.DataPenghuni, dataKamar: data.DataKamar, role: 'Penghuni'})
   }
-
+  
   const goToLaporanList = () => {
-    navigation.navigate('LaporanList', {dataRumah: data.DataRumah})
+    navigation.navigate('LaporanList', {dataRumah: data.DataRumah, dataPenghuni: data.DataPenghuni, dataKamar: data.DataKamar, role: 'Penghuni'})
   }
-
+  
   const goToBroadcast = () => {
-    navigation.navigate('Broadcast', {dataRumah: data.DataRumah, kostImage: data.DataRumah.Rumah_Image})
+    navigation.navigate('Broadcast', {dataRumah: data.DataRumah, dataPenghuni: data.DataPenghuni,  role: 'Penghuni'})
   }
 
-  const averageRating = (rating) => {
-    if (rating == null) {
-      return 0;
-    }
-    let sum = 0
-    rating.map((item) => {
-      sum = sum + item.Nilai_Rating
-    })
-
-    return (sum/rating.length).toFixed(1)
+  const goToBroadcastDetail = (item) => {
+    // Code to handle login
+    navigation.navigate('BroadcastDetail', {dataRumah: data.DataRumah, broadcast: item})
+  }
+  
+  const goToCreateRating = () => {
+    navigation.navigate('CreateRating', {dataRumah: data.DataRumah, dataPenghuni: data.DataPenghuni, dataKamar: data.DataKamar })
   }
 
   const newKeluhan = (keluhan) => {
@@ -120,8 +132,11 @@ const DashboardPenghuniPage = ({navigation}) => {
 
   const getTodayEvent = () => {
     let now = moment().format('YYYY-MM-DD')
-    let jatuhtempo = []
     let eventmsg = ''
+
+    if (data.DataEvent == null) {
+      return 'Tidak ada agenda'
+    }
 
     data.DataEvent.forEach((item) => {
       if (item.Event_Tanggal == now) {
@@ -140,19 +155,6 @@ const DashboardPenghuniPage = ({navigation}) => {
     // })
   }
 
-  const jatuhTempoCount = () => {
-    let now = moment()
-    let jatuhTempo = [];
-    data.DataKamarTerisi.forEach((item) => {
-      if (moment(item.Tanggal_Berakhir, 'YYYY MM DD').isBefore(now)) {
-        jatuhTempo.push(item)
-      }
-    })
-
-    jatuhtempo = jatuhTempo
-    return jatuhTempo.length
-  }
-
   return (
     <View style={{ flex:1 }}>
       <ScrollView contentContainerStyle={styles.container} refreshControl={<RefreshControl refreshing={isLoading} colors={['#FFB700']} onRefresh={() => {setIsLoading(true); init()}} />} >
@@ -161,21 +163,16 @@ const DashboardPenghuniPage = ({navigation}) => {
           :
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', alignItems: 'center' }} >
             <View style={{}} >
-              <Text style={{ color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold' }}>Halo, asdasd</Text>
+              <Text style={{ color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold' }}>{`Halo, ${data.DataPenghuni.Penghuni_Name}`}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>#{data.DataRumah.Special_Code} </Text>
-                <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }}>| {data.DataRumah.Kota_Name}</Text>
-                {data.DataRating == null ? 
-                  null
-                  :
-                  <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => goToRatingList()} >
-                    <Icon size={15} name='star' color='#FFB700' style={{ alignSelf: 'center', paddingHorizontal: 2 }} />
-                    <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>{averageRating(data.DataRating)}</Text>
-                  </TouchableOpacity>
-                }
+                <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }}>{data.DataRumah.Nama_Rumah}</Text>
+                {/* <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => goToRatingList()} > */}
+                  <Icon size={20} name='door' color='#FFB700' style={{ alignSelf: 'center', paddingHorizontal: 2 }} />
+                  <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Nomor}</Text>
+                {/* </TouchableOpacity> */}
               </View>
             </View>
-            <Image source={data.DataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: data.DataRumah.Rumah_Image + '&' + new Date() }} style={{ height: 50, width: 50, borderRadius: 100}} />
+            <Image source={data.DataPenghuni.Penghuni_Image == '' ? require('../assets/image/Large.png') : { uri: data.DataPenghuni.Penghuni_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
           </View>
         }
         { isLoading ? 
@@ -193,9 +190,9 @@ const DashboardPenghuniPage = ({navigation}) => {
           <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
           :
           <View style={{ flexDirection: 'column', width: '100%' }} >
-            <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => goToJatuhTempoList()} >
+            <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => goToPaymentLogList()} >
               <View style={{ flexDirection: 'column' }} >
-                <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamarTerisi == null ? 0 : jatuhTempoCount()}</Text>
+                <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{moment(data.DataKamar.Tanggal_Berakhir, 'YYYY MM DD').format('D MMMM')}</Text>
                 <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jatuh tempo pembayaran</Text>
               </View>
               <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
@@ -204,7 +201,7 @@ const DashboardPenghuniPage = ({navigation}) => {
             </TouchableOpacity>
             <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center' }} onPress={() => goToPaymentDetail()} >
               <View style={{ flexDirection: 'column' }} >
-                <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataOrder == null ? 0 : data.DataOrder.length}</Text>
+                <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Harga}</Text>
                 <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jumlah bayaran</Text>
               </View>
               <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
@@ -214,6 +211,11 @@ const DashboardPenghuniPage = ({navigation}) => {
           </View>
         }
         <Text style={{ color: 'black', fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', alignSelf: 'flex-start', marginVertical: 20 }}>Pesan broadcast</Text>
+        { data.DataBroadcast == null ?
+            null
+          :
+            <BroadcastItem item={data.DataBroadcast.at(-1)} />
+        }
         <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToBroadcast()} >
           <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Pesan broadcast</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }} >
@@ -224,7 +226,7 @@ const DashboardPenghuniPage = ({navigation}) => {
           </View>
         </TouchableOpacity>
         <Text style={{ color: 'black', fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', alignSelf: 'flex-start', marginVertical: 20 }}>Info rumah kost</Text>
-        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToBroadcast()} >
+        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToPusatInformasi()} >
           <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Pusat informasi</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }} >
             {/* <View style={{ backgroundColor: '#CC3300', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10 }} >
@@ -234,7 +236,7 @@ const DashboardPenghuniPage = ({navigation}) => {
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToKeluhanList()} >
-          <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Keluhan dari penghuni</Text>
+          <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Laporan keluhan</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }} >
             { isLoading ? 
               <ActivityIndicator color={'#FFB700'} size={30} style={{ alignSelf: 'center' }} />
