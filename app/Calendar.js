@@ -77,7 +77,7 @@ const CalendarScreen = ({navigation}) => {
 
       axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=event&RumahID=${value.Rumah_ID}`)
         .then(({data}) => {
-          if (data.error.msg == '') {
+          if (data.error.msg == '' && data.data != null) {
   
             let data1 = data.data
             let dates = {}
@@ -113,7 +113,7 @@ const CalendarScreen = ({navigation}) => {
             //   updateCalendar: false
             // })
           }
-          // setIsLoading(false)
+          setIsLoading(false)
         }).catch((e) => {
           console.log(e, 'error get event')
         })

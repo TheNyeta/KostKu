@@ -123,6 +123,10 @@ const DashboardPage = ({navigation}) => {
     let jatuhtempo = []
     let eventmsg = ''
 
+    if (data.DataEvent == null) {
+      return 'Tidak ada agenda'
+    }
+
     data.DataEvent.forEach((item) => {
       if (item.Event_Tanggal == now) {
         if (eventmsg == '') {
