@@ -77,9 +77,10 @@ const RatingListScreen = ({navigation, route}) => {
           </View>
         </View>
         <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ borderRadius: 50, width: 50, height: 50 }} />
+        {/* <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image.includes('data:image/png;base64') ? dataRumah.Rumah_Image : (dataRumah.Rumah_Image + '&' + new Date()) }} style={{ borderRadius: 50, width: 50, height: 50 }} /> */}
       </View>
       <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: 20 }} >
-        <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black' }} >Nama kost</Text>
+        <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black' }} >{dataRumah.Nama_Rumah}</Text>
         <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black' }} >{rating}</Text>
         <Rating 
             type='custom'

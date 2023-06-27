@@ -14,12 +14,13 @@ const PusatInformasiScreen = ({navigation, route}) => {
   const [rating, setRating] = useState('4.0')
   const [isLoading, setIsLoading] = useState(true)
   const enter = route.params.enter
+  const dataPenghuni = route.params.dataPenghuni
 
   useEffect(() => {
     if (enter) {
       init()
     } else {
-
+      init()
     }
   }, [])
 
@@ -28,25 +29,16 @@ const PusatInformasiScreen = ({navigation, route}) => {
     setIsLoading(false)
   }
 
-  const getDataKost = () => {
-    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=specialCode&SpecialCode=${kode}`)
-    .then(({data}) => {
-      if (data.data != null) {
-        goToPusatInformasi()
-      } else {
-        setModal(true)
-      }
-    }).catch((e) => {
-      console.log(e, 'error check kost')
-    })
-  }
-
   const goBack = () => {
     navigation.goBack()
   }
 
   const goToEnterRumahKost = () => {
     navigation.navigate('EnterRumahKost', {dataRumah: dataKost})
+  }
+
+  const goToPeraturanDetail = () => {
+    navigation.navigate('PeraturanDetail', {dataRumah: dataKost})
   }
 
   const copyToClipboard = (number) => {
@@ -66,7 +58,11 @@ const PusatInformasiScreen = ({navigation, route}) => {
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >{enter ? 'Pastikan rumah kost sudah benar' : 'Informasi rumah kost' }</Text>
             </View>
           </View>
-          <Image source={dataKost.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataKost.Rumah_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+          {dataPenghuni == null ? 
+              <Image source={require('../assets/image/Large.png')} style={{ height: 50, width: 50, borderRadius: 100}} />
+            :
+              <Image source={dataPenghuni.Penghuni_Image == '' ? require('../assets/image/Large.png') : { uri: dataPenghuni.Penghuni_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+          }
         </View>
         { isLoading ?
             <ActivityIndicator color={'#FFB700'} size={100} style={{ alignSelf: 'center', marginVertical: 50 }} />
@@ -125,7 +121,7 @@ const PusatInformasiScreen = ({navigation, route}) => {
                       </View>
                   }
                 </View>
-                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10, width: '100%' }} onPress={() => goToPeraturan()} >
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10, width: '100%' }} onPress={() => goToPeraturanDetail()} >
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Icon size={25} name='home-city-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
                     <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 15, color: 'black'}} >Peraturan rumah kost</Text>

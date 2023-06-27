@@ -235,7 +235,7 @@ const KostEditScreen = ({navigation, route}) => {
       Lokasi_Rumah: alamat,
       Nomor_Hp_Rumah1: nohp1,
       Nomor_Hp_Rumah2: nohp2,
-      Rumah_Image: image == '' ? dataRumah.Rumah_Image : ('data:image/png;base64,' + image)
+      Rumah_Image: image == '' ? dataRumah.Rumah_Image : image
     }
     axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=rumah`, data)
       .then(({data}) => {

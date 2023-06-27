@@ -93,7 +93,6 @@ const CreateEventScreen = ({navigation, route}) => {
         })
         goBack()
       }
-      setIsLoading(false)
     }).catch((e) => {
       console.log(e, 'error post event')
     })

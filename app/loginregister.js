@@ -108,6 +108,27 @@ const LoginScreen = ({navigation, route}) => {
                     }
                   })
 
+              } else if (role == 'Penghuni') {
+                axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=kamar&PenghuniID=${data.data.Penghuni_ID}`)
+                  .then(({data}) => {
+                    if (data.error.msg == '') {
+
+                      let jsonValue = JSON.stringify(data.data)
+                      AsyncStorage.setItem('@penghuni_data', jsonValue) 
+
+                      navigation.reset({
+                        index: 0,
+                        routes: [{name: 'HomePenghuni'}],
+                      })
+                      
+                    } else {
+                      navigation.reset({
+                        index: 0,
+                        routes: [{name: 'OnBoarding'}],
+                      })
+                    }
+                  })
+
               } else {
                 navigation.reset({
                   index: 0,
@@ -350,6 +371,7 @@ const RegisterScreen = ({navigation, route}) => {
         } else if (data.error.code == 409) {
           setModalTitle('Email/nomor HP sudah terdaftar')
           setModalText('Email/nomor HP yang Anda masukan sudah digunakan untuk mendaftar pada peran yang sama sebelumnya.')
+          setRegister(false)
           setModal(true)
         }
 

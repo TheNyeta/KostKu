@@ -120,7 +120,6 @@ const DashboardPage = ({navigation}) => {
 
   const getTodayEvent = () => {
     let now = moment().format('YYYY-MM-DD')
-    let jatuhtempo = []
     let eventmsg = ''
 
     if (data.DataEvent == null) {
@@ -179,7 +178,8 @@ const DashboardPage = ({navigation}) => {
                 }
               </View>
             </View>
-            <Image source={data.DataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: data.DataRumah.Rumah_Image + '&' + new Date() }} style={{ height: 50, width: 50, borderRadius: 100}} />
+            <Image source={data.DataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: data.DataRumah.Rumah_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+            {/* <Image source={data.DataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: data.DataRumah.Rumah_Image + '&' + new Date() }} style={{ height: 50, width: 50, borderRadius: 100}} /> */}
           </View>
         }
         { isLoading ? 

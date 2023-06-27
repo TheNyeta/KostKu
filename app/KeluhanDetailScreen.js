@@ -25,6 +25,7 @@ const KeluhanDetailScreen = ({navigation, route}) => {
   const [modal2, setModal2] = useState(false)
   const keluhan = route.params.keluhan
   const dataRumah = route.params.dataRumah
+  const role = route.params.role
 
   useEffect(() => {
     init()
@@ -181,11 +182,16 @@ const KeluhanDetailScreen = ({navigation, route}) => {
           }
           </Collapsible>
         </View>
-        { status == 'Dilaporkan' ?
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginVertical: 20 }} onPress={() => setModal(true)} >
-            <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Tandai Selesai</Text>
-          </TouchableOpacity>
-          : null
+        { role == 'Penghuni' ?
+            null
+          :
+            status == 'Dilaporkan' ?
+              <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginVertical: 20 }} onPress={() => setModal(true)} >
+                <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Tandai Selesai</Text>
+              </TouchableOpacity>
+            : 
+              null
+          
         }
       </View>
       <Modal

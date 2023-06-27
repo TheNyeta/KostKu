@@ -13,7 +13,9 @@ const KeluhanListScreen = ({navigation, route}) => {
   const [isLoading, setIsLoading] = useState(true)
   const [keluhanId, setKeluhanId] = useState('')
   const dataRumah = route.params.dataRumah
-  const kostImage = dataRumah.Rumah_Image
+  const role = route.params.role
+  const dataPenghuni = route.params.dataPenghuni
+  const dataKamar = route.params.dataKamar
 
   useEffect(() => {
     init()
@@ -21,8 +23,16 @@ const KeluhanListScreen = ({navigation, route}) => {
   }, [])
 
   const init = () => {
+    let url = ''
     setIsLoading(true)
-    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=keluhan&RumahID=${dataRumah.Rumah_ID}`)
+
+    if (role == 'Penghuni') {
+      url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=keluhan&PenghuniID=${dataPenghuni.Penghuni_ID}`
+    } else {
+      url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=keluhan&RumahID=${dataRumah.Rumah_ID}`
+    }
+    
+    axios.get(url)
       .then(({data}) => {
         if (data.error.msg == '' && data.data != null) {
           let data1 = []
@@ -33,8 +43,8 @@ const KeluhanListScreen = ({navigation, route}) => {
             if (item.Status_Keluhan == 'Selesai') data2.push(item)
           })
 
-          setData(data1)
-          setData2(data2)
+          setData(data1.reverse())
+          setData2(data2.reverse())
           // setRefreshing(false)
         }
         setIsLoading(false)
@@ -48,7 +58,11 @@ const KeluhanListScreen = ({navigation, route}) => {
   }
 
   const goToKeluhanDetail = (item) => {
-    navigation.navigate('KeluhanDetail', {keluhan: item, dataRumah: dataRumah})
+    navigation.navigate('KeluhanDetail', {keluhan: item, dataRumah: dataRumah, role: role})
+  }
+
+  const goToCreateKeluhan = (item) => {
+    navigation.navigate('CreateKeluhan', {dataRumah: dataRumah, dataPenghuni: dataPenghuni, dataKamar: dataKamar})
   }
 
   const updateKeluhan = () => {
@@ -63,7 +77,7 @@ const KeluhanListScreen = ({navigation, route}) => {
       })
   }
 
-  const RoomItem = ({item}) => {
+  const KeluhanItem = ({item}) => {
     return (
       <TouchableOpacity style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center', justifyContent: 'space-between' }} onPress={() => goToKeluhanDetail(item)} >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -71,16 +85,20 @@ const KeluhanListScreen = ({navigation, route}) => {
             <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{item.Kamar_Nomor}</Text>
           </View>
           <View style={{ marginLeft: 5, width: '65%' }} >
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} numberOfLines={1} >{item.Penghuni_Name}</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15, paddingLeft: 4 }} numberOfLines={1} >{item.Penghuni_Name}</Text>
             <View style={{flexDirection: 'row', width: '100%' }} >
               <Icon size={15} name='alert-octagon-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} numberOfLines={1} >{item.Detail_Keluhan}</Text>
             </View>
           </View>
         </View>
-        <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => {setKeluhanId(item.Keluhan_ID); setModal(true)}} disabled={item.Status_Keluhan == 'Dilaporkan' ? false : true} >
-          <Icon size={40} name={item.Status_Keluhan == 'Dilaporkan' ? 'check-circle-outline' : 'check-circle' } color='#FFB700' style={{ alignSelf: 'center' }} />
-        </TouchableOpacity>
+        { role == 'Penghuni' ?
+            null
+          :
+            <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => {setKeluhanId(item.Keluhan_ID); setModal(true)}} disabled={item.Status_Keluhan == 'Dilaporkan' ? false : true} >
+              <Icon size={40} name={item.Status_Keluhan == 'Dilaporkan' ? 'check-circle-outline' : 'check-circle' } color='#FFB700' style={{ alignSelf: 'center' }} />
+            </TouchableOpacity>
+        }
       </TouchableOpacity>
     )
   }
@@ -93,7 +111,7 @@ const KeluhanListScreen = ({navigation, route}) => {
         <View>
           <FlatList
             data={data}
-            renderItem={({item}) => <RoomItem item={item}/>}
+            renderItem={({item}) => <KeluhanItem item={item}/>}
             style={{ width: '100%', marginVertical: 10 }}
             ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
             />
@@ -110,7 +128,7 @@ const KeluhanListScreen = ({navigation, route}) => {
         <View>
           <FlatList
             data={data2}
-            renderItem={({item}) => <RoomItem item={item}/>}
+            renderItem={({item}) => <KeluhanItem item={item}/>}
             style={{ width: '100%', marginVertical: 10 }}
             ListEmptyComponent={<Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />}
             />
@@ -157,10 +175,14 @@ const KeluhanListScreen = ({navigation, route}) => {
           </TouchableOpacity>
           <View style={{ flexDirection: 'column' }}>
             <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Daftar keluhan</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Klik nomor untuk melihat detail</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >{role == 'Penghuni' ? 'Laporkan keluhan ke pengelola kost' : 'Klik nomor untuk melihat detail'}</Text>
           </View>
         </View>
-        <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 50, width: 50, borderRadius: 100}} />
+        { role == 'Penghuni' ?
+            <Image source={dataPenghuni.Penghuni_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataPenghuni.Penghuni_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+          :
+            <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+        }
       </View>
       <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginVertical: 20, borderRadius: 100 }} >
         <View style={{ flexDirection: 'row' }} >
@@ -177,16 +199,21 @@ const KeluhanListScreen = ({navigation, route}) => {
           <Icon size={20} name='close' color='#ccc' style={{ alignSelf: 'center' }} />
         </TouchableOpacity>
       </View>
-      
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: Dimensions.get('window').width }}
-          style={{ width: '100%' }}
-          renderTabBar={renderTabBar}
-        />
-      
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: Dimensions.get('window').width }}
+        style={{ width: '100%' }}
+        renderTabBar={renderTabBar}
+      />
+      { role == 'Penghuni' ?
+          <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 10, position: 'absolute', right: 20, bottom: 40 }} onPress={() => goToCreateKeluhan()} >
+            <Icon size={35} name='plus' color='white' style={{ alignSelf: 'center' }} />
+          </TouchableOpacity>
+        :
+          null
+      }
       <Modal
         isVisible={modal}
         onBackdropPress={() => setModal(false)}

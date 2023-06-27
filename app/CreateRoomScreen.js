@@ -264,7 +264,7 @@ const CreateRoomScreen = ({navigation, route}) => {
       }
 
       if (namaDarurat == '') {
-        setNamaDaruratError('Masukan namaDarurat')
+        setNamaDaruratError('Masukan nama darurat')
         error = true
       } else if (namaDarurat.length < 3) {
         setNamaDaruratError('Minimal 3 karakter')
@@ -626,7 +626,7 @@ const CreateRoomScreen = ({navigation, route}) => {
             selectedId={selectedId}
             containerStyle={{ alignItems: 'flex-start' }}
           />
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150, alignSelf: 'center' }} onPress={() => {setStatusKamar(radioButton[selectedId].label); setStatusKamarError(''); setModal2(false)}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150, alignSelf: 'center' }} onPress={() => {setStatusKamar(radioButton[selectedId].value); setStatusKamarError(''); setModal2(false)}}>
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Simpan</Text>
           </TouchableOpacity>
         </View>

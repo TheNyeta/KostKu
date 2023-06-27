@@ -19,15 +19,16 @@ const UserProfileEditScreen = ({navigation, route}) => {
   const [modal2, setModal2] = useState(false)
   const [isUpdate, setIsUpdate] = useContext(UpdateContext)
   const dataUser = route.params.dataUser
+  const role = route.params.role
 
   useEffect(() => {
     init()
   }, [])
 
   const init = () => {
-      setNama(dataUser.Pengelola_Name)
-      setNoHp(dataUser.Pengelola_Number)
-      setEmail(dataUser.Pengelola_Email)
+      setNama(role == 'Pengelola' ? dataUser.Pengelola_Name : role == 'Penghuni' ? dataUser.Penghuni_Name : dataUser.Penjaga_Name)
+      setNoHp(role == 'Pengelola' ? dataUser.Pengelola_Number : role == 'Penghuni' ? dataUser.Penghuni_Number : dataUser.Penjaga_Number)
+      setEmail(role == 'Pengelola' ? dataUser.Pengelola_Email : role == 'Penghuni' ? dataUser.Penghuni_Email : dataUser.Penjaga_Email)
   }
 
   const goBack = () => {
@@ -76,32 +77,80 @@ const UserProfileEditScreen = ({navigation, route}) => {
 
   const updateProfile = () => {
     setModal2(true)
-    let data = {
-      Pengelola_ID : dataUser.Pengelola_ID,
-      Pengelola_Name: nama,
-      Pengelola_Image:  image == '' ? dataUser.Pengelola_Image : ('data:image/png;base64,' + image)
+    let data = {}
+    let url = ''
+    switch (role) {
+      case 'Pengelola':
+        data = {
+          Pengelola_ID : dataUser.Pengelola_ID,
+          Pengelola_Name: nama,
+          Pengelola_Image:  image == '' ? dataUser.Pengelola_Image : image
+        }
+        url = 'https://api-kostku.pharmalink.id/skripsi/kostku?update=pengelola'
+        break;
+      case 'Penghuni':
+        data = {
+          Penghuni_Name: nama,
+          Penghuni_Image:  image == '' ? dataUser.Penghuni_Image : image
+        }
+        url = `https://api-kostku.pharmalink.id/skripsi/kostku?update=penghuni&PenghuniID=${dataUser.Penghuni_ID}`
+        break;
+      case 'Penjaga':
+        data = {
+          Penjaga_ID : dataUser.Penjaga_ID,
+          Penjaga_Name: nama,
+          Penjaga_Image:  image == '' ? dataUser.Penjaga_Image : image
+        }
+        url = 'https://api-kostku.pharmalink.id/skripsi/kostku?update=penjaga'
+        break;
+    
+      default:
+        break;
     }
-    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=pengelola`, data)
+
+    axios.put(url, data)
       .then(({data}) => {
         console.log(data)
         if (data.error.msg == '') {
-
-          let userdata = {
-            ...dataUser,
-            Pengelola_Image: image == '' ? dataUser.Pengelola_Image : ('data:image/png;base64,' + image),
-            Pengelola_Name: nama
+            let userdata = {}
+          switch (role) {
+            case 'Pengelola':
+              userdata = {
+                ...dataUser,
+                Pengelola_Image: image == '' ? dataUser.Pengelola_Image : ('data:image/png;base64,' + image),
+                Pengelola_Name: nama
+              }
+              break;
+            case 'Penghuni':
+              userdata = {
+                ...dataUser,
+                Penghuni_Name: nama,
+                Penghuni_Image:  image == '' ? dataUser.Penghuni_Image : ('data:image/png;base64,' + image)
+              }
+              break;
+            case 'Penjaga':
+              userdata = {
+                ...dataUser,
+                Penjaga_Name: nama,
+                Penjaga_Image:  image == '' ? dataUser.Penjaga_Image : ('data:image/png;base64,' + image)
+              }
+              break;
+          
+            default:
+              break;
           }
-          console.log(userdata)
           const value = JSON.stringify(userdata)
           AsyncStorage.setItem('@user_data', value)
             .then(() => {
               setModal2(false)
               setIsUpdate({
                 ...isUpdate,
-                updateSetting: true
+                updateSetting: true,
+                updateDashboard: true,
+                updateCalendar: true
               })
               goBack()
-              navigation.replace('UserProfile')
+              navigation.replace('UserProfile', {role: role})
             })
             
         }
@@ -132,7 +181,7 @@ const UserProfileEditScreen = ({navigation, route}) => {
           }
         </View>
         <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
-          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', marginVertical: 10 }} >Kelompok Kamar</Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', marginVertical: 10 }} >Informasi Akun</Text>
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Nama</Text>
           <View style={[styles.form, { borderColor: namaError ? 'red' : 'black' }]}>
             <Icon size={18} name='pencil' color='black' style={{ alignSelf: 'center' }} />
@@ -182,8 +231,8 @@ const UserProfileEditScreen = ({navigation, route}) => {
         >
           <View style={{flexDirection: 'column', alignSelf: 'center', alignItems: 'center', backgroundColor: 'white', paddingVertical: 30, paddingHorizontal: 20, borderRadius: 20, width: '90%' }}>
             <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
-            <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Batal membuat kelompok kamar?</Text>
-            <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Kelompok kamar tidak akan tersimpan jika anda keluar. Apakah Anda yakin?</Text>
+            <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Batal mengedit?</Text>
+            <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Apakah Anda yakin untuk batal mengedit profil?</Text>
             <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => goBack()}>
               <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
             </TouchableOpacity>

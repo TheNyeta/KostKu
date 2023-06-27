@@ -26,7 +26,6 @@ const CreateKostScreen = ({navigation}) => {
 
   const openLibrary = () => {
     launchImageLibrary({ includeBase64: true }, (res) => {
-      console.log('test', res)
       if (res.didCancel) {
         console.log('User cancelled image picker');
       } else if (res.error) {

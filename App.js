@@ -37,6 +37,10 @@ import PusatInformasiScreen from './app/PusatInformasiScreen';
 import EnterRumahKostScreen from './app/EnterRumahKostScreen';
 import WaitingScreen from './app/WaitingScreen';
 import CreateRatingScreen from './app/CreateRatingScreen';
+import PeraturanDetailScreen from './app/PeraturanDetailScreen';
+import CreateKeluhanScreen from './app/CreateKeluhanScreen';
+import CreateLaporanScreen from './app/CreateLaporanScreen';
+import PaymentLogListScreen from './app/PaymentLogListScreen';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -101,6 +105,10 @@ function App() {
           <Stack.Screen name="EnterRumahKost" component={EnterRumahKostScreen} />
           <Stack.Screen name="Waiting" component={WaitingScreen} />
           <Stack.Screen name="CreateRating" component={CreateRatingScreen} />
+          <Stack.Screen name="PeraturanDetail" component={PeraturanDetailScreen} />
+          <Stack.Screen name="CreateKeluhan" component={CreateKeluhanScreen} />
+          <Stack.Screen name="CreateLaporan" component={CreateLaporanScreen} />
+          <Stack.Screen name="PaymentLogList" component={PaymentLogListScreen} />
 
 
         </Stack.Navigator>

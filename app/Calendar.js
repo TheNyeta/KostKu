@@ -10,6 +10,7 @@ import { UpdateContext } from './GlobalState';
 import { useIsFocused } from '@react-navigation/native';
 
 const CalendarScreen = ({navigation}) => {
+  const [role, setRole] = useState('')
   const [image, setImage] = useState('')
   const [date, setDate] = useState('')
   const [event, setEvent] = useState([])
@@ -70,54 +71,90 @@ const CalendarScreen = ({navigation}) => {
 
   const init = () => {
     // setIsLoading(true)
-    AsyncStorage.getItem('@kost_data').then((data) => {
-      const value = JSON.parse(data)
-      setDataRumah(value)
-      setImage(value.Rumah_Image)
-
-      axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=event&RumahID=${value.Rumah_ID}`)
-        .then(({data}) => {
-          if (data.error.msg == '' && data.data != null) {
-  
-            let data1 = data.data
-            let dates = {}
-  
-            data.data.forEach((item) => {
-              dates[item.Event_Tanggal] = { marked: true }
-            })
-  
-            
-            axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=pembayaranKamar&RumahID=${value.Rumah_ID}`)
+    AsyncStorage.getItem('@user_role').then((data) => {
+      let role = data
+      setRole(role)
+      if (role == 'Penghuni') {
+        AsyncStorage.getItem('@user_data').then((data) => {
+          const value = JSON.parse(data)
+          setImage(value.Penghuni_Image)
+    
+          axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=event&RumahID=${value.Penghuni_Tinggal_Rumah}`)
             .then(({data}) => {
-              if (data.error.msg == '') {
-
-                let data2 = data.data
-
+              if (data.error.msg == '' && data.data != null) {
+      
+                let data1 = data.data
+                let dates = {}
+      
                 data.data.forEach((item) => {
-                  dates[item.Tanggal_Berakhir] = { marked: true }
+                  dates[item.Event_Tanggal] = { marked: true }
+                })
+      
+                setData(data1)
+                setMarkedDate(dates)
+                setIsUpdate({
+                  ...isUpdate,
+                  updateCalendar: false
+                })
+              }
+              setIsLoading(false)
+            }).catch((e) => {
+              console.log(e, 'error get event')
+            })
+        })
+
+      } else {
+        AsyncStorage.getItem('@kost_data').then((data) => {
+          const value = JSON.parse(data)
+          setDataRumah(value)
+          setImage(value.Rumah_Image)
+    
+          axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=event&RumahID=${value.Rumah_ID}`)
+            .then(({data}) => {
+              if (data.error.msg == '' && data.data != null) {
+      
+                let data1 = data.data
+                let dates = {}
+      
+                data.data.forEach((item) => {
+                  dates[item.Event_Tanggal] = { marked: true }
+                })
+      
+                axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=pembayaranKamar&RumahID=${value.Rumah_ID}`)
+                .then(({data}) => {
+                  if (data.error.msg == '' && data.data != null) {
+    
+                    let data2 = data.data
+    
+                    data.data.forEach((item) => {
+                      dates[item.Tanggal_Berakhir] = { marked: true }
+                    })
+                    
+                    setData([...data1, ...data2])
+                    setMarkedDate(dates)
+                    // setIsUpdate({
+                    //   ...isUpdate,
+                    //   updateCalendar: false
+                    // })
+                  }
+                }).catch((e) => {
+                  console.log(e, 'error get event')
                 })
                 
-                setData([...data1, ...data2])
-                setMarkedDate(dates)
-                  setIsUpdate({
-                    ...isUpdate,
-                    updateCalendar: false
-                  })
-                }
-                setIsLoading(false)
-              }).catch((e) => {
-                console.log(e, 'error get event')
-              })
-            // setIsUpdate({
-            //   ...isUpdate,
-            //   updateCalendar: false
-            // })
-          }
-          setIsLoading(false)
-        }).catch((e) => {
-          console.log(e, 'error get event')
+                setIsUpdate({
+                  ...isUpdate,
+                  updateCalendar: false
+                })
+              }
+              setIsLoading(false)
+            }).catch((e) => {
+              console.log(e, 'error get event')
+            })
         })
+
+      }
     })
+
   }
 
   const CustomArrow = (direction) => {
@@ -146,7 +183,11 @@ const CalendarScreen = ({navigation}) => {
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Tanggal pembayaran & agenda rumah kost</Text>
             </View>
           </View>
-          <Image source={image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+          { role == 'Penghuni' ?
+              <Image source={image == '' ? require('../assets/image/Large.png') : { uri: image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+            :
+              <Image source={image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+          }
         </View>
         { isLoading ?
             <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', margin: 150 }} />
@@ -176,7 +217,7 @@ const CalendarScreen = ({navigation}) => {
               }}
             />
         }
-        <View style={{ backgroundColor: '#FFB700', width: Dimensions.get('window').width, padding: 20, borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: 100, minHeight: 300 }} >
+        <View style={{ backgroundColor: '#FFB700', width: Dimensions.get('window').width, padding: 20, borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: 100, flex: 1 }} >
           <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 24, color: 'white'}} >Kalender rumah kost</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10 }} >
             <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'white'}} >{date == '' ? '' : moment(date, 'YYYY-M-D').format('dddd, D MMMM YYYY')}</Text>

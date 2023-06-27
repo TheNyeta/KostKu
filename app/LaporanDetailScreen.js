@@ -31,6 +31,7 @@ const LaporanDetailScreen = ({navigation, route}) => {
   const [isUpdate, setIsUpdate] = useContext(UpdateContext)
   const laporan = route.params.laporan
   const dataRumah = route.params.dataRumah
+  const role = route.params.role
 
   useEffect(() => {
     init()
@@ -45,7 +46,7 @@ const LaporanDetailScreen = ({navigation, route}) => {
     setPekerjaan(laporan.Penghuni_Pekerjaan)
     setBulan(laporan.Pembayaran_Bulan)
     setTanggal(laporan.Tanggal_Laporan)
-    setTanggalKeluar(moment(laporan.Tanggal_Keluar, 'YYYY/MM/DD').format('dddd, D MMMM YYYY'))
+    setTanggalKeluar(moment(laporan.Tanggal_Keluar, 'YYYY MM DD').format('dddd, D MMMM YYYY'))
     setJam(laporan.Jam_Laporan)
     setDetail(laporan.Pesan_Laporan)
     setStatus(laporan.Status_Laporan)
@@ -248,17 +249,20 @@ const LaporanDetailScreen = ({navigation, route}) => {
               </>
           }
         </View>
-        {status != 'Dilaporkan' ? 
-          null
-        :
-          <>
-            <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginTop: 20 }} onPress={() => setModal(true)} >
-              <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Terima Laporan</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, width: '50%', borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginBottom: 20, marginTop: 10 }} onPress={() => setModal2(true)} >
-              <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tolak Laporan</Text>
-            </TouchableOpacity>
-          </>
+        { role == 'Penghuni' ?
+            null
+          :
+            status != 'Dilaporkan' ? 
+              null
+            :
+              <>
+                <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginTop: 20 }} onPress={() => setModal(true)} >
+                  <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Terima Laporan</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, width: '50%', borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginBottom: 20, marginTop: 10 }} onPress={() => setModal2(true)} >
+                  <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tolak Laporan</Text>
+                </TouchableOpacity>
+              </>
         }
       </View>
       <Modal
