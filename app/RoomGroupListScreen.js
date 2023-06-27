@@ -123,7 +123,7 @@ const RoomGroupListScreen = ({navigation, route}) => {
                 renderItem={renderItem}
                 style={{ width: '100%' }}
               />
-              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'lightgray'}} >Tekan lama kelompok untuk edit atau hapus</Text>
+              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'lightgray', alignSelf: 'center' }} >Tekan lama kelompok untuk edit atau hapus</Text>
             </>
       }
       <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 10, position: 'absolute', right: 20, bottom: 40 }} onPress={() => goToCreateRoomGroup()} >

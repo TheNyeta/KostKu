@@ -19,7 +19,7 @@ const SplashScreen = ({navigation}) => {
       } else if (order_id !== null) {
         navigation.replace('Waiting')
       } else if (user_data !== null) {
-        navigation.replace('HomePenghuni') //ntar ganti ke onboarding
+        navigation.replace('OnBoarding')
       } else {
         navigation.replace('RoleSelect')
       }
