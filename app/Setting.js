@@ -22,6 +22,7 @@ const SettingPage = ({navigation, route}) => {
   useEffect(() => {
     if (isFocused) {
       if (isUpdate.updateSetting == true) {
+        setIsLoading(true)
         init()
       }
     }
@@ -70,20 +71,22 @@ const SettingPage = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: 20 }} >
-        <View style={{ flexDirection: 'column' }}>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Pengaturan</Text>
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Atur akun dan lainnya</Text>
-        </View>
-        <Image source={image == '' ? require('../assets/image/Large.png') : { uri: image }} style={{ height: 50, width: 50, borderRadius: 100}} />
-      </View>
       { isLoading ?
-          <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', margin: 150 }} />
+          <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }} >
+            <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center' }} />
+          </View>
         :
           <>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: 20 }} >
+              <View style={{ flexDirection: 'column' }}>
+                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Pengaturan</Text>
+                <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Atur akun dan lainnya</Text>
+              </View>
+              <Image source={image == '' ? require('../assets/image/Large.png') : { uri: image }} style={{ height: 50, width: 50, borderRadius: 100}} />
+            </View>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => goToUserProfile()} >
               <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                <Icon size={25} name='home-city-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
+                <Icon size={25} name='account-box-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
                 <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Profil</Text>
               </View>
               <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
@@ -138,7 +141,7 @@ const SettingPage = ({navigation, route}) => {
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
-            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Kembali</Text>
+            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
           </TouchableOpacity>
         </View>
       </Modal>

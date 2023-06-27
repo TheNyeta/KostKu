@@ -44,12 +44,10 @@ const CalendarScreen = ({navigation}) => {
   LocaleConfig.defaultLocale = 'id';
 
   useEffect(() => {
-    // setDate(moment().format('YYYY-MM-DD'))
     init()
   }, [])
 
   useEffect(() => {
-    // init()
     if (isFocused) {
       if (isUpdate.updateCalendar == true) {
         setIsLoading(true)
@@ -70,7 +68,6 @@ const CalendarScreen = ({navigation}) => {
   }, [date])
 
   const init = () => {
-    // setIsLoading(true)
     AsyncStorage.getItem('@user_role').then((data) => {
       let role = data
       setRole(role)
@@ -111,36 +108,38 @@ const CalendarScreen = ({navigation}) => {
     
           axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=event&RumahID=${value.Rumah_ID}`)
             .then(({data}) => {
+              console.log(data)
               if (data.error.msg == '' && data.data != null) {
       
                 let data1 = data.data
+                let data2 = []
                 let dates = {}
       
                 data.data.forEach((item) => {
                   dates[item.Event_Tanggal] = { marked: true }
                 })
-      
+                
                 axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=pembayaranKamar&RumahID=${value.Rumah_ID}`)
                 .then(({data}) => {
                   if (data.error.msg == '' && data.data != null) {
-    
-                    let data2 = data.data
-    
+                    
+                    data2 = data.data
+                    
                     data.data.forEach((item) => {
                       dates[item.Tanggal_Berakhir] = { marked: true }
                     })
                     
-                    setData([...data1, ...data2])
-                    setMarkedDate(dates)
                     // setIsUpdate({
-                    //   ...isUpdate,
-                    //   updateCalendar: false
-                    // })
-                  }
-                }).catch((e) => {
-                  console.log(e, 'error get event')
-                })
-                
+                      //   ...isUpdate,
+                      //   updateCalendar: false
+                      // })
+                    }
+                  }).catch((e) => {
+                    console.log(e, 'error get event')
+                  })
+                  
+                setData([...data1, ...data2])
+                setMarkedDate(dates)
                 setIsUpdate({
                   ...isUpdate,
                   updateCalendar: false
@@ -217,13 +216,17 @@ const CalendarScreen = ({navigation}) => {
               }}
             />
         }
-        <View style={{ backgroundColor: '#FFB700', width: Dimensions.get('window').width, padding: 20, borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: 100, flex: 1 }} >
+        <View style={{ backgroundColor: '#FFB700', width: Dimensions.get('window').width, padding: 20, borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: 80, minHeight: Dimensions.get('window').height*0.7 }} >
           <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 24, color: 'white'}} >Kalender rumah kost</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10 }} >
             <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'white'}} >{date == '' ? '' : moment(date, 'YYYY-M-D').format('dddd, D MMMM YYYY')}</Text>
-            <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 5 }} onPress={() => goToCreateEvent()} >
-              <Icon size={30} name='plus' color='white' style={{ alignSelf: 'center' }} />
-            </TouchableOpacity>
+            { role == 'Penghuni' ?
+                null
+              :
+                <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 5 }} onPress={() => goToCreateEvent()} >
+                  <Icon size={30} name='plus' color='white' style={{ alignSelf: 'center' }} />
+                </TouchableOpacity>
+            }
           </View>
           { isLoading ? 
               <ActivityIndicator color={'#FFB700'} size={100} style={{ alignSelf: 'center', marginVertical: 50 }} />

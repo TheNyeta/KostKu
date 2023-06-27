@@ -37,6 +37,10 @@ const KostScreen = ({navigation, route}) => {
     navigation.navigate('KostDetail', {dataRumah: dataKost})
   }
 
+  const goToPeraturanDetail = () => {
+    navigation.navigate('PeraturanDetail', {dataRumah: dataKost})
+  }
+
   const copyToClipboard = (number) => {
     Clipboard.setString(number);
   };
@@ -113,7 +117,7 @@ const KostScreen = ({navigation, route}) => {
                   </View>
                   <Icon size={30} name='chevron-right' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10, width: '100%' }} onPress={() => goToPeraturan()} >
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10, width: '100%' }} onPress={() => goToPeraturanDetail()} >
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Icon size={25} name='home-city-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
                     <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 15, color: 'black'}} >Peraturan rumah kost</Text>

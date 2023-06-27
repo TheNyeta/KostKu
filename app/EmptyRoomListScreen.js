@@ -65,7 +65,6 @@ const EmptyRoomListScreen = ({navigation, route}) => {
   }, [kelompok])
 
   const getKamar = () => {
-    console.log(kelompok, 'test aja')
     setIsLoading(true)
     axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=KamarKelompok&RumahID=${dataRumah.Rumah_ID}&KamarKelompok=${kelompok}`)
       .then(({data}) => {
@@ -106,16 +105,18 @@ const EmptyRoomListScreen = ({navigation, route}) => {
         <View style={{ backgroundColor: item.Kamar_Status == 'Kosong' ? '#FFDB80' : '#D1D5DB' , padding: 10, borderRadius: 15, width: 75, alignItems: 'center'}} >
           <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{item.Kamar_Nomor}</Text>
         </View>
-        <View style={{ marginHorizontal: 5, width: '42%' }} >
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} >{item.Kamar_Status}</Text>
-          <View style={{flexDirection: 'row' }} >
-            <Icon size={15} name='clock-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
-            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{waktuKosong(item.Kamar_lastupdate)}</Text>
+        <View style={{ marginHorizontal: 5, flex: 1 }} >
+          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} numberOfLines={1} >{item.Kamar_Status == 'Kosong' ? 'Kosong' : 'Tidak bisa digunakan'}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }} >
+            <View style={{flexDirection: 'row' }} >
+              <Icon size={15} name='clock-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
+              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{waktuKosong(item.Kamar_lastupdate)}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }} >
+              <Icon size={15} name='cash-multiple' color='black' style={{ paddingHorizontal: 4 }} />
+              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{formatHarga(item.Kamar_Harga)}</Text>
+            </View>
           </View>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }} >
-          <Icon size={15} name='cash-multiple' color='black' style={{ paddingHorizontal: 4 }} />
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{formatHarga(item.Kamar_Harga)}</Text>
         </View>
       </View>
     )
@@ -206,7 +207,7 @@ const EmptyRoomListScreen = ({navigation, route}) => {
       { isKelompokLoading ? 
           <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
         :
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'white', width: '100%', marginVertical: 20, paddingVertical: 5, borderRadius: 10, borderColor: '#FFB700', borderWidth: 1 }} onPress={() => setModal(true)} disabled={dataKelompok == null ? true : false}>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'white', width: '100%', marginVertical: 20, paddingVertical: 5, borderRadius: 10, borderColor: '#FFB700', borderWidth: 1 }} onPress={() => setModal(true)} disabled={dataKelompok.length == 0 ? true : false}>
             <View style={{ flexDirection: 'row' }} >
               <Icon size={25} name='door' color='#FFB700' style={{ alignSelf: 'center', paddingHorizontal: 15 }} />
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >{dataKelompok == null ? 'Tidak ada kelompok kamar' : kelompok }</Text>

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Picker } from '@react-native-picker/picker/typings/Picker'
@@ -47,6 +47,8 @@ const CreateRoomScreen = ({navigation, route}) => {
   const [modal, setModal] = useState(false)
   const [modal2, setModal2] = useState(false)
   const [modal3, setModal3] = useState(false)
+  const [modal4, setModal4] = useState(false)
+  const [modal5, setModal5] = useState(false)
   const [date, setDate] = useState('')
   const [selectedId, setSelectedId] = useState('')
   const [isUpdate, setIsUpdate] = useContext(UpdateContext)
@@ -306,10 +308,13 @@ const CreateRoomScreen = ({navigation, route}) => {
 
     if (!error) {
       addKamar()
+    } else {
+      setModal5(true)
     }
   }
 
   const addKamar = () => {
+    setModal4(true)
     let url = 'https://api-kostku.pharmalink.id/skripsi/kostku?register=kamar'
 
     let data = {
@@ -355,6 +360,7 @@ const CreateRoomScreen = ({navigation, route}) => {
       } else if (data.error.code == 103) {
         setNomorKamarError('Nomor kamar sudah digunakan')
       }
+      setModal4(false)
     }).catch((e) => {
       console.log(e, 'error post kamar')
     })
@@ -666,6 +672,27 @@ const CreateRoomScreen = ({navigation, route}) => {
             <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Ok</Text>
           </TouchableOpacity>
         </View>
+        </View>
+      </Modal>
+      <Modal
+        isVisible={modal4}
+      >
+        <View style={{flexDirection: 'column', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderRadius: 20, width: 200, height: 200 }}>
+          <Text style={{fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Memproses</Text>
+          <ActivityIndicator color={'#FFB700'} size={100} style={{ alignSelf: 'center', marginVertical: 20 }} />
+        </View>
+      </Modal>
+      <Modal
+        isVisible={modal5}
+        onBackdropPress={() => setModal5(false)}
+      >
+        <View style={{flexDirection: 'column', alignSelf: 'center', alignItems: 'center', backgroundColor: 'white', paddingVertical: 30, paddingHorizontal: 20, borderRadius: 20, width: '90%' }}>
+          <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
+          <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Terdapat kesalahan</Text>
+          <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Terdapat kesalahan pada data yang Anda masukan. Mohon untuk pastikan kembali.</Text>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => setModal5(false)}>
+            <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ok</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
     </KeyboardAwareScrollView>

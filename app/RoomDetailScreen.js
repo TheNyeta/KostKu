@@ -63,6 +63,10 @@ const RoomDetailScreen = ({navigation, route}) => {
     navigation.goBack()
   }
 
+  const goToPaymentLogList = () => {
+    navigation.navigate('PaymentLogList', {dataRumah: dataRumah, dataKamar: kamar})
+  }
+
   const goToPembayaranDetail = () => {
     navigation.navigate('PaymentDetail', {dataRumah: dataRumah, kamar: kamar})
   }
@@ -110,7 +114,7 @@ const RoomDetailScreen = ({navigation, route}) => {
       </View>
       <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
         <View style={{ flexDirection: 'row', width: '100%', borderRadius: 100, justifyContent: 'space-between', marginTop: 20 }} >
-          <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '48%', alignItems: 'center' }} >
+          <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '48%', alignItems: 'center' }} onPress={() => goToPaymentLogList()} disabled={statusKamar != 'Terisi' ? true : false} >
             <View style={{ flexDirection: 'column' }} >
               <Text style={{ color: 'white', fontSize: 30, fontFamily: 'PlusJakartaSans-Bold' }}>{statusKamar == 'Terisi' ? moment(tanggalMasuk, 'YYYY MM DD').format('D MMM') : 'n/a'}</Text>
               <Text style={{ color: 'white', fontSize: 14, fontFamily: 'PlusJakartaSans-Bold' }}>Tanggal masuk</Text>
@@ -119,7 +123,7 @@ const RoomDetailScreen = ({navigation, route}) => {
               <Icon size={25} name='login' color='#FFB700' style={{ alignSelf: 'center' }} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '48%', alignItems: 'flex-end' }} onPress={() => goToPembayaranDetail()} >
+          <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '48%', alignItems: 'flex-end' }} onPress={() => goToPembayaranDetail()} disabled={statusKamar != 'Terisi' ? true : false} >
             <View style={{ flexDirection: 'column' }} >
               <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold', marginBottom: 5 }}>{formatHarga(hargaKamar)}</Text>
               <Text style={{ color: 'white', fontSize: 14, fontFamily: 'PlusJakartaSans-Bold' }}>Harga sewa</Text>
@@ -271,7 +275,7 @@ const RoomDetailScreen = ({navigation, route}) => {
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
-            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Batal</Text>
+            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -287,7 +291,7 @@ const RoomDetailScreen = ({navigation, route}) => {
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal2(false)}}>
-            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Batal</Text>
+            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
           </TouchableOpacity>
         </View>
       </Modal>

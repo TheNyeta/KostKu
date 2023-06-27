@@ -44,12 +44,12 @@ const RoomGroupListScreen = ({navigation, route}) => {
   }
 
   const renderItem = ({item}) => {
-
-    return (
-      <RoomGroupItem
-        item={item}
-      />
-    )
+    if (search == '') {
+      return <RoomGroupItem item={item}/>
+    } 
+    if (item.KelompokKamar_Nama.toLowerCase().includes(search.toLowerCase())) {
+      return <RoomGroupItem item={item}/>
+    }
   }
 
   const goBack = () => {
@@ -101,7 +101,7 @@ const RoomGroupListScreen = ({navigation, route}) => {
           <Icon size={25} name='magnify' color='black' style={{ alignSelf: 'center', paddingLeft: 15 }} />
           <TextInput
             style={styles.search}
-            placeholder='Cari nama penghuni/nomor kamar'
+            placeholder='Cari nama kelompok kamar'
             placeholderTextColor='#ccc'
             onChangeText={setSearch}
             value={search}
@@ -117,13 +117,15 @@ const RoomGroupListScreen = ({navigation, route}) => {
           dataKelompok == null ?
             <Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />
           :
-            <FlatList
-              data={dataKelompok}
-              renderItem={renderItem}
-              style={{ width: '100%' }}
-            />
+            <>
+              <FlatList
+                data={dataKelompok}
+                renderItem={renderItem}
+                style={{ width: '100%' }}
+              />
+              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'lightgray'}} >Tekan lama kelompok untuk edit atau hapus</Text>
+            </>
       }
-      <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'lightgray'}} >Tekan lama kelompok untuk edit atau hapus</Text>
       <TouchableOpacity style={{ backgroundColor: '#FF7A00', borderRadius: 100, padding: 10, position: 'absolute', right: 20, bottom: 40 }} onPress={() => goToCreateRoomGroup()} >
         <Icon size={35} name='plus' color='white' style={{ alignSelf: 'center' }} />
       </TouchableOpacity>

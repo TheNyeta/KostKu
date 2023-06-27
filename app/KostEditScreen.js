@@ -253,7 +253,6 @@ const KostEditScreen = ({navigation, route}) => {
           const value = JSON.stringify(kostdata)
           AsyncStorage.setItem('@kost_data', value)
             .then(() => {
-              setModal2(false)
               setIsUpdate({
                 ...isUpdate,
                 updateDashboard: true,
@@ -265,6 +264,7 @@ const KostEditScreen = ({navigation, route}) => {
             })
             
         }
+        setModal2(false)
       }).catch((e) => {
         console.log(e, 'error edit kost')
       })

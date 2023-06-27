@@ -24,7 +24,6 @@ const PaymentLogListScreen = ({navigation, route}) => {
     axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=logPembayaran&PenghuniID=${dataKamar.DataPenghuni.Penghuni_ID}`)
       .then(({data}) => {
         if (data.error.msg == '' && data.data != null) {
-
           setData(data.data.reverse())
         }
         setIsLoading(false)
@@ -80,7 +79,7 @@ const PaymentLogListScreen = ({navigation, route}) => {
           </TouchableOpacity>
           <View style={{ flexDirection: 'column' }}>
             <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 25, color: 'black'}} >Status pembayaran</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >{role == 'Penghuni' ? 'Status pembayaran tiap bulan' : 'Status pembayaran untuk kamar 123'}</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >{role == 'Penghuni' ? 'Status pembayaran tiap bulan' : `Status pembayaran untuk kamar ${dataKamar.Kamar_Nomor}`}</Text>
           </View>
         </View>
         { role == 'Penghuni' ?
@@ -93,17 +92,19 @@ const PaymentLogListScreen = ({navigation, route}) => {
         <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black', marginVertical: 10 }} >Pembayaran selanjutnya</Text>
         <RoomItem item={dataKamar}/>
       </View>
-      <View style={{ flexDirection: 'column', marginVertical: 10 , alignSelf: 'flex-start' }} >
-        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black' }} >Sudah dibayar</Text>
-      </View>
-      { data == [] ?
+      { data.length == 0 ?
           null
         :
-          <FlatList
-            data={data}
-            renderItem={renderItem}
-            style={{ width: '100%' }}
-          />
+          <>
+            <View style={{ flexDirection: 'column', marginVertical: 10 , alignSelf: 'flex-start' }} >
+              <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black' }} >Sudah dibayar</Text>
+            </View>
+            <FlatList
+              data={data}
+              renderItem={renderItem}
+              style={{ width: '100%' }}
+            />
+          </>
       }
     </View>
   );
