@@ -253,7 +253,7 @@ const EnterRumahKostScreen = ({navigation, route}) => {
               <TouchableOpacity onPress={() => goBack()} >
                 <Icon size={22} name='arrow-left' color='white' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
               </TouchableOpacity>
-              <Text style={{ color: 'white', fontSize: 24, fontFamily: 'PlusJakartaSans-SemiBold' }} >Masukan rumah kost</Text>
+              <Text style={{ color: 'white', fontSize: 24, fontFamily: 'PlusJakartaSans-SemiBold' }} >Masukan Rumah Kost</Text>
             </View>
           </View>
           { imagePenghuni == '' ?

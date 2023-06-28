@@ -21,8 +21,8 @@ const OnBoardingScreen = ({navigation}) => {
       if (role == 'Pengelola') {
         return (
           <View style={styles.container}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >Selamat Datang</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >di
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >Selamat Datang</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >di
               <Text style={{ fontFamily: 'UbuntuTitling-Bold', fontSize: 32, color: '#FFB700'}} > KostKu</Text>
             </Text>
             <View style={{ flexDirection: 'column', alignItems: 'center', padding: 10, marginVertical: 30 }} >
@@ -43,8 +43,8 @@ const OnBoardingScreen = ({navigation}) => {
       } else if (role == 'Penghuni') {
         return (
           <View style={styles.container}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >Selamat Datang</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >di
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >Selamat Datang</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >di
               <Text style={{ fontFamily: 'UbuntuTitling-Bold', fontSize: 32, color: '#FFB700'}} > KostKu</Text>
             </Text>
             <View style={{ flexDirection: 'column', alignItems: 'center', padding: 10, marginVertical: 30 }} >
@@ -69,8 +69,8 @@ const OnBoardingScreen = ({navigation}) => {
       if (role == 'Pengelola') {
         return (
           <View style={styles.container}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >Jadilah penghuni rumah</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >kost pilihanmu tanpa ribet</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >Jadilah penghuni rumah</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >kost pilihanmu tanpa ribet</Text>
             <View style={{ flexDirection: 'column', alignItems: 'center', padding: 10, marginVertical: 30 }} >
               <Image source={require('../assets/image/OnboardingPengelola_Penjaga_2.png')} style={{ width: width*0.5, height: width*0.5 }} />
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 16, color: 'black', textAlign: 'center', margin: 20 }} >
@@ -89,8 +89,8 @@ const OnBoardingScreen = ({navigation}) => {
       } else if (role == 'Penghuni') {
         return (
           <View style={styles.container}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >Catat dan hitung</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >jumlah kamar kosong</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >Catat dan hitung</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >jumlah kamar kosong</Text>
             <View style={{ flexDirection: 'column', alignItems: 'center', padding: 10, marginVertical: 30 }} >
               <Image source={require('../assets/image/OnboardingPenghuni_2.png')} style={{ width: width*0.5, height: width*0.5 }} />
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 16, color: 'black', textAlign: 'center', margin: 20 }} >
@@ -108,8 +108,8 @@ const OnBoardingScreen = ({navigation}) => {
       if (role == 'Pengelola') {
         return (
           <View style={styles.container}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >Lihat data tiap kamar</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >kost dengan mudah</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >Lihat data tiap kamar</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >kost dengan mudah</Text>
             <View style={{ flexDirection: 'column', alignItems: 'center', padding: 10, marginVertical: 30 }} >
               <Image source={require('../assets/image/OnboardingPengelola_Penjaga_3.png')} style={{ width: width*0.5, height: width*0.5 }} />
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 16, color: 'black', textAlign: 'center', margin: 20 }} >
@@ -128,8 +128,8 @@ const OnBoardingScreen = ({navigation}) => {
       } else if (role == 'Penghuni') {
         return (
           <View style={styles.container}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >Dapatkan informasi</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >terkini rumah kostmu</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >Dapatkan informasi</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >terkini rumah kostmu</Text>
             <View style={{ flexDirection: 'column', alignItems: 'center', padding: 10, marginVertical: 30 }} >
               <Image source={require('../assets/image/OnboardingPenghuni_3.png')} style={{ width: width*0.5, height: width*0.5 }} />
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 16, color: 'black', textAlign: 'center', margin: 20 }} >
@@ -151,8 +151,8 @@ const OnBoardingScreen = ({navigation}) => {
       if (role == 'Pengelola') {
         return (
           <View style={styles.container}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >Dan masih banyak</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >lagi fitur yang ada!</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >Dan masih banyak</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >lagi fitur yang ada!</Text>
             <View style={{ flexDirection: 'column', alignItems: 'center', padding: 10, marginVertical: 30 }} >
               <Image source={require('../assets/image/OnboardingPengelola_Penjaga_4.png')} style={{ width: width*0.5, height: width*0.5 }} />
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 16, color: 'black', textAlign: 'center', margin: 20 }} >
@@ -171,8 +171,8 @@ const OnBoardingScreen = ({navigation}) => {
       } else if (role == 'Penghuni') {
         return (
           <View style={styles.container}>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >Dan masih banyak</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black'}} >lagi fitur yang ada!</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >Dan masih banyak</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 30, color: 'black', textAlign: 'center'}} >lagi fitur yang ada!</Text>
             <View style={{ flexDirection: 'column', alignItems: 'center', padding: 10, marginVertical: 30 }} >
               <Image source={require('../assets/image/OnboardingPenghuni_4.png')} style={{ width: width*0.5, height: width*0.5 }} />
               <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 16, color: 'black', textAlign: 'center', margin: 20 }} >

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView, Image, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView, Image, TouchableOpacity, ActivityIndicator, RefreshControl, Dimensions } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import axios from 'axios';
@@ -159,119 +159,111 @@ const DashboardPenghuniPage = ({navigation}) => {
     <View style={{ flex:1 }}>
       <ScrollView contentContainerStyle={styles.container} refreshControl={<RefreshControl refreshing={isLoading} colors={['#FFB700']} onRefresh={() => {setIsLoading(true); init()}} />} >
         { isLoading ? 
-          <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center' }} />
+          <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }} >
+            <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center' }} />
+          </View>
           :
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', alignItems: 'center' }} >
-            <View style={{}} >
-              <Text style={{ color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold' }}>{`Halo, ${data.DataPenghuni.Penghuni_Name}`}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                {/* <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }}>{data.DataRumah.Nama_Rumah}</Text> */}
-                {/* <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => goToRatingList()} > */}
-                  <Icon size={20} name='door' color='#FFB700' style={{ alignSelf: 'center', paddingHorizontal: 2 }} />
-                  {/* <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Nomor}</Text> */}
-                {/* </TouchableOpacity> */}
+            <>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', alignItems: 'center' }} >
+                <View style={{}} >
+                  <Text style={{ color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold' }}>{`Halo, ${data.DataPenghuni.Penghuni_Name}`}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                    <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }}>{data.DataRumah.Nama_Rumah}</Text>
+                    {/* <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => goToRatingList()} > */}
+                      <Icon size={20} name='door' color='#FFB700' style={{ alignSelf: 'center', paddingHorizontal: 2 }} />
+                      <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Nomor}</Text>
+                    {/* </TouchableOpacity> */}
+                  </View>
+                </View>
+                <Image source={data.DataPenghuni.Penghuni_Image == '' ? require('../assets/image/Large.png') : { uri: data.DataPenghuni.Penghuni_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
               </View>
-            </View>
-            <Image source={data.DataPenghuni.Penghuni_Image == '' ? require('../assets/image/Large.png') : { uri: data.DataPenghuni.Penghuni_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
-          </View>
+              <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', marginVertical: 20, padding: 10, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => navigation.jumpTo('Calendar')} >
+                <Icon size={30} name='calendar' color='#FFB700' style={{ alignSelf: 'center', paddingRight: 10 }} />
+                <View style={{ flexDirection: 'column', width: '100%' }} >
+                  <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-SemiBold' }} >{moment().format('dddd, D MMMM YYYY')}</Text>
+                  <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '90%' }} numberOfLines={1} >{getTodayEvent()}</Text>
+                </View>
+              </TouchableOpacity>
+              <View style={{ flexDirection: 'column', width: '100%' }} >
+                <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => goToPaymentLogList()} >
+                  <View style={{ flexDirection: 'column' }} >
+                    <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{moment(data.DataKamar.Tanggal_Berakhir, 'YYYY MM DD').format('D MMMM')}</Text>
+                    <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jatuh tempo pembayaran</Text>
+                  </View>
+                  <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
+                    <Icon size={25} name='calendar' color='#FFB700' style={{ alignSelf: 'center' }} />
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center' }} onPress={() => goToPaymentDetail()} >
+                  <View style={{ flexDirection: 'column' }} >
+                    <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Harga}</Text>
+                    <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jumlah bayaran</Text>
+                  </View>
+                  <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
+                    <Icon size={25} name='cash-multiple' color='#FFB700' style={{ alignSelf: 'center' }} />
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <Text style={{ color: 'black', fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', alignSelf: 'flex-start', marginVertical: 20 }}>Pesan broadcast</Text>
+              { data.DataBroadcast == null ?
+                  null
+                :
+                  <BroadcastItem item={data.DataBroadcast.at(-1)} />
+              }
+              <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToBroadcast()} >
+                <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Pesan broadcast</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                  {/* <View style={{ backgroundColor: '#CC3300', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10 }} >
+                    <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >99+</Text>
+                  </View> */}
+                  <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+                </View>
+              </TouchableOpacity>
+              <Text style={{ color: 'black', fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', alignSelf: 'flex-start', marginVertical: 20 }}>Info rumah kost</Text>
+              <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToPusatInformasi()} >
+                <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Pusat informasi</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                  <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToKeluhanList()} >
+                <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Laporan keluhan</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                  { data.DataKeluhan == null ? null : newKeluhan(data.DataKeluhan) == 0 ? null :
+                    <View style={{ backgroundColor: data.DataKeluhan.length > 99 ? '#CC3300' : data.DataKeluhan.length < 50 ? '#FFCC00' : '#FF7A00', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10, width: 40, alignItems: 'center' }} >
+                      <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >{newKeluhan(data.DataKeluhan)}</Text>
+                    </View>
+                  }
+                  <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5, marginBottom: data.DataRating == null ? 0 : 80 }} onPress={() => goToLaporanList()} >
+                <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Laporan kost</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                  { data.DataLaporan == null ? null : newLaporan(data.DataLaporan) == 0 ? null :
+                    <View style={{ backgroundColor: data.DataLaporan.length > 99 ? '#CC3300' : data.DataLaporan.length < 50 ? '#FFCC00' : '#FF7A00', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10, width: 40, alignItems: 'center' }} >
+                      <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >{newLaporan(data.DataLaporan)}</Text>
+                    </View>
+                  }
+                  <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+                </View>
+              </TouchableOpacity>
+              { data.DataRating == null ?
+                  <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5, marginBottom: 80 }} onPress={() => goToCreateRating()} >
+                    <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Beri rating & ulasan kost</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                      <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
+                    </View>
+                  </TouchableOpacity>
+                :
+                  null
+              }
+            </>
         }
-        { isLoading ? 
-          <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
-          :
-          <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', marginVertical: 20, padding: 10, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => navigation.jumpTo('Calendar')} >
-            <Icon size={30} name='calendar' color='#FFB700' style={{ alignSelf: 'center', paddingRight: 10 }} />
-            <View style={{ flexDirection: 'column', width: '100%' }} >
-              <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-SemiBold' }} >{moment().format('dddd, D MMMM YYYY')}</Text>
-              <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '90%' }} numberOfLines={1} >{getTodayEvent()}</Text>
-            </View>
-          </TouchableOpacity>
-        }
-        { isLoading ? 
-          <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
-          :
-          <View style={{ flexDirection: 'column', width: '100%' }} >
-            <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => goToPaymentLogList()} >
-              <View style={{ flexDirection: 'column' }} >
-                {/* <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{moment(data.DataKamar.Tanggal_Berakhir, 'YYYY MM DD').format('D MMMM')}</Text> */}
-                {/* <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jatuh tempo pembayaran</Text> */}
-              </View>
-              <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
-                <Icon size={25} name='calendar' color='#FFB700' style={{ alignSelf: 'center' }} />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center' }} onPress={() => goToPaymentDetail()} >
-              <View style={{ flexDirection: 'column' }} >
-                {/* <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Harga}</Text> */}
-                {/* <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jumlah bayaran</Text> */}
-              </View>
-              <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
-                <Icon size={25} name='cash-multiple' color='#FFB700' style={{ alignSelf: 'center' }} />
-              </View>
-            </TouchableOpacity>
-          </View>
-        }
-        <Text style={{ color: 'black', fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', alignSelf: 'flex-start', marginVertical: 20 }}>Pesan broadcast</Text>
-        { data.DataBroadcast == null ?
-            null
-          :
-            <BroadcastItem item={data.DataBroadcast.at(-1)} />
-        }
-        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToBroadcast()} >
-          <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Pesan broadcast</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-            {/* <View style={{ backgroundColor: '#CC3300', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10 }} >
-              <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >99+</Text>
-            </View> */}
-            <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
-          </View>
-        </TouchableOpacity>
-        <Text style={{ color: 'black', fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', alignSelf: 'flex-start', marginVertical: 20 }}>Info rumah kost</Text>
-        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToPusatInformasi()} >
-          <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Pusat informasi</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-            {/* <View style={{ backgroundColor: '#CC3300', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10 }} >
-              <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >99+</Text>
-            </View> */}
-            <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToKeluhanList()} >
-          <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Laporan keluhan</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-            { isLoading ? 
-              <ActivityIndicator color={'#FFB700'} size={30} style={{ alignSelf: 'center' }} />
-              :
-              data.DataKeluhan == null ? null : newKeluhan(data.DataKeluhan) == 0 ? null :
-              <View style={{ backgroundColor: data.DataKeluhan.length > 99 ? '#CC3300' : data.DataKeluhan.length < 50 ? '#FFCC00' : '#FF7A00', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10, width: 40, alignItems: 'center' }} >
-                <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >{newKeluhan(data.DataKeluhan)}</Text>
-              </View>
-            }
-            <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5 }} onPress={() => goToLaporanList()} >
-          <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Laporan kost</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-            { isLoading ? 
-              <ActivityIndicator color={'#FFB700'} size={30} style={{ alignSelf: 'center' }} />
-              :
-              data.DataLaporan == null ? null : newLaporan(data.DataLaporan) == 0 ? null :
-              <View style={{ backgroundColor: data.DataLaporan.length > 99 ? '#CC3300' : data.DataLaporan.length < 50 ? '#FFCC00' : '#FF7A00', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10, width: 40, alignItems: 'center' }} >
-                <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >{newLaporan(data.DataLaporan)}</Text>
-              </View>
-            }
-            <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, padding: 15, borderRadius: 10, backgroundColor: 'white', elevation: 5, marginBottom: 80 }} onPress={() => goToCreateRating()} >
-          <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Beri rating & ulasan kost</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-            {/* <View style={{ backgroundColor: '#CC3300', paddingVertical: 2, paddingHorizontal: 5, borderRadius: 10 }} >
-              <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >99+</Text>
-            </View> */}
-            <Icon size={40} name='chevron-right' color='black' style={{ alignSelf: 'center' }} />
-          </View>
-        </TouchableOpacity>
+
+    
+ 
+        
       </ScrollView>
     </View>
   );

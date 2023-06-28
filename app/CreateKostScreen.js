@@ -117,7 +117,7 @@ const CreateKostScreen = ({navigation}) => {
         Lokasi_Rumah: alamat,
         Kota_Name:  kota,
         Special_Code: kode,
-        Nomor_Hp_Rumah: nomor,
+        Nomor_Hp_Rumah1: nomor,
         Rumah_Image: image
       }
       

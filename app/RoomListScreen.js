@@ -52,27 +52,30 @@ const RoomListScreen = ({navigation, route}) => {
         <View style={{ backgroundColor: item.Kamar_Status == 'Kosong' ? '#FFDB80' : item.Kamar_Status == 'Tidak Disewakan' ? '#D1D5DB' : '#FFB700', padding: 10, borderRadius: 15, width: 80, alignItems: 'center' }} >
           <Text style={{ color: 'white', fontFamily: 'UbuntuTitling-Bold', fontSize: 20 }} >{item.Kamar_Nomor}</Text>
         </View>
-        <View style={{ marginHorizontal: 5, width: '42%' }} >
-          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }} >{item.Kamar_Status == 'Kosong' ? 'Kosong' : item.Kamar_Status == 'Tidak Disewakan' ? 'Tidak Bisa Digunakan' : item.DataPenghuni.Penghuni_Name}</Text>
-          <View style={{flexDirection: 'row' }} >
-            <Icon size={15} name='calendar-blank-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
-            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{item.Kamar_Status == 'Terisi' ? moment(item.Tanggal_Masuk, 'YYYY MM DD').format('D MMMM') : 'n/a'}</Text>
+        <View style={{ marginHorizontal: 5, flex: 1 }} >
+          <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: 'black', fontSize: 15 }}  numberOfLines={1} >{item.Kamar_Status == 'Kosong' ? 'Kosong' : item.Kamar_Status == 'Tidak Disewakan' ? 'Tidak Bisa Digunakan' : item.DataPenghuni.Penghuni_Name}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }} >
+            <View style={{flexDirection: 'row' }} >
+              <Icon size={15} name='calendar-blank-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 4 }} />
+              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{item.Kamar_Status == 'Terisi' ? moment(item.Tanggal_Masuk, 'YYYY MM DD').format('D MMMM') : 'n/a'}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }} >
+              <Icon size={15} name='cash-multiple' color='black' style={{ paddingHorizontal: 4 }} />
+              <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{formatHarga(item.Kamar_Harga)}</Text>
+            </View>
           </View>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }} >
-          <Icon size={15} name='cash-multiple' color='black' style={{ paddingHorizontal: 4 }} />
-          <Text style={{ fontFamily: 'PlusJakartaSans-Regular', color: 'black', fontSize: 13 }} >{formatHarga(item.Kamar_Harga)}</Text>
         </View>
       </TouchableOpacity>
     )
   }
 
   const renderItem = ({item}) => {
-    return (
-      <RoomItem
-        item={item}
-      />
-    )
+    if (search == '') {
+      return <RoomItem item={item}/>
+    } 
+    if (item.Kamar_Nomor.toLowerCase().includes(search.toLowerCase()) || item.DataPenghuni.Penghuni_Name.toLowerCase().includes(search.toLowerCase())) {
+      return <RoomItem item={item}/>
+    }
   }
 
   const jumlahPenghuni = (data) => {
@@ -122,14 +125,14 @@ const RoomListScreen = ({navigation, route}) => {
           :
             <>
               <View style={{ flexDirection: 'column', width: '100%' }} >
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }} >
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 5 }} >
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Icon size={25} name='door' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
                     <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 15, color: 'black'}} >Jumlah kamar</Text>
                   </View>
                   <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 15, color: 'black'}} >{dataKamar.length}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }} >
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 5 }} >
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Icon size={25} name='account-multiple' color='black' style={{ alignSelf: 'center', paddingHorizontal: 5 }} />
                     <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 15, color: 'black'}} >Jumlah penghuni</Text>

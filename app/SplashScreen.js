@@ -6,7 +6,7 @@ const SplashScreen = ({navigation}) => {
 
   useEffect(() => {
 
-    
+    // logout()
     setTimeout(async () => {
       const user_data = await getData('@user_data')
       const kost_data = await getData('@kost_data')
@@ -19,13 +19,26 @@ const SplashScreen = ({navigation}) => {
       } else if (order_id !== null) {
         navigation.replace('Waiting')
       } else if (user_data !== null) {
-        navigation.replace('HomePenghuni') //ntar ganti ke onboarding
+        navigation.replace('OnBoarding')
       } else {
         navigation.replace('RoleSelect')
       }
 
     }, 3000)
   })
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.multiRemove(['@user_data', '@kost_data', '@user_role', '@penghuni_data', '@order_id'])
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'RoleSelect'}],
+      })
+    } catch(e) {
+      console.log(e, 'error logout')
+    }
+  
+  }
 
   const getData = async (key) => {
     try {

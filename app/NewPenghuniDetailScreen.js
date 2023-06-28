@@ -409,7 +409,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
               <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginVertical: 100 }} />
             :
               <>
-                {radio == [] ?
+                {radio.length == 0 ?
                   <Image source={require('../assets/image/EmptyStateImg_General.png')} style={{ alignSelf: 'center', width: 150, height: 150, marginTop: 50 }} />
                 :
                   <ScrollView style={{ width: '100%' }} contentContainerStyle={{ width: '100%', alignItems: 'flex-start', justifyContent: 'flex-start', paddingVertical: 10}}>

@@ -5,7 +5,7 @@ import { TabView, TabBar } from 'react-native-tab-view';
 import axios from 'axios';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
- 
+
 const moment = extendMoment(Moment);
 
 const BroadcastScreen = ({navigation, route}) => {

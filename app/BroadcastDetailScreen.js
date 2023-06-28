@@ -31,7 +31,7 @@ const BroadcastDetailScreen = ({navigation, route}) => {
   }
 
   return (
-    <KeyboardAwareScrollView>
+    <KeyboardAwareScrollView style={{ backgroundColor: 'white' }}>
       <View style={styles.container} >
         <View style={{ height: 'auto', width: '100%', backgroundColor: '#FFB700', borderBottomLeftRadius: 20, borderBottomRightRadius: 20, alignItems: 'center', paddingBottom: 10 }} >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 5 , width: '100%'}}>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: '80%',
+    width: '90%',
     marginVertical: 10,
     padding: 10,
     alignSelf:  'center',

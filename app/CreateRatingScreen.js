@@ -15,10 +15,8 @@ const CreateRatingScreen = ({navigation, route}) => {
   const [ulasan, setUlasan] = useState('')
   const [ulasanError, setUlasanError] = useState('')
   const dataRumah = route.params.dataRumah
-
-  useEffect(() => {
-   
-  }, [])
+  const dataPenghuni = route.params.dataPenghuni
+  const dataKamar = route.params.dataKamar
 
   const goBack = () => {
     navigation.goBack()
@@ -27,8 +25,10 @@ const CreateRatingScreen = ({navigation, route}) => {
   const validate = () => {
     let error = false
 
-
-    if (ulasan.length > 225) {
+    if (ulasan == '') {
+      setUlasanError('Masukan ulasan')
+      error = true
+    } else if (ulasan.length > 225) {
       setUlasanError('Maksimal 225 karakter')
       error = true
     } else {
@@ -50,20 +50,21 @@ const CreateRatingScreen = ({navigation, route}) => {
   const addRating = () => {
     let data = {
       Rumah_ID: dataRumah.Rumah_ID ,
-      Kamar_Nomor: "106",
-      Kamar_Kelompok: "Lantai 1",
-      Penghuni_ID: "PI2300028",
-      Penghuni_Name: "Bagus 2",
-      Penghuni_Image: "https://firebasestorage.googleapis.com/v0/b/kostku-82c00.appspot.com/o/ImgPenghuniOrder%2FOR2300034.jpg?alt=media",
+      Kamar_Nomor: dataKamar.Kamar_Nomor,
+      Kamar_Kelompok: dataKamar.Kamar_Kelompok,
+      Penghuni_ID: dataPenghuni.Penghuni_ID,
+      Penghuni_Name: dataKamar.DataPenghuni.Penghuni_Name,
+      Penghuni_Image: dataKamar.DataPenghuni.Penghuni_Image,
       Ulasan_Rating: ulasan,
       Nilai_Rating: rating
     }
     axios.post(`https://api-kostku.pharmalink.id/skripsi/kostku?register=rating`, data)
     .then(({data}) => {
+      console.log(data)
       if (data.error.msg == '') {
         goBack()
-      } else if (data.error.code == 104) {
-        setNamaKelompokError('Nama kelompok sudah digunakan')
+      } else if (data.error.code == 105) {
+        setRatingError('Sudah memberikan rating')
       }
     }).catch((e) => {
       console.log(e, 'error post kelompok kamar')
@@ -100,6 +101,7 @@ const CreateRatingScreen = ({navigation, route}) => {
             onFinishRating={(rating) => setRating(rating)}
             style={{ marginVertical: 10}}
           />
+          { ratingError ? <Text style={{ color: 'red', margin: 5, marginTop: -2, fontFamily: 'PlusJakartaSans-Regular' }} >{ratingError}</Text> : null }
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', width: '100%', marginBottom: 10 }} >
             <Icon size={25} name='playlist-edit' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
             <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Ulasan</Text>
@@ -118,7 +120,7 @@ const CreateRatingScreen = ({navigation, route}) => {
           <View style={{ flexDirection: 'row', justifyContent: ulasanError ? 'space-between' : 'flex-end', width: '100%' }}>
             { ulasanError ? <Text style={{ color: 'red', margin: 5, marginTop: -2, fontFamily: 'PlusJakartaSans-Regular' }} >{ulasanError}</Text> : null }
             
-            <Text style={{ alignSelf: 'flex-end', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >{ulasan.length}225</Text>
+            <Text style={{ alignSelf: 'flex-end', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >{ulasan.length}/225</Text>
           </View>
         </View>
         <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} onPress={() => validate()}>

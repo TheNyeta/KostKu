@@ -93,12 +93,13 @@ const LoginScreen = ({navigation, route}) => {
                     if (data.error.msg == '') {
 
                       let jsonValue = JSON.stringify(data.data)
-                      AsyncStorage.setItem('@kost_data', jsonValue) 
+                      AsyncStorage.setItem('@kost_data', jsonValue).then(() => {
+                        navigation.reset({
+                          index: 0,
+                          routes: [{name: 'Home'}],
+                        })
+                      }) 
 
-                      navigation.reset({
-                        index: 0,
-                        routes: [{name: 'Home'}],
-                      })
                       
                     } else {
                       navigation.reset({
@@ -114,12 +115,13 @@ const LoginScreen = ({navigation, route}) => {
                     if (data.error.msg == '') {
 
                       let jsonValue = JSON.stringify(data.data)
-                      AsyncStorage.setItem('@penghuni_data', jsonValue) 
-
-                      navigation.reset({
-                        index: 0,
-                        routes: [{name: 'HomePenghuni'}],
+                      AsyncStorage.setItem('@penghuni_data', jsonValue).then(() => {
+                        navigation.reset({
+                          index: 0,
+                          routes: [{name: 'HomePenghuni'}],
+                        })
                       })
+
                       
                     } else {
                       navigation.reset({
@@ -141,11 +143,11 @@ const LoginScreen = ({navigation, route}) => {
 
           } else if (data.error.code == 12) {
             setModalTitle('Password Anda salah')
-            setModalText('Periksa lagi kembali password dengan email/nomor HP yang Anda masukan.')
+            setModalText('Periksa kembali lagi password dengan email/nomor HP yang Anda masukan.')
             setModal(true)
           } else if (data.error.code == 11) {
             setModalTitle('Email/nomor HP tidak ditemukan')
-            setModalText('Periksa lagi kembali email/nomor HP yang Anda masukan sudah terdaftar.')
+            setModalText('Periksa kembali lagi email/nomor HP yang Anda masukan sudah terdaftar.')
             setModal(true)
           }
 
@@ -175,7 +177,7 @@ const LoginScreen = ({navigation, route}) => {
       <Text style={{ fontSize: 16, fontFamily: 'PlusJakartaSans-Regular', marginBottom: 50, color: 'black' }} >Sebagai {role}</Text>
       <View style={{ alignItems: 'center', justifyContent: 'center', width: '70%' }}>
       <View style={[styles.form, { borderColor: emailError ? 'red' : '#FFB700' }]}>
-        <Icon size={18} name='pencil' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
+        <Icon size={18} name='email-outline' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -211,9 +213,9 @@ const LoginScreen = ({navigation, route}) => {
         <Text style={{ fontSize: 17, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }}>Masuk</Text>
       </TouchableOpacity>
       <View style={{ marginTop: 60 }}>
-        <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular' }} >Belum punya akun?</Text>
+        <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular', color: 'black' }} >Belum punya akun?</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular' }} >Daftar </Text>
+          <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular', color: 'black' }} >Daftar </Text>
           <TouchableOpacity onPress={() => goToRegister()}>
             <Text style={{ color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >di sini</Text>
           </TouchableOpacity>
@@ -254,18 +256,18 @@ const RegisterScreen = ({navigation, route}) => {
 
   const handleRegister = () => {
     let error = false
-    let usernamere = /^[a-zA-Z]*$/
-
-    if (username == '') {
+    let usernamere = /^[a-zA-Z ]*$/
+    console.log(`a${username.trim()}a`)
+    if (username.trim() == '') {
       setUsernameError('Masukan nama akun')
       error = true
-    } else if (username.length < 3) {
+    } else if (username.trim().length < 3) {
       setUsernameError('Minimal 3 karakter')
       error = true
-    } else if (username.length > 50) {
+    } else if (username.trim().length > 50) {
       setUsernameError('Maksimal 50 karakter')
       error = true
-    } else if (!usernamere.test(username)) {
+    } else if (!usernamere.test(username.trim())) {
       setUsernameError('Nama hanya boleh alphabet')
       error = true
     } else {
@@ -319,10 +321,10 @@ const RegisterScreen = ({navigation, route}) => {
       switch (role) {
         case 'Penghuni':
           data = {
-            Penghuni_Name: username,
-            Penghuni_Email: email,
-            Penghuni_Number: phone,
-            Penghuni_Password: password
+            Penghuni_Name: username.trim(),
+            Penghuni_Email: email.trim(),
+            Penghuni_Number: phone.trim(),
+            Penghuni_Password: password.trim()
           }
           url = 'https://api-kostku.pharmalink.id/skripsi/kostku?register=penghuni'
           break;
@@ -350,16 +352,6 @@ const RegisterScreen = ({navigation, route}) => {
         default:
           break;
       }
-
-      // axios.post(url, data)
-      //   .then(({data}) => {
-      //     console.log(data, 'test aja nih')
-      //     if (data.error.msg == '') {
-      //       navigation.goBack()
-      //     } else {
-      //       ToastAndroid.show(data.error.msg, 1)
-      //     }
-      //   })
       axios.post(url, data)
       .then(({data}) => {
         console.log(data, 'test aja nih')
@@ -447,9 +439,9 @@ const RegisterScreen = ({navigation, route}) => {
           <Text style={{ fontSize: 17, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }}>Daftar</Text>
         </TouchableOpacity>
         <View style={{ marginTop: 30 }}>
-          <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular' }} >Sudah punya akun?</Text>
+          <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular', color: 'black' }} >Sudah punya akun?</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular' }} >Masuk </Text>
+            <Text style={{ textAlign: 'center', fontFamily: 'PlusJakartaSans-Regular', color: 'black' }} >Masuk </Text>
             <TouchableOpacity onPress={() => goToLogin()}>
               <Text style={{ color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >di sini</Text>
             </TouchableOpacity>
