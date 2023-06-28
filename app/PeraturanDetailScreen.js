@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView, Dimensions, ActivityIndicator } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { Rating } from 'react-native-ratings';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Modal from 'react-native-modal';
 import axios from 'axios';
@@ -11,6 +10,7 @@ const PeraturanDetailScreen = ({navigation, route}) => {
   const [peraturan, setPeraturan] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const dataRumah = route.params.dataRumah
+  const role = route.params.role
 
   useEffect(() => {
     init()
@@ -20,7 +20,8 @@ const PeraturanDetailScreen = ({navigation, route}) => {
     axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=peraturan&RumahID=${dataRumah.Rumah_ID}`)
     .then(({data}) => {
       if (data.error.msg == '') {
-        setPeraturan(data.data.Text)
+
+        setPeraturan(data.data)
       }
       setIsLoading(false)
     }).catch((e) => {
@@ -32,8 +33,12 @@ const PeraturanDetailScreen = ({navigation, route}) => {
     navigation.goBack()
   }
 
+  const goToPeraturanDetailEdit = () => {
+    navigation.navigate('PeraturanDetailEdit', {dataRumah: dataRumah, aturan: peraturan})
+  }
+
   return (
-    <KeyboardAwareScrollView>
+    <KeyboardAwareScrollView style={{ backgroundColor: 'white' }}>
       <View style={styles.container} >
         <View style={{ height: 'auto', width: '100%', backgroundColor: '#FFB700', borderBottomLeftRadius: 20, borderBottomRightRadius: 20, alignItems: 'center', paddingBottom: 10 }} >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 5 , width: '100%'}}>
@@ -51,46 +56,39 @@ const PeraturanDetailScreen = ({navigation, route}) => {
         </View>
         <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', marginVertical: 10 }} >Peraturan rumah kost</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', width: '100%', marginBottom: 10 }} >
-            <Icon size={25} name='playlist-edit' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
-            <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Peraturan</Text>
-          </View>
-          <View style={{ width: '100%', marginTop: 5, borderWidth: 1, borderColor: 'black', borderRadius: 5 }}>
-            <TextInput
-              style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 300, textAlignVertical: 'top', padding: 10 }}
-              placeholder='Isi pesan'
-              placeholderTextColor='#ccc'
-              onChangeText={setPeraturan}
-              value={peraturan}
-              multiline
-              editable={false}
-              // maxLength={255}
-            />
-          </View>
+          { isLoading ?
+              <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
+            :
+              <>
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start', width: '100%', marginBottom: 10 }} >
+                  <Icon size={25} name='playlist-edit' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
+                  <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Peraturan</Text>
+                </View>
+                <View style={{ width: Dimensions.get('window').width*0.9, minHeight: 300, marginTop: 5, borderWidth: 1, borderColor: 'black', borderRadius: 5 }}>
+                  <TextInput
+                    style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, minHeight: 300, textAlignVertical: 'top', padding: 10 }}
+                    placeholder='Isi pesan'
+                    placeholderTextColor='#ccc'
+                    onChangeText={setPeraturan}
+                    value={peraturan.Text}
+                    multiline
+                    editable={false}
+                    // maxLength={255}
+                  />
+                </View>
+              </>
+          }
         </View>
-        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} onPress={() => validate()}>
-          <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Edit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, width: '35%', borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginBottom: 20, marginTop: 10 }} onPress={() => setModal(true)} >
-          <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Batal</Text>
-        </TouchableOpacity>
+        { role == 'Penghuni' ?
+            null
+          :
+            <>
+              <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} onPress={() => goToPeraturanDetailEdit()}>
+                <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Edit</Text>
+              </TouchableOpacity>
+            </>
+        }
       </View>
-      <Modal
-        isVisible={modal}
-        onBackdropPress={() => setModal(false)}
-      >
-        <View style={{flexDirection: 'column', alignSelf: 'center', alignItems: 'center', backgroundColor: 'white', paddingVertical: 30, paddingHorizontal: 20, borderRadius: 20, width: '90%' }}>
-          <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
-          <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Batal mengisi</Text>
-          <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Apakah Anda yakin untuk batal mengirim rating dan peraturan rumah kost?</Text>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => goBack()}>
-            <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
-            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
     </KeyboardAwareScrollView>
   
   );
@@ -101,6 +99,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
+    paddingBottom: 20
     // justifyContent: 'center'
   },
   input: {

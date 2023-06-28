@@ -41,7 +41,7 @@ const BroadcastScreen = ({navigation, route}) => {
           })
 
           setData1(data1.reverse())
-          setData2(data2)
+          setData2(data2.reverse())
           // setRefreshing(false)
         }
         setIsLoading(false)

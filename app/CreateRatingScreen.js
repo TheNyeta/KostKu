@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Rating } from 'react-native-ratings';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Modal from 'react-native-modal';
 import axios from 'axios';
+import { UpdateContext } from './GlobalState';
 
 const CreateRatingScreen = ({navigation, route}) => {
   const [namaKelompok, setNamaKelompok] = useState('');
@@ -14,6 +15,7 @@ const CreateRatingScreen = ({navigation, route}) => {
   const [ratingError, setRatingError] = useState('')
   const [ulasan, setUlasan] = useState('')
   const [ulasanError, setUlasanError] = useState('')
+  const [isUpdate, setIsUpdate] = useContext(UpdateContext)
   const dataRumah = route.params.dataRumah
   const dataPenghuni = route.params.dataPenghuni
   const dataKamar = route.params.dataKamar
@@ -62,6 +64,10 @@ const CreateRatingScreen = ({navigation, route}) => {
     .then(({data}) => {
       console.log(data)
       if (data.error.msg == '') {
+        setIsUpdate({
+          ...isUpdate,
+          updateDashboard: true
+        })
         goBack()
       } else if (data.error.code == 105) {
         setRatingError('Sudah memberikan rating')

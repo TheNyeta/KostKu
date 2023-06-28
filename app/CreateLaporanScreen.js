@@ -160,6 +160,7 @@ const CreateLaporanScreen = ({navigation, route}) => {
           Penghuni_Pekerjaan: dataKamar.DataPenghuni.Penghuni_Pekerjaan,
           Perihal_Laporan: perihal,
           Pembayaran_Bulan: bulan,
+          Tanggal_Berakhir: dataKamar.Tanggal_Berakhir,
           Bukti_Transfer: "",
           Tanggal_Keluar: "",
           Foto_Laporan: imageLaporan,
@@ -425,8 +426,8 @@ const styles = StyleSheet.create({
     // justifyContent: 'center'
   },
   input: {
-    height: 40,
-    width: '80%',
+    height: 50,
+    width: '90%',
     marginVertical: 10,
     padding: 10,
     alignSelf:  'center',

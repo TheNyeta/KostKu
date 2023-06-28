@@ -6,27 +6,38 @@ import { Rating } from 'react-native-ratings';
 import moment from 'moment';
 import 'moment/locale/id'
 import Clipboard from '@react-native-clipboard/clipboard';
+import axios from 'axios';
 
 const PusatInformasiScreen = ({navigation, route}) => {
   const [search, setSearch] = useState('')
   const [kostImage, setKostImage] = useState('')
   const [dataKost, setDataKost] = useState({})
-  const [rating, setRating] = useState('4.0')
+  const [rating, setRating] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const dataRumah = route.params.dataRumah
   const enter = route.params.enter
   const dataPenghuni = route.params.dataPenghuni
 
   useEffect(() => {
-    if (enter) {
-      init()
-    } else {
-      init()
-    }
+    init()
+    getRating()
   }, [])
 
   const init = () => {
-    setDataKost(route.params.dataRumah)
-    setIsLoading(false)
+    setDataKost(dataRumah)
+  }
+
+  const getRating = () => {
+    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rating&RumahID=${dataRumah.Rumah_ID}`)
+    .then(({data}) => {
+      
+      if (data.error.msg == '' && data.data != null) {
+        setRating(averageRating(data.data))
+      }
+      setIsLoading(false)
+    }).catch((e) => {
+      console.log(e, 'error post kelompok kamar')
+    })
   }
 
   const goBack = () => {
@@ -38,12 +49,21 @@ const PusatInformasiScreen = ({navigation, route}) => {
   }
 
   const goToPeraturanDetail = () => {
-    navigation.navigate('PeraturanDetail', {dataRumah: dataKost})
+    navigation.navigate('PeraturanDetail', {dataRumah: dataKost, role: 'Penghuni'})
   }
 
   const copyToClipboard = (number) => {
     Clipboard.setString(number);
   };
+
+  const averageRating = (rating) => {
+    let sum = 0
+    rating.map((item) => {
+      sum = sum + item.Nilai_Rating
+    })
+
+    return (sum/rating.length).toFixed(1)
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -71,16 +91,22 @@ const PusatInformasiScreen = ({navigation, route}) => {
               <View style={{ flexDirection: 'column', marginVertical: 20, alignItems: 'center', width: '100%' }}>
                 <Image source={dataKost.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataKost.Rumah_Image }} style={{ height: 170, width: 170, borderRadius: 100}} />
                 <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black'}} >{dataKost.Nama_Rumah}</Text>
-                <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black' }} >{rating}</Text>
-                <Rating 
-                    type='custom'
-                    ratingColor='#ffb700'
-                    imageSize={30}
-                    fractions={1}
-                    startingValue={rating}
-                    onFinishRating={(rating) => setRating(rating)}
-                    readonly
-                  />
+                { rating == '' ?
+                    <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 15, color: 'lightgray' }} >Belum ada ulasan</Text>
+                  :
+                    <>
+                      <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black' }} >{rating}</Text>
+                      <Rating 
+                          type='custom'
+                          ratingColor='#ffb700'
+                          imageSize={30}
+                          fractions={1}
+                          startingValue={rating}
+                          onFinishRating={(rating) => setRating(rating)}
+                          readonly
+                        />
+                    </>
+                }
                   { enter ?
                       <TouchableOpacity style={{ backgroundColor: '#ffb700', padding: 5, borderRadius: 7, marginTop: 15, width: '100%', alignItems: 'center'}} onPress={() => goToEnterRumahKost()}>
                         <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'white'}} >Masuk Rumah Kost</Text>

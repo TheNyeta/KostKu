@@ -6,6 +6,7 @@ import { Rating } from 'react-native-ratings';
 import moment from 'moment';
 import 'moment/locale/id'
 import Clipboard from '@react-native-clipboard/clipboard';
+import axios from 'axios';
 
 const KostScreen = ({navigation, route}) => {
   const [search, setSearch] = useState('')
@@ -23,9 +24,22 @@ const KostScreen = ({navigation, route}) => {
     .then((data) => {
       console.log(data)
       const value = JSON.parse(data)
+      getRating(value.Rumah_ID)
       setKostImage(value.Rumah_Image)
       setDataKost(value)
+    })
+  }
+
+  const getRating = (rumaid) => {
+    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rating&RumahID=${rumaid}`)
+    .then(({data}) => {
+      
+      if (data.error.msg == '' && data.data != null) {
+        setRating(averageRating(data.data))
+      }
       setIsLoading(false)
+    }).catch((e) => {
+      console.log(e, 'error post kelompok kamar')
     })
   }
 
@@ -44,6 +58,15 @@ const KostScreen = ({navigation, route}) => {
   const copyToClipboard = (number) => {
     Clipboard.setString(number);
   };
+
+  const averageRating = (rating) => {
+    let sum = 0
+    rating.map((item) => {
+      sum = sum + item.Nilai_Rating
+    })
+
+    return (sum/rating.length).toFixed(1)
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -67,16 +90,22 @@ const KostScreen = ({navigation, route}) => {
               <View style={{ flexDirection: 'column', marginVertical: 20, alignItems: 'center', width: '100%' }}>
                 <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 170, width: 170, borderRadius: 100}} />
                 <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black'}} >{dataKost.Nama_Rumah}</Text>
-                <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black' }} >{rating}</Text>
-                <Rating 
-                    type='custom'
-                    ratingColor='#ffb700'
-                    imageSize={30}
-                    fractions={1}
-                    startingValue={rating}
-                    onFinishRating={(rating) => setRating(rating)}
-                    readonly
-                  />
+                { rating == '' ?
+                    <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 15, color: 'lightgray' }} >Belum ada ulasan</Text>
+                  :
+                    <>
+                      <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black' }} >{rating}</Text>
+                      <Rating 
+                          type='custom'
+                          ratingColor='#ffb700'
+                          imageSize={30}
+                          fractions={1}
+                          startingValue={rating}
+                          onFinishRating={(rating) => setRating(rating)}
+                          readonly
+                        />
+                    </>
+                }
               </View>
               <View style={{ flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
                 <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 25, color: 'black'}} >Informasi rumah kost</Text>

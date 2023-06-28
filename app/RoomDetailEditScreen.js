@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -13,7 +13,7 @@ import moment from 'moment';
 import 'moment/locale/id'
 import { UpdateContext } from './GlobalState';
 
-const CreateRoomScreen = ({navigation, route}) => {
+const RoomDetailEditScreen = ({navigation, route}) => {
   const [imagePenghuni, setImagePenghuni] = useState('');
   const [nomorKamar, setNomorKamar] = useState('');
   const [nomorKamarError, setNomorKamarError] = useState('');
@@ -53,6 +53,7 @@ const CreateRoomScreen = ({navigation, route}) => {
   const [selectedId, setSelectedId] = useState('')
   const [isUpdate, setIsUpdate] = useContext(UpdateContext)
   const dataRumah = route.params.dataRumah
+  const kamar = route.params.kamar
   const kostImage = dataRumah.Rumah_Image
   const namaKelompok = route.params.namaKelompok
 
@@ -76,6 +77,27 @@ const CreateRoomScreen = ({navigation, route}) => {
   };
 
   LocaleConfig.defaultLocale = 'id';
+
+  useEffect(() => {
+    init()
+  }, [])
+
+  const init = () => {
+    console.log(kamar)
+    setNomorKamar(kamar.Kamar_Nomor)
+    setStatusKamar(kamar.Kamar_Status)
+    setHargaKamar(String(kamar.Kamar_Harga))
+    setTanggalMasuk(kamar.Tanggal_Masuk)
+    setNama(kamar.DataPenghuni.Penghuni_Name)
+    setGender(kamar.DataPenghuni.Penghuni_Gender)
+    setNoHp(kamar.DataPenghuni.Penghuni_Number)
+    setPekerjaan(kamar.DataPenghuni.Penghuni_Pekerjaan)
+    setEmail(kamar.DataPenghuni.Penghuni_Email)
+    setNamaDarurat(kamar.DataPenghuni.Penghuni_KontakDaruratNama)
+    setNoHpDarurat(kamar.DataPenghuni.Penghuni_KontakDaruratNoHP)
+    setHubungan(kamar.DataPenghuni.Penghuni_KontakDaruratHubungan)
+
+  }
 
   const goBack = () => {
     navigation.goBack()
@@ -258,13 +280,6 @@ const CreateRoomScreen = ({navigation, route}) => {
         setEmailError('')
       }
 
-      if (imageKtp == '') {
-        setImageKtpError('Masukan foto KTP')
-        error = true
-      } else {
-        setImageKtpError('')
-      }
-
       if (namaDarurat == '') {
         setNamaDaruratError('Masukan nama darurat')
         error = true
@@ -307,47 +322,91 @@ const CreateRoomScreen = ({navigation, route}) => {
     }
 
     if (!error) {
-      addKamar()
+      updateKamar()
     } else {
       setModal5(true)
     }
   }
 
-  const addKamar = () => {
+  const updateKamar = () => {
     setModal4(true)
-    let url = 'https://api-kostku.pharmalink.id/skripsi/kostku?register=kamar'
-
-    let data = {
-      Rumah_ID: dataRumah.Rumah_ID,
-      Kamar_Status: statusKamar,
-      Kamar_Nomor: nomorKamar,
-      Kamar_Harga: Number(hargaKamar),
-      Kamar_Kelompok: namaKelompok,
-      Tanggal_Masuk: moment(tanggalMasuk, 'YYYY MM DD').format('YYYY-MM-DD'),
-      Tanggal_Berakhir: moment(tanggalMasuk, 'YYYY MM DD').add(1, 'months').format('YYYY-MM-DD'),
-      DataPenghuni: {}
+    let data = {}
+    switch (statusKamar) {
+      case 'Terisi':
+        data = {
+          Kamar_Status: 'Terisi',
+          Kamar_Nomor: nomorKamar,
+          Tanggal_Masuk: tanggalMasuk,
+          Tanggal_Berakhir: '',
+          Kamar_Harga: Number(hargaKamar),
+          DataPenghuni: {
+            Penghuni_ID: kamar.DataPenghuni.Penghuni_ID,
+            Penghuni_Image: imagePenghuni == '' ? kamar.DataPenghuni.Penghuni_Image : imagePenghuni,
+            Penghuni_Name: nama,
+            Penghuni_Gender: gender,
+            Penghuni_Number: nohp,
+            Penghuni_Pekerjaan: pekerjaan,
+            Penghuni_Email: email,
+            Penghuni_FotoKTP: imageKtp == '' ? kamar.DataPenghuni.Penghuni_FotoKTP : imageKtp,
+            Penghuni_FotoBukuNikah: imageNikah == '' ? kamar.DataPenghuni.Penghuni_FotoBukuNikah : imageNikah,
+            Penghuni_KontakDaruratNama: namaDarurat,
+            Penghuni_KontakDaruratHubungan: hubungan,
+            Penghuni_KontakDaruratNoHP: nohpDarurat
+        }
+        }
+        break;
+      case 'Kosong':
+        data = {
+          Kamar_Status: 'Kosong',
+          Kamar_Nomor: nomorKamar,
+          Tanggal_Masuk: '',
+          Tanggal_Berakhir: '',
+          Kamar_Harga: Number(hargaKamar),
+          DataPenghuni: {
+            Penghuni_ID: '',
+            Penghuni_Image: '',
+            Penghuni_Name:'',
+            Penghuni_Gender:'',
+            Penghuni_Number:'',
+            Penghuni_Pekerjaan:'',
+            Penghuni_Email:'',
+            Penghuni_FotoKTP:'',
+            Penghuni_FotoBukuNikah:'',
+            Penghuni_KontakDaruratNama:'',
+            Penghuni_KontakDaruratHubungan:'',
+            Penghuni_KontakDaruratNoHP:''
+        }
+        }
+        break;
+      case 'Tidak Disewakan':
+        data = {
+          Kamar_Status: 'Tidak Disewakan',
+          Kamar_Nomor: nomorKamar,
+          Tanggal_Masuk: '',
+          Tanggal_Berakhir: '',
+          Kamar_Harga: Number(hargaKamar),
+          DataPenghuni: {
+            Penghuni_ID: '',
+            Penghuni_Image: '',
+            Penghuni_Name:'',
+            Penghuni_Gender:'',
+            Penghuni_Number:'',
+            Penghuni_Pekerjaan:'',
+            Penghuni_Email:'',
+            Penghuni_FotoKTP:'',
+            Penghuni_FotoBukuNikah:'',
+            Penghuni_KontakDaruratNama:'',
+            Penghuni_KontakDaruratHubungan:'',
+            Penghuni_KontakDaruratNoHP:''
+        }
+        }
+        break;
+    
+      default:
+        break;
     }
-
-    if (statusKamar == 'Terisi') {
-      data['DataPenghuni'] = {
-        Penghuni_ID: '',
-        Penghuni_Name: nama,
-        Penghuni_Number: nohp,
-        Penghuni_Pekerjaan: pekerjaan,
-        Penghuni_Gender: gender,
-        Penghuni_Email: email,
-        Penghuni_Image: imagePenghuni,
-        Penghuni_FotoKTP: imageKtp,
-        Penghuni_FotoBukuNikah: imageNikah,
-        Penghuni_KontakDaruratNama: namaDarurat,
-        Penghuni_KontakDaruratNoHP: nohpDarurat,
-        Penghuni_KontakDaruratHubungan: hubungan
-      }
-      url = 'https://api-kostku.pharmalink.id/skripsi/kostku?register=kamarTerisi'
-
-    }
-
-    axios.post(url, data)
+    console.log(data)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=kamar&KamarID=${kamar.Kamar_ID}`, data)
     .then(({data}) => {
       console.log(data)
       if (data.error.msg == '') {
@@ -356,15 +415,67 @@ const CreateRoomScreen = ({navigation, route}) => {
           updateDashboard: true
         })
         goBack()
+        goBack()
         navigation.replace('RoomList', {dataRumah: dataRumah, namaKelompok: namaKelompok})
-      } else if (data.error.code == 103) {
-        setNomorKamarError('Nomor kamar sudah digunakan')
       }
       setModal4(false)
     }).catch((e) => {
-      console.log(e, 'error post kamar')
+      console.log(e, 'error delete kamar')
     })
   }
+
+  // const addKamar = () => {
+  //   setModal4(true)
+  //   let url = 'https://api-kostku.pharmalink.id/skripsi/kostku?register=kamar'
+
+  //   let data = {
+  //     Rumah_ID: dataRumah.Rumah_ID,
+  //     Kamar_Status: statusKamar,
+  //     Kamar_Nomor: nomorKamar,
+  //     Kamar_Harga: Number(hargaKamar),
+  //     Kamar_Kelompok: namaKelompok,
+  //     Tanggal_Masuk: moment(tanggalMasuk, 'YYYY MM DD').format('YYYY/MM/DD'),
+  //     Tanggal_Berakhir: moment(tanggalMasuk, 'YYYY MM DD').add(1, 'months').format('YYYY/MM/DD'),
+  //     DataPenghuni: {}
+  //   }
+
+  //   if (statusKamar == 'Terisi') {
+  //     data['DataPenghuni'] = {
+  //       Penghuni_ID: '',
+  //       Penghuni_Name: nama,
+  //       Penghuni_Number: nohp,
+  //       Penghuni_Pekerjaan: pekerjaan,
+  //       Penghuni_Gender: gender,
+  //       Penghuni_Email: email,
+  //       Penghuni_Image: imagePenghuni,
+  //       Penghuni_FotoKTP: imageKtp,
+  //       Penghuni_FotoBukuNikah: imageNikah,
+  //       Penghuni_KontakDaruratNama: namaDarurat,
+  //       Penghuni_KontakDaruratNoHP: nohpDarurat,
+  //       Penghuni_KontakDaruratHubungan: hubungan
+  //     }
+  //     url = 'https://api-kostku.pharmalink.id/skripsi/kostku?register=kamarTerisi'
+
+  //   }
+
+  //   axios.post(url, data)
+  //   .then(({data}) => {
+  //     console.log(data)
+  //     if (data.error.msg == '') {
+  //       setIsUpdate({
+  //         ...isUpdate,
+  //         updateDashboard: true
+  //       })
+  //       goBack()
+  //       navigation.replace('RoomList', {dataRumah: dataRumah, namaKelompok: namaKelompok})
+  //     } else if (data.error.code == 103) {
+  //       setNomorKamarError('Nomor kamar sudah digunakan')
+  //     }
+  //     setModal4(false)
+  //   }).catch((e) => {
+  //     console.log(e, 'error post kamar')
+  //   })
+  // }
 
   return (
     <KeyboardAwareScrollView style={{ backgroundColor: '#FFFFFF' }}>
@@ -391,7 +502,7 @@ const CreateRoomScreen = ({navigation, route}) => {
               <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ margin: 10 , borderRadius: 100, width: 100, height: 100}} />
           }
           <View style={{ backgroundColor: '#FF7A00', borderRadius: 10, paddingVertical: 5, paddingHorizontal: 10 }} >
-            <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >{dataRumah.Nama_Rumah}</Text>
+            <Text style={{ color: 'white', fontSize: 20, fontFamily: 'UbuntuTitling-Bold' }} >{nomorKamar}</Text>
           </View>
         </View>
         <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
@@ -729,4 +840,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default CreateRoomScreen;
+export default RoomDetailEditScreen;

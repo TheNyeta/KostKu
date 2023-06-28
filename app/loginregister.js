@@ -112,7 +112,8 @@ const LoginScreen = ({navigation, route}) => {
               } else if (role == 'Penghuni') {
                 axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=kamar&PenghuniID=${data.data.Penghuni_ID}`)
                   .then(({data}) => {
-                    if (data.error.msg == '') {
+                    console.log(data)
+                    if (data.error.msg == '' && data.data != null) {
 
                       let jsonValue = JSON.stringify(data.data)
                       AsyncStorage.setItem('@penghuni_data', jsonValue).then(() => {
@@ -321,10 +322,10 @@ const RegisterScreen = ({navigation, route}) => {
       switch (role) {
         case 'Penghuni':
           data = {
-            Penghuni_Name: username.trim(),
-            Penghuni_Email: email.trim(),
-            Penghuni_Number: phone.trim(),
-            Penghuni_Password: password.trim()
+            Penghuni_Name: username,
+            Penghuni_Email: email,
+            Penghuni_Number: phone,
+            Penghuni_Password: password
           }
           url = 'https://api-kostku.pharmalink.id/skripsi/kostku?register=penghuni'
           break;

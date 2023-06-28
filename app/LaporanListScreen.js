@@ -29,7 +29,7 @@ const LaporanListScreen = ({navigation, route}) => {
     setIsLoading(true)
 
     if (role == 'Penghuni') {
-      url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=laporan&PenghuniID=${dataPenghuni.Penghuni_ID}`
+      url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=laporan&RumahID=${dataRumah.Rumah_ID}&PenghuniID=${dataPenghuni.Penghuni_ID}`
     } else {
       url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=laporan&RumahID=${dataRumah.Rumah_ID}`
     }
@@ -41,17 +41,28 @@ const LaporanListScreen = ({navigation, route}) => {
           let data2 = []
           let data3 = []
 
-          data.data.forEach((item) => {
-            if (item.Status_Laporan == 'Ditolak') {
-              data3.push(item)
-            } else if (item.Status_Laporan == 'Dilaporkan') {
-              if (item.Perihal_Laporan == 'Pembayaran') {
-              data2.push(item)
+          if (role == 'Penghuni') {
+            data.data.forEach((item) => {
+              if (item.Status_Laporan == 'Ditolak') {
+                data3.push(item)
+              } else if (item.Status_Laporan == 'Diterima') {
+                data2.push(item)
+              } else {
+                data1.push(item)
               }
-              data1.push(item)
-            }
-            
-          })
+            })
+          } else {
+            data.data.forEach((item) => {
+              if (item.Status_Laporan == 'Ditolak') {
+                data3.push(item)
+              } else if (item.Status_Laporan == 'Dilaporkan') {
+                if (item.Perihal_Laporan == 'Pembayaran') {
+                data2.push(item)
+                }
+                data1.push(item)
+              }
+            })
+          }
 
           setData1(data1.reverse())
           setData2(data2.reverse())
@@ -163,8 +174,8 @@ const LaporanListScreen = ({navigation, route}) => {
   //react tab view
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'first', title: 'Semua' },
-    { key: 'second', title: 'Pembayaran' },
+    { key: 'first', title: role == 'Penghuni' ? 'Dilaporkan' : 'Semua' },
+    { key: 'second', title: role == 'Penghuni' ? 'Diterima' : 'Pembayaran' },
     { key: 'third', title: 'Ditolak' },
   ]);
 

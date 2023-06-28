@@ -4,6 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Collapsible from 'react-native-collapsible';
 import Modal from 'react-native-modal';
+import RadioGroup from 'react-native-radio-buttons-group';
 import moment from 'moment';
 import 'moment/locale/id'
 import ImageViewer from 'react-native-image-zoom-viewer';
@@ -17,6 +18,7 @@ const RoomDetailScreen = ({navigation, route}) => {
   const [hargaKamar, setHargaKamar] = useState('');
   const [tanggalMasuk, setTanggalMasuk] = useState('');
   const [nama, setNama] = useState('')
+  const [gender, setGender] = useState('')
   const [nohp, setNoHp] = useState('')
   const [pekerjaan, setPekerjaan] = useState('')
   const [email, setEmail] = useState('')
@@ -36,6 +38,28 @@ const RoomDetailScreen = ({navigation, route}) => {
   const kamar = route.params.kamar
   const namaKelompok = route.params.namaKelompok
 
+  const radioButtonGender = [
+    {
+        id: 'Pria',
+        label: 'Pria',
+        labelStyle: { color: 'black', fontSize: 16, fontFamily: 'PlusJakartaSans-Regular' },
+        containerStyle: { marginRight: 50, padding: 2 },
+        value: 'Pria',
+        color: gender == 'Pria' ? '#FFB700' : 'lightgray',
+        // disabled: true
+
+    },
+    {
+        id: 'Wanita',
+        label: 'Wanita',
+        labelStyle: { color: 'black', fontSize: 16, fontFamily: 'PlusJakartaSans-Regular' },
+        containerStyle: { padding: 2 },
+        value: 'Wanita',
+        color: gender == 'Wanita' ? '#FFB700' : 'lightgray',
+        // disabled: true
+    }
+  ]
+
   useEffect(() => {
     init()
   }, [])
@@ -48,6 +72,7 @@ const RoomDetailScreen = ({navigation, route}) => {
     setHargaKamar(kamar.Kamar_Harga)
     setTanggalMasuk(kamar.Tanggal_Masuk)
     setNama(kamar.DataPenghuni.Penghuni_Name)
+    setGender(kamar.DataPenghuni.Penghuni_Gender)
     setNoHp(kamar.DataPenghuni.Penghuni_Number)
     setPekerjaan(kamar.DataPenghuni.Penghuni_Pekerjaan)
     setEmail(kamar.DataPenghuni.Penghuni_Email)
@@ -70,6 +95,10 @@ const RoomDetailScreen = ({navigation, route}) => {
   const goToPembayaranDetail = () => {
     navigation.navigate('PaymentDetail', {dataRumah: dataRumah, kamar: kamar})
   }
+
+  const goToRoomDetailEdit = () => {
+    navigation.navigate('RoomDetailEdit', {dataRumah: dataRumah, kamar: kamar, namaKelompok: namaKelompok})
+  }
   
   const formatHarga = (price) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(price)
@@ -79,6 +108,43 @@ const RoomDetailScreen = ({navigation, route}) => {
     axios.delete(`https://api-kostku.pharmalink.id/skripsi/kostku?delete=kamar&KamarID=${kamar.Kamar_ID}`)
     .then(({data}) => {
       console.log(data)
+      if (data.error.msg == '') {
+        setIsUpdate({
+          ...isUpdate,
+          updateDashboard: true
+        })
+        goBack()
+        navigation.replace('RoomList', {dataRumah: dataRumah, namaKelompok: namaKelompok})
+      }
+    }).catch((e) => {
+      console.log(e, 'error delete kamar')
+    })
+  }
+
+  const tandaiSelesaiKamar = () => {
+    let data = {
+      Kamar_Status: 'Kosong',
+      Kamar_Nomor: kamar.Kamar_Nomor,
+      Tanggal_Masuk: '',
+      Tanggal_Berakhir: '',
+      Kamar_Harga: kamar.Kamar_Harga,
+      DataPenghuni: {
+        Penghuni_ID: '',
+        Penghuni_Name:'',
+        Penghuni_Gender:'',
+        Penghuni_Number:'',
+        Penghuni_Pekerjaan:'',
+        Penghuni_Email:'',
+        Penghuni_FotoKTP:'',
+        Penghuni_FotoBukuNikah:'',
+        Penghuni_KontakDaruratNama:'',
+        Penghuni_KontakDaruratHubungan:'',
+        Penghuni_KontakDaruratNoHP:''
+    }
+    }
+    console.log(data)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=kamar&KamarID=${kamar.Kamar_ID}`, data)
+    .then(({data}) => {
       if (data.error.msg == '') {
         setIsUpdate({
           ...isUpdate,
@@ -146,6 +212,14 @@ const RoomDetailScreen = ({navigation, route}) => {
               editable={false}
             />
           </View>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Jenis Kelamin</Text>
+          <RadioGroup 
+            radioButtons={radioButtonGender} 
+            // onPress={setGender}
+            selectedId={gender}
+            layout='row'
+            containerStyle={{ alignItems: 'flex-start', alignSelf: 'flex-start' }}
+          />
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >No.HP</Text>
           <View style={styles.form}>
             <Icon size={18} name='cellphone' color='black' style={{ alignSelf: 'center' }} />
@@ -256,7 +330,7 @@ const RoomDetailScreen = ({navigation, route}) => {
             />
           </View>
         </View>
-        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginTop: 20 }} >
+        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 7, marginTop: 20 }} onPress={() => goToRoomDetailEdit()} >
           <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Edit</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, width: '50%', borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginBottom: 20, marginTop: 10 }} onPress={() => setModal(true)} >
@@ -271,10 +345,10 @@ const RoomDetailScreen = ({navigation, route}) => {
           <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
           <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Tandai sebagai selesai</Text>
           <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Apakah Anda yakin untuk tandai penghuni ini telah selesai kost?</Text>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => {}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => tandaiSelesaiKamar()}>
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => setModal(false)}>
             <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
           </TouchableOpacity>
         </View>
@@ -290,7 +364,7 @@ const RoomDetailScreen = ({navigation, route}) => {
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => deleteKamar()}>
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal2(false)}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => setModal2(false)}>
             <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
           </TouchableOpacity>
         </View>
@@ -314,8 +388,8 @@ const styles = StyleSheet.create({
     // justifyContent: 'center'
   },
   input: {
-    height: 40,
-    width: '80%',
+    height: 50,
+    width: '90%',
     marginVertical: 10,
     padding: 10,
     alignSelf:  'center',
