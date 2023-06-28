@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image, Dimensions, Modal as Modal1, ScrollView, ActivityIndicator } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -11,12 +11,15 @@ import moment from 'moment';
 import 'moment/locale/id'
 import ImageViewer from 'react-native-image-zoom-viewer';
 import axios from 'axios';
+import { UpdateContext } from './GlobalState';
 
 const NewPenghuniDetailScreen = ({navigation, route}) => {
   const [nomorKamar, setNomorKamar] = useState('');
+  const [nomorKamarError, setNomorKamarError] = useState('');
   const [statusKamar, setStatusKamar] = useState('');
   const [hargaKamar, setHargaKamar] = useState('');
   const [tanggalMasuk, setTanggalMasuk] = useState('');
+  const [tanggalMasukError, setTanggalMasukError] = useState('');
   const [nama, setNama] = useState('')
   const [gender, setGender] = useState('')
   const [nohp, setNoHp] = useState('')
@@ -34,6 +37,8 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
   const [modal2, setModal2] = useState(false)
   const [modal3, setModal3] = useState(false)
   const [modal4, setModal4] = useState(false)
+  const [modal5, setModal5] = useState(false)
+  const [modal6, setModal6] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [listKamar, setListKamar] = useState(true)
   const [index, setIndex] = useState(0)
@@ -41,6 +46,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
   const [radio, setRadio] = useState([])
   const [date, setDate] = useState('')
   const [selectedId, setSelectedId] = useState(0)
+  const [isUpdate, setIsUpdate] = useContext(UpdateContext)
   const data = route.params.data
   const dataRumah = route.params.dataRumah
 
@@ -99,7 +105,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
 
   const init = () => {
     setNama(data.DataPenghuni.Penghuni_Name)
-    setNoHp(data.DataPenghuni.Penghuni_Gender)
+    setGender(data.DataPenghuni.Penghuni_Gender)
     setNoHp(data.DataPenghuni.Penghuni_Number)
     setPekerjaan(data.DataPenghuni.Penghuni_Pekerjaan)
     setEmail(data.DataPenghuni.Penghuni_Email)
@@ -110,8 +116,6 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
     setNoHpDarurat(data.DataPenghuni.Penghuni_KontakDaruratNoHP)
     setHubungan(data.DataPenghuni.Penghuni_KontakDaruratHubungan)
 
-    getKamarList()
-
   }
 
   const goBack = () => {
@@ -120,7 +124,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
 
   const goToCreateRoom = () => {
     setModal2(false)
-    navigation.navigate('CreateRoom', {dataRumah: dataRumah})
+    navigation.navigate('RoomGroupList', {dataRumah: dataRumah})
   }
 
   const getKamarList = () => {
@@ -153,13 +157,66 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
       })
   }
 
+  const validate = () => {
+    let error = false
+    if (nomorKamar == '') {
+      setNomorKamarError('Masukan nomor kamar')
+      error = true
+    } else if (nomorKamar.length != 3) {
+      setNomorKamarError('Hanya boleh 3 karakter')
+      error = true
+    } else {
+      setNomorKamarError('')
+    }
+
+    if (tanggalMasuk == '') {
+      setTanggalMasukError('Pilih tanggal masuk')
+      error = true
+    } else {
+      setTanggalMasukError('')
+    }
+
+    if (!error) {
+      terima()
+    } else {
+      setModal5(true)
+    }
+
+  }
+
   const terima = () => {
-    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=orderBerhasil&OrderID=${data.Order_ID}&KamarID=${kamar.Kamar_ID}&tanggalMasuk=${tanggalMasuk}&tanggalKeluar=${moment(tanggalMasuk, 'YYYY MM DD').add(1, 'months')}&kamarStatus=Terisi`)
+    setModal6(true)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=orderBerhasil&OrderID=${data.Order_ID}&KamarID=${kamar.Kamar_ID}&tanggalMasuk=${tanggalMasuk}&tanggalKeluar=${moment(tanggalMasuk, 'YYYY MM DD').add(1, 'months').format('YYYY-MM-DD')}&kamarStatus=Terisi`)
       .then(({data}) => {
+        console.log(data)
         if (data.error.msg == '') {
+          setIsUpdate({
+            ...isUpdate,
+            updateDashboard: true
+          })
           goBack()
           navigation.replace('NewPenghuniList', {dataRumah: dataRumah})
         }
+        setModal6(false)
+      }).catch((e) => {
+        console.log(e, 'error get list kamar kosong')
+      })
+  }
+
+  const tolak = () => {
+    setModal6(true)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=orderBatal&OrderID=${data.Order_ID}`)
+      .then(({data}) => {
+        console.log(data)
+        if (data.error.msg == '') {
+          setIsUpdate({
+            ...isUpdate,
+            updateDashboard: true
+          })
+          goBack()
+          navigation.replace('NewPenghuniList', {dataRumah: dataRumah})
+        }
+        setModal6(false)
       }).catch((e) => {
         console.log(e, 'error get list kamar kosong')
       })
@@ -175,6 +232,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
     setKamar(listKamar[selectedId])
     setNomorKamar(listKamar[selectedId].Kamar_Nomor)
     setHargaKamar(formatHarga(listKamar[selectedId].Kamar_Harga))
+    setNomorKamarError('')
 
   }
 
@@ -199,7 +257,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
         <View style={{ alignItems: 'center', justifyContent: 'center', width: '90%' }} >
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', marginVertical: 10 }} >Data Kamar</Text>
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Nomor Kamar</Text>
-          <TouchableOpacity style={styles.form} onPress={() => setModal2(true)}>
+          <TouchableOpacity style={[styles.form, { borderColor: nomorKamarError ? 'red' : 'black' }]} onPress={() => {setModal2(true);getKamarList()}}>
             <Icon size={18} name='format-list-numbered' color='black' style={{ alignSelf: 'center' }} />
             <TextInput
               style={styles.input}
@@ -210,6 +268,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
               editable={false}
             />
           </TouchableOpacity>
+          { nomorKamarError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{nomorKamarError}</Text> : null }
           { nomorKamar == '' ?
               null
             :
@@ -227,7 +286,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
                   />
                 </View>
                 <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Tanggal Masuk</Text>
-                <TouchableOpacity style={styles.form} onPress={() => setModal4(true)}>
+                <TouchableOpacity style={[styles.form, { borderColor: tanggalMasukError ? 'red' : 'black' }]} onPress={() => setModal4(true)}>
                   <Icon size={18} name='login' color='black' style={{ alignSelf: 'center' }} />
                   <TextInput
                     style={styles.input}
@@ -238,6 +297,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
                     editable={false}
                   />
                 </TouchableOpacity>
+                { tanggalMasukError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{tanggalMasukError}</Text> : null }
               </>
             }
           <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', marginVertical: 10 }} >Data Pribadi</Text>
@@ -371,7 +431,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
             />
           </View>
         </View>
-        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} >
+        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} onPress={() => validate()} >
           <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Terima</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, width: '35%', borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginBottom: 20, marginTop: 10 }} onPress={() => {setModal(true)}}>
@@ -386,7 +446,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
           <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
           <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Tolak penghuni</Text>
           <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Apakah Anda yakin untuk tolak penghuni? Penghuni perlu mengirim ulang kembali setelah ini.</Text>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => {}}>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => tolak()}>
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => setModal(false)}>
@@ -470,10 +530,31 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
           <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => {setDate(''); setModal4(false)}}>
             <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Batal</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ alignItems: 'center', marginHorizontal: 30 }} onPress={() => {setTanggalMasuk(date); setModal4(false)}}>
+          <TouchableOpacity style={{ alignItems: 'center', marginHorizontal: 30 }} onPress={() => {setTanggalMasuk(date); setModal4(false); setTanggalMasukError('')}}>
             <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Ok</Text>
           </TouchableOpacity>
         </View>
+        </View>
+      </Modal>
+      <Modal
+        isVisible={modal5}
+        onBackdropPress={() => setModal5(false)}
+      >
+        <View style={{flexDirection: 'column', alignSelf: 'center', alignItems: 'center', backgroundColor: 'white', paddingVertical: 30, paddingHorizontal: 20, borderRadius: 20, width: '90%' }}>
+          <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
+          <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Terdapat kesalahan</Text>
+          <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Terdapat kesalahan pada data yang Anda masukan. Mohon untuk pastikan kembali.</Text>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => setModal5(false)}>
+            <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ok</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+      <Modal
+        isVisible={modal6}
+      >
+        <View style={{flexDirection: 'column', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderRadius: 20, width: 200, height: 200 }}>
+          <Text style={{fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Memproses</Text>
+          <ActivityIndicator color={'#FFB700'} size={100} style={{ alignSelf: 'center', marginVertical: 20 }} />
         </View>
       </Modal>
     </KeyboardAwareScrollView>
@@ -488,8 +569,8 @@ const styles = StyleSheet.create({
     // justifyContent: 'center'
   },
   input: {
-    height: 40,
-    width: '80%',
+    height: 50,
+    width: '90%',
     marginVertical: 10,
     padding: 10,
     alignSelf:  'center',

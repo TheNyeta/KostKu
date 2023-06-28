@@ -38,9 +38,12 @@ import EnterRumahKostScreen from './app/EnterRumahKostScreen';
 import WaitingScreen from './app/WaitingScreen';
 import CreateRatingScreen from './app/CreateRatingScreen';
 import PeraturanDetailScreen from './app/PeraturanDetailScreen';
+import PeraturanDetailEditScreen from './app/PeraturanDetailEditScreen';
 import CreateKeluhanScreen from './app/CreateKeluhanScreen';
 import CreateLaporanScreen from './app/CreateLaporanScreen';
 import PaymentLogListScreen from './app/PaymentLogListScreen';
+import RoomDetailEditScreen from './app/RoomDetailEditScreen';
+
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -106,9 +109,12 @@ function App() {
           <Stack.Screen name="Waiting" component={WaitingScreen} />
           <Stack.Screen name="CreateRating" component={CreateRatingScreen} />
           <Stack.Screen name="PeraturanDetail" component={PeraturanDetailScreen} />
+          <Stack.Screen name="PeraturanDetailEdit" component={PeraturanDetailEditScreen} />
           <Stack.Screen name="CreateKeluhan" component={CreateKeluhanScreen} />
           <Stack.Screen name="CreateLaporan" component={CreateLaporanScreen} />
           <Stack.Screen name="PaymentLogList" component={PaymentLogListScreen} />
+          <Stack.Screen name="RoomDetailEdit" component={RoomDetailEditScreen} />
+
 
 
         </Stack.Navigator>

@@ -15,13 +15,12 @@ const WaitingScreen = ({navigation}) => {
   useEffect(() => {
     AsyncStorage.getItem('@order_id').then((data) => {
       setOrderId(data)
-    }).then(() => {
-      checkOrderStatus()
+      checkOrderStatus(data)
     })
   }, [])
 
-  const checkOrderStatus = () => {
-    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=order&OrderID=${orderID}`)
+  const checkOrderStatus = (orderid) => {
+    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=order&OrderID=${orderid}`)
     .then(({data}) => {
       if (data.data != null) {
         console.log(data)
@@ -31,6 +30,8 @@ const WaitingScreen = ({navigation}) => {
             AsyncStorage.removeItem('@order_id')
             navigation.replace('HomePenghuni')
           })
+        } else if (data.data.Order_Status == 'Tolak') {
+          setModal(true)
         }
       }
       setIsLoading(false)
@@ -38,6 +39,13 @@ const WaitingScreen = ({navigation}) => {
       console.log(e, 'error check kost')
       setIsLoading(false)
     })
+  }
+
+  const ditolak = () => {
+    AsyncStorage.removeItem('@order_id')
+      .then(() => {
+        navigation.replace('EnterCode')
+      })
   }
 
   return (
@@ -62,13 +70,10 @@ const WaitingScreen = ({navigation}) => {
       >
         <View style={{flexDirection: 'column', alignSelf: 'center', alignItems: 'center', backgroundColor: 'white', paddingVertical: 30, paddingHorizontal: 20, borderRadius: 20, width: '90%' }}>
           <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
-          <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Keluar dari akun?</Text>
-          <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Anda akan keluar dan tidak dapat melihat data rumah kost. Apakah Anda yakin?</Text>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => logout()}>
-            <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
-            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
+          <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Permintaan masuk ditolak</Text>
+          <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Permintaan masuk Anda telah ditolak. Mohon mengajukan permintaan masuk baru.</Text>
+          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => ditolak()}>
+            <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Mengerti</Text>
           </TouchableOpacity>
         </View>
       </Modal>

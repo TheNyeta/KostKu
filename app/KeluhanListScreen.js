@@ -27,7 +27,7 @@ const KeluhanListScreen = ({navigation, route}) => {
     setIsLoading(true)
 
     if (role == 'Penghuni') {
-      url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=keluhan&PenghuniID=${dataPenghuni.Penghuni_ID}`
+      url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=keluhan&RumahID=${dataRumah.Rumah_ID}&PenghuniID=${dataPenghuni.Penghuni_ID}`
     } else {
       url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=keluhan&RumahID=${dataRumah.Rumah_ID}`
     }
@@ -67,7 +67,7 @@ const KeluhanListScreen = ({navigation, route}) => {
 
   const updateKeluhan = () => {
     setModal(false)
-    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?keluhan=selesai&KeluhanID=${keluhan.Keluhan_ID}`)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?keluhan=selesai&KeluhanID=${keluhanId}`)
       .then(({data}) => {
         if (data.error.msg == '') {
           init()

@@ -17,7 +17,10 @@ const DashboardPenghuniPage = ({navigation}) => {
   const [isUpdate, setIsUpdate] = useContext(UpdateContext)
   // const [refreshing, setRefreshing] = useState(false)
   const isFocused = useIsFocused()
-  var jatuhtempo = []
+
+  useEffect(() => {
+    init()
+  }, [])
 
   useEffect(() => {
     // init()
@@ -84,7 +87,7 @@ const DashboardPenghuniPage = ({navigation}) => {
   }
   
   const goToPaymentDetail = () => {
-    navigation.navigate('PaymentDetail', {kamar: data.DataKamar})
+    navigation.navigate('PaymentDetail', {kamar: data.DataKamar, dataPenghuni: data.DataPenghuni, dataRumah: data.DataRumah, role: 'Penghuni'})
   }
   
   const goToKeluhanList = () => {

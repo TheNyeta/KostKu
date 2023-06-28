@@ -71,6 +71,7 @@ const BroadcastDetailScreen = ({navigation, route}) => {
               onChangeText={setJudul}
               value={judul}
               editable={false}
+              numberOfLines={2}
             />
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', width: '100%', marginVertical: 10 }} >
@@ -79,7 +80,7 @@ const BroadcastDetailScreen = ({navigation, route}) => {
           </View>
           <View style={{ width: '100%', marginTop: 5, borderWidth: 1, borderColor: 'black', borderRadius: 5, marginBottom: 20 }}>
             <TextInput
-              style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, height: 200, textAlignVertical: 'top', padding: 10 }}
+              style={{ width: '100%', color: 'black', fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, minHeight: 200, textAlignVertical: 'top', padding: 10 }}
               placeholder='Isi pesan'
               placeholderTextColor='#ccc'
               onChangeText={setPesan}
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'center'
   },
   input: {
-    height: 40,
+    height: 50,
     width: '90%',
     marginVertical: 10,
     padding: 10,

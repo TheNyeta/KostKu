@@ -21,7 +21,7 @@ const PaymentLogListScreen = ({navigation, route}) => {
   const init = () => {
     setIsLoading(true)
     
-    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=logPembayaran&PenghuniID=${dataKamar.DataPenghuni.Penghuni_ID}`)
+    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=logPembayaran&RumahID=${dataRumah.Rumah_ID}&PenghuniID=${dataKamar.DataPenghuni.Penghuni_ID}`)
       .then(({data}) => {
         if (data.error.msg == '' && data.data != null) {
           setData(data.data.reverse())
@@ -88,22 +88,28 @@ const PaymentLogListScreen = ({navigation, route}) => {
               <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
           }
       </View>
-      <View style={{ flexDirection: 'column', alignSelf: 'flex-start', width: '100%' }} >
-        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black', marginVertical: 10 }} >Pembayaran selanjutnya</Text>
-        <RoomItem item={dataKamar}/>
-      </View>
-      { data.length == 0 ?
-          null
+      { isLoading ?
+          <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
         :
           <>
-            <View style={{ flexDirection: 'column', marginVertical: 10 , alignSelf: 'flex-start' }} >
-              <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black' }} >Sudah dibayar</Text>
+            <View style={{ flexDirection: 'column', alignSelf: 'flex-start', width: '100%' }} >
+              <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black', marginVertical: 10 }} >Pembayaran selanjutnya</Text>
+              <RoomItem item={dataKamar}/>
             </View>
-            <FlatList
-              data={data}
-              renderItem={renderItem}
-              style={{ width: '100%' }}
-            />
+            { data.length == 0 ?
+                null
+              :
+                <>
+                  <View style={{ flexDirection: 'column', marginVertical: 10 , alignSelf: 'flex-start' }} >
+                    <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'black' }} >Sudah dibayar</Text>
+                  </View>
+                  <FlatList
+                    data={data}
+                    renderItem={renderItem}
+                    style={{ width: '100%' }}
+                  />
+                </>
+            }
           </>
       }
     </View>

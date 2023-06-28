@@ -52,17 +52,17 @@ const UserProfileEditScreen = ({navigation, route}) => {
 
   const validate = () => {
     let error = false
-    let usernamere = /^[a-zA-Z]*$/
-    if (nama == '') {
+    let usernamere = /^[a-zA-Z ]*$/
+    if (nama.trim() == '') {
       setNamaError('Masukan nama akun')
       error = true
-    } else if (nama.length < 3) {
+    } else if (nama.trim().length < 3) {
       setNamaError('Minimal 3 karakter')
       error = true
-    } else if (nama.length > 50) {
+    } else if (nama.trim().length > 50) {
       setNamaError('Maksimal 50 karakter')
       error = true
-    } else if (!usernamere.test(nama)) {
+    } else if (!usernamere.test(nama.trim())) {
       setNamaError('Nama hanya boleh alphabet')
       error = true
     } else {
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: '80%',
+    width: '90%',
     marginVertical: 10,
     padding: 10,
     alignSelf:  'center',

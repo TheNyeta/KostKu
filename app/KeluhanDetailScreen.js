@@ -230,8 +230,8 @@ const styles = StyleSheet.create({
     // justifyContent: 'center'
   },
   input: {
-    height: 40,
-    width: '80%',
+    height: 50,
+    width: '90%',
     marginVertical: 10,
     padding: 10,
     alignSelf:  'center',

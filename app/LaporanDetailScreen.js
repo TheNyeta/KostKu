@@ -50,7 +50,7 @@ const LaporanDetailScreen = ({navigation, route}) => {
     setJam(laporan.Jam_Laporan)
     setDetail(laporan.Pesan_Laporan)
     setStatus(laporan.Status_Laporan)
-    setImageLaporan(laporan.Perihal_Laporan == 'Pembayaran' ? laporan.Bukti_Transfer : laporan.Foto_Laporan)
+    setImageLaporan(laporan.Foto_Laporan)
 
   }
 
@@ -64,6 +64,34 @@ const LaporanDetailScreen = ({navigation, route}) => {
     axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?laporan=${status}&LaporanID=${laporan.Laporan_ID}`)
       .then(({data}) => {
         if (data.error.msg == '') {
+
+          if (perihal == 'Pembayaran') {
+            let log = {
+              Rumah_ID: dataRumah.Rumah_ID,
+              Kamar_ID: laporan.Kamar_ID,
+              Kamar_Nomor: laporan.Kamar_Nomor,
+              Kamar_Kelompok: laporan.Kamar_Kelompok,
+              Kamar_Harga: laporan.Kamar_Harga,
+              Penghuni_ID: laporan.Penghuni_ID,
+              Tanggal_Berakhir: laporan.Tanggal_Berakhir
+            }
+            axios.post(`https://api-kostku.pharmalink.id/skripsi/kostku?register=logPembayaran`, log)
+              .then(() => {
+                let kontrak = {
+                  Tanggal_Berakhir: moment(laporan.Tanggal_Berakhir, 'YYYY MM DD').add(1, 'months').format('YYYY-MM-DD')
+                }
+                console.log(kontrak, 'yang baru')
+                axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=pembaruanKontrak&KamarID=${laporan.Kamar_ID}`, kontrak)
+                  .then(() => {
+                    console.log('post log and update kontrak done')
+                  }).catch((e) => {
+                    console.log(e, 'error update kontrak')
+                  })
+            }).catch((e) => {
+              console.log(e, 'error post log pembayaran')
+            })
+          }
+          
           setIsUpdate({
             ...isUpdate,
             updateDashboard: true
@@ -317,8 +345,8 @@ const styles = StyleSheet.create({
     // justifyContent: 'center'
   },
   input: {
-    height: 40,
-    width: '80%',
+    height: 50,
+    width: '90%',
     marginVertical: 10,
     padding: 10,
     alignSelf:  'center',
