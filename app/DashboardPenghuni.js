@@ -165,10 +165,10 @@ const DashboardPenghuniPage = ({navigation}) => {
             <View style={{}} >
               <Text style={{ color: 'black', fontSize: 25, fontFamily: 'PlusJakartaSans-SemiBold' }}>{`Halo, ${data.DataPenghuni.Penghuni_Name}`}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }}>{data.DataRumah.Nama_Rumah}</Text>
+                {/* <Text style={{ color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }}>{data.DataRumah.Nama_Rumah}</Text> */}
                 {/* <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => goToRatingList()} > */}
                   <Icon size={20} name='door' color='#FFB700' style={{ alignSelf: 'center', paddingHorizontal: 2 }} />
-                  <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Nomor}</Text>
+                  {/* <Text style={{ color: '#FFB700', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Nomor}</Text> */}
                 {/* </TouchableOpacity> */}
               </View>
             </View>
@@ -192,8 +192,8 @@ const DashboardPenghuniPage = ({navigation}) => {
           <View style={{ flexDirection: 'column', width: '100%' }} >
             <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => goToPaymentLogList()} >
               <View style={{ flexDirection: 'column' }} >
-                <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{moment(data.DataKamar.Tanggal_Berakhir, 'YYYY MM DD').format('D MMMM')}</Text>
-                <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jatuh tempo pembayaran</Text>
+                {/* <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{moment(data.DataKamar.Tanggal_Berakhir, 'YYYY MM DD').format('D MMMM')}</Text> */}
+                {/* <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jatuh tempo pembayaran</Text> */}
               </View>
               <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
                 <Icon size={25} name='calendar' color='#FFB700' style={{ alignSelf: 'center' }} />
@@ -201,8 +201,8 @@ const DashboardPenghuniPage = ({navigation}) => {
             </TouchableOpacity>
             <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center' }} onPress={() => goToPaymentDetail()} >
               <View style={{ flexDirection: 'column' }} >
-                <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Harga}</Text>
-                <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jumlah bayaran</Text>
+                {/* <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Harga}</Text> */}
+                {/* <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jumlah bayaran</Text> */}
               </View>
               <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
                 <Icon size={25} name='cash-multiple' color='#FFB700' style={{ alignSelf: 'center' }} />
