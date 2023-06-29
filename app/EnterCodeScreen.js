@@ -10,9 +10,17 @@ const EnterCodeScreen = ({navigation}) => {
   const [image, setImage] = useState('')
   const [modal, setModal] = useState(false)
   const [kode, setKode] = useState('')
+  const [role, setRole] = useState('')
+
+  useEffect(() => {
+    AsyncStorage.getItem('@user_role')
+      .then((data) => {
+        setRole(data)
+      })
+  }, [])
 
   const goToPusatInformasi = (dataRumah) => {
-    navigation.navigate('PusatInformasi', {enter: true, dataRumah: dataRumah})
+    navigation.navigate('PusatInformasi', {enter: true, dataRumah: dataRumah, role: role})
   }
 
   const checkKostCode = () => {

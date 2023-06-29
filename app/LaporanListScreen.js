@@ -14,6 +14,13 @@ const LaporanListScreen = ({navigation, route}) => {
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  //react tab view
+  const [index, setIndex] = useState(0);
+  const [routes, setRoutes] = useState([
+    { key: 'first', title: role == 'Penghuni' ? 'Dilaporkan' : 'Semua' },
+    { key: 'second', title: role == 'Penghuni' ? 'Diterima' : 'Pembayaran' },
+    { key: 'third', title: 'Ditolak' },
+  ]);
   const dataRumah = route.params.dataRumah
   const role = route.params.role
   const dataPenghuni = route.params.dataPenghuni
@@ -21,7 +28,18 @@ const LaporanListScreen = ({navigation, route}) => {
 
   useEffect(() => {
     init()
-    // navigation.addListener('focus', () => {init()})
+    if (role == 'Penjaga') {
+      setRoutes([
+        { key: 'first', title: 'Semua' },
+        { key: 'second', title: 'Ditolak' },
+      ])
+    } else {
+      setRoutes([
+        { key: 'first', title: role == 'Penghuni' ? 'Dilaporkan' : 'Semua' },
+        { key: 'second', title: role == 'Penghuni' ? 'Diterima' : 'Pembayaran' },
+        { key: 'third', title: 'Ditolak' },
+      ])
+    }
   }, [])
 
   const init = () => {
@@ -51,7 +69,7 @@ const LaporanListScreen = ({navigation, route}) => {
                 data1.push(item)
               }
             })
-          } else {
+          } else if (role == 'Pengelola') {
             data.data.forEach((item) => {
               if (item.Status_Laporan == 'Ditolak') {
                 data3.push(item)
@@ -60,6 +78,16 @@ const LaporanListScreen = ({navigation, route}) => {
                 data2.push(item)
                 }
                 data1.push(item)
+              }
+            })
+          } else {
+            data.data.forEach((item) => {
+              if (item.Perihal_Laporan != 'Pembayaran') {
+                if (item.Status_Laporan == 'Ditolak') {
+                  data2.push(item)
+                } else {
+                  data1.push(item)
+                }
               }
             })
           }
@@ -170,14 +198,6 @@ const LaporanListScreen = ({navigation, route}) => {
         </View>
     )
   };
-
-  //react tab view
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: 'first', title: role == 'Penghuni' ? 'Dilaporkan' : 'Semua' },
-    { key: 'second', title: role == 'Penghuni' ? 'Diterima' : 'Pembayaran' },
-    { key: 'third', title: 'Ditolak' },
-  ]);
 
   const renderTabBar = props => (
     <TabBar

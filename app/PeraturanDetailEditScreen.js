@@ -21,10 +21,9 @@ const PeraturanDetailEditScreen = ({navigation, route}) => {
 
   const updatePeraturan = () => {
     let data = {
-      Peraturan_ID: peraturan.Peraturan_ID,
       Text: text
     }
-    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=peraturan`, data)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=peraturan&RumahID=${dataRumah.Rumah_ID}`, data)
     .then(({data}) => {
       console.log(data)
       if (data.error.msg == '') {

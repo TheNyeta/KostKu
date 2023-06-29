@@ -17,6 +17,7 @@ const PusatInformasiScreen = ({navigation, route}) => {
   const dataRumah = route.params.dataRumah
   const enter = route.params.enter
   const dataPenghuni = route.params.dataPenghuni
+  const role = route.params.role
 
   useEffect(() => {
     init()
@@ -65,6 +66,38 @@ const PusatInformasiScreen = ({navigation, route}) => {
     return (sum/rating.length).toFixed(1)
   }
 
+  const addOrder = () => {
+    AsyncStorage.getItem('@user_data').then((item) => {
+      const value = JSON.parse(item)
+      let data = {
+        Rumah_ID: dataRumah.Rumah_ID,
+        Order_Status: 'N',
+        DataPenjaga: {
+          Penjaga_ID: value.Penjaga_ID,
+          Penjaga_Name: value.Penjaga_Name,
+          Penjaga_Email: value.Penjaga_Email,
+          Penjaga_Image: value.Penjaga_Image,
+          Penjaga_Number: value.Penjaga_Number
+      }
+      }
+
+      axios.post('https://api-kostku.pharmalink.id/skripsi/kostku?register=order', data)
+      .then(({data}) => {
+        console.log(data)
+        if (data.error.msg == '') {
+          AsyncStorage.setItem('@order_id', data.data).then(() => {
+            navigation.reset({
+              index: 0,
+              routes: [{name: 'Waiting'}],
+            })
+          })
+        }
+      }).catch((e) => {
+        console.log(e, 'error post order penjaga')
+      })
+    })
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -108,7 +141,7 @@ const PusatInformasiScreen = ({navigation, route}) => {
                     </>
                 }
                   { enter ?
-                      <TouchableOpacity style={{ backgroundColor: '#ffb700', padding: 5, borderRadius: 7, marginTop: 15, width: '100%', alignItems: 'center'}} onPress={() => goToEnterRumahKost()}>
+                      <TouchableOpacity style={{ backgroundColor: '#ffb700', padding: 5, borderRadius: 7, marginTop: 15, width: '100%', alignItems: 'center'}} onPress={() => {role == 'Penjaga' ? addOrder() : goToEnterRumahKost()}}>
                         <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 20, color: 'white'}} >Masuk Rumah Kost</Text>
                       </TouchableOpacity>
                     :

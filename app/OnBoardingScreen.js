@@ -7,11 +7,9 @@ const OnBoardingScreen = ({navigation}) => {
   const [role, setRole] = useState('')
   var width = Dimensions.get('window').width
 
-
   useEffect(() => {
     AsyncStorage.getItem('@user_role').then((item) => {
       setRole(item)
-      console.log(item)
     })
     
   }, [])

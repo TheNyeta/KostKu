@@ -32,15 +32,29 @@ const SettingPage = ({navigation, route}) => {
     AsyncStorage.getItem('@user_role').then((data) => {
       let role = data
       setRole(role)
-      AsyncStorage.getItem('@user_data').then((data) => {
-        const value = JSON.parse(data)
-        setImage(role == 'Pengelola' ? value.Pengelola_Image : value.Penghuni_Image)
-        setIsUpdate({
-          ...isUpdate,
-          updateSetting: false
+
+      if (role == 'Penghuni') {
+
+        AsyncStorage.getItem('@user_data').then((data) => {
+          const value = JSON.parse(data)
+          setImage(value.Penghuni_Image)
+          setIsUpdate({
+            ...isUpdate,
+            updateSetting: false
+          })
+          setIsLoading(false)
         })
-        setIsLoading(false)
-      })
+      } else {
+        AsyncStorage.getItem('@kost_data').then((data) => {
+          const value = JSON.parse(data)
+          setImage(value.Rumah_Image)
+          setIsUpdate({
+            ...isUpdate,
+            updateSetting: false
+          })
+          setIsLoading(false)
+        })
+      }
     })
   }
 
@@ -62,7 +76,7 @@ const SettingPage = ({navigation, route}) => {
   }
 
   const goToKostDetail = () => {
-    navigation.navigate('Kost')
+    navigation.navigate('Kost', {role: role})
   }
 
   const goToPenjagaKost = () => {
