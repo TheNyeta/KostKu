@@ -158,6 +158,10 @@ const DashboardPenghuniPage = ({navigation}) => {
     // })
   }
 
+  const formatHarga = (price) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(price)
+  }
+
   return (
     <View style={{ flex:1 }}>
       <ScrollView contentContainerStyle={styles.container} refreshControl={<RefreshControl refreshing={isLoading} colors={['#FFB700']} onRefresh={() => {setIsLoading(true); init()}} />} >
@@ -199,7 +203,7 @@ const DashboardPenghuniPage = ({navigation}) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center' }} onPress={() => goToPaymentDetail()} >
                   <View style={{ flexDirection: 'column' }} >
-                    <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamar.Kamar_Harga}</Text>
+                    <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{formatHarga(data.DataKamar.Kamar_Harga)}</Text>
                     <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jumlah bayaran</Text>
                   </View>
                   <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
