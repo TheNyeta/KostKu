@@ -14,6 +14,7 @@ const KostScreen = ({navigation, route}) => {
   const [dataKost, setDataKost] = useState({})
   const [rating, setRating] = useState('4.0')
   const [isLoading, setIsLoading] = useState(true)
+  const role = route.params.role
 
   useEffect(() => {
     init()
@@ -48,11 +49,11 @@ const KostScreen = ({navigation, route}) => {
   }
 
   const goToKostDetail = (kamar) => {
-    navigation.navigate('KostDetail', {dataRumah: dataKost})
+    navigation.navigate('KostDetail', {dataRumah: dataKost, role: role})
   }
 
   const goToPeraturanDetail = () => {
-    navigation.navigate('PeraturanDetail', {dataRumah: dataKost})
+    navigation.navigate('PeraturanDetail', {dataRumah: dataKost, role: role})
   }
 
   const copyToClipboard = (number) => {

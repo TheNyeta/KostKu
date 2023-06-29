@@ -12,6 +12,7 @@ const SplashScreen = ({navigation}) => {
       const kost_data = await getData('@kost_data')
       const order_id = await getData('@order_id')
       const penghuni_data = await getData('@penghuni_data')
+      const user_role = await AsyncStorage.getItem('@user_role')
       if (kost_data !== null) {
         navigation.replace('Home')
       } else if (penghuni_data !== null) {
@@ -19,7 +20,11 @@ const SplashScreen = ({navigation}) => {
       } else if (order_id !== null) {
         navigation.replace('Waiting')
       } else if (user_data !== null) {
-        navigation.replace('OnBoarding')
+        if (user_role == 'Penjaga') {
+          navigation.replace('EnterCode')
+        } else {
+          navigation.replace('OnBoarding')
+        }
       } else {
         navigation.replace('RoleSelect')
       }

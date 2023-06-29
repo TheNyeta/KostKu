@@ -79,14 +79,12 @@ const PeraturanDetailScreen = ({navigation, route}) => {
               </>
           }
         </View>
-        { role == 'Penghuni' ?
-            null
+        { role == 'Pengelola' ?
+            <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} onPress={() => goToPeraturanDetailEdit()}>
+              <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Edit</Text>
+            </TouchableOpacity> 
           :
-            <>
-              <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} onPress={() => goToPeraturanDetailEdit()}>
-                <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Edit</Text>
-              </TouchableOpacity>
-            </>
+            null
         }
       </View>
     </KeyboardAwareScrollView>

@@ -131,6 +131,27 @@ const LoginScreen = ({navigation, route}) => {
                       })
                     }
                   })
+              } else if (role == 'Penjaga') {
+                axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rumah&PenjagaID=${data.data.Penjaga_ID}`)
+                  .then(({data}) => {
+                    if (data.error.msg == '') {
+
+                      let jsonValue = JSON.stringify(data.data)
+                      AsyncStorage.setItem('@kost_data', jsonValue).then(() => {
+                        navigation.reset({
+                          index: 0,
+                          routes: [{name: 'Home'}],
+                        })
+                      }) 
+
+                      
+                    } else {
+                      navigation.reset({
+                        index: 0,
+                        routes: [{name: 'EnterCode'}],
+                      })
+                    }
+                  })
 
               } else {
                 navigation.reset({
@@ -141,14 +162,13 @@ const LoginScreen = ({navigation, route}) => {
               }
             })
 
-
           } else if (data.error.code == 12) {
             setModalTitle('Password Anda salah')
-            setModalText('Periksa kembali lagi password dengan email/nomor HP yang Anda masukan.')
+            setModalText('Periksa kembali lagi password dengan email yang Anda masukan.')
             setModal(true)
           } else if (data.error.code == 11) {
-            setModalTitle('Email/nomor HP tidak ditemukan')
-            setModalText('Periksa kembali lagi email/nomor HP yang Anda masukan sudah terdaftar.')
+            setModalTitle('Email tidak ditemukan')
+            setModalText('Periksa kembali lagi email yang Anda masukan sudah terdaftar.')
             setModal(true)
           }
 

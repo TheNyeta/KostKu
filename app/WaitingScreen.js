@@ -10,12 +10,16 @@ const WaitingScreen = ({navigation}) => {
   const [image, setImage] = useState('')
   const [modal, setModal] = useState(false)
   const [orderID, setOrderId] = useState('')
+  const [role, setRole] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    AsyncStorage.getItem('@order_id').then((data) => {
-      setOrderId(data)
-      checkOrderStatus(data)
+    AsyncStorage.getItem('@user_role').then((data) => {
+      setRole(data)
+      AsyncStorage.getItem('@order_id').then((data) => {
+        setOrderId(data)
+        checkOrderStatus(data)
+      })
     })
   }, [])
 
@@ -25,11 +29,25 @@ const WaitingScreen = ({navigation}) => {
       if (data.data != null) {
         console.log(data)
         if (data.data.Order_Status == 'Berhasil') {
-          let value = JSON.stringify(data.data.DataPenghuni)
-          AsyncStorage.setItem('@penghuni_data', value).then(() => {
-            AsyncStorage.removeItem('@order_id')
-            navigation.replace('HomePenghuni')
-          })
+          if (role == 'Penghuni') {
+            let value = JSON.stringify(data.data.DataPenghuni)
+            AsyncStorage.setItem('@penghuni_data', value).then(() => {
+              AsyncStorage.removeItem('@order_id')
+              navigation.replace('HomePenghuni')
+            })
+          } else {
+            axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rumah&PenjagaID=${data.data.DataPenjaga.Penjaga_ID}`)
+              .then(({data}) => {
+                console.log(data)
+                if (data.error.msg == '') {
+                  let jsonValue = JSON.stringify(data.data)
+                  AsyncStorage.setItem('@kost_data', jsonValue).then(() => {
+                    AsyncStorage.removeItem('@order_id')
+                    navigation.replace('Home')
+                  })
+                }
+              })
+          }
         } else if (data.data.Order_Status == 'Tolak') {
           setModal(true)
         }

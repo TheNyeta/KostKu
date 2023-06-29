@@ -11,6 +11,7 @@ import { useIsFocused } from '@react-navigation/native';
 
 const DashboardPage = ({navigation}) => {
   const [data, setData] = useState({})
+  const [role, setRole] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isUpdate, setIsUpdate] = useContext(UpdateContext)
   const isFocused = useIsFocused()
@@ -22,7 +23,7 @@ const DashboardPage = ({navigation}) => {
 
   useEffect(() => {
     // init()
-    if (isFocused) {
+    if (isFocused) { 
       if (isUpdate.updateDashboard == true) {
         setIsLoading(true)
         init()
@@ -31,7 +32,9 @@ const DashboardPage = ({navigation}) => {
   }, [isFocused])
 
   const init = () => {
-    // setIsLoading(true)
+    AsyncStorage.getItem('@user_role').then((data) => {
+      setRole(data)
+    })
     AsyncStorage.getItem('@kost_data').then((data) => {
       const value = JSON.parse(data)
       axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=rumahAll&RumahID=${value.Rumah_ID}`)
@@ -78,7 +81,7 @@ const DashboardPage = ({navigation}) => {
   }
 
   const goToLaporanList = () => {
-    navigation.navigate('LaporanList', {dataRumah: data.DataRumah})
+    navigation.navigate('LaporanList', {dataRumah: data.DataRumah, role: role})
   }
 
   const goToBroadcast = () => {
@@ -208,15 +211,19 @@ const DashboardPage = ({navigation}) => {
                     <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Jumlah penghuni</Text>
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => goToJatuhTempoList()} >
-                  <View style={{ flexDirection: 'column' }} >
-                    <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamarTerisi == null ? 0 : jatuhTempoCount()}</Text>
-                    <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Kamar jatuh tempo</Text>
-                  </View>
-                  <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
-                    <Icon size={25} name='calendar' color='#FFB700' style={{ alignSelf: 'center' }} />
-                  </View>
-                </TouchableOpacity>
+                { role == 'Penjaga' ?
+                    null
+                  :
+                    <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => goToJatuhTempoList()} >
+                      <View style={{ flexDirection: 'column' }} >
+                        <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataKamarTerisi == null ? 0 : jatuhTempoCount()}</Text>
+                        <Text style={{ color: 'white', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }}>Kamar jatuh tempo</Text>
+                      </View>
+                      <View style={{ backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, alignContent: 'center', justifyContent: 'center' }} >
+                        <Icon size={25} name='calendar' color='#FFB700' style={{ alignSelf: 'center' }} />
+                      </View>
+                    </TouchableOpacity>
+                }
                 <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#FFB700', padding: 12, borderRadius: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center' }} onPress={() => goToNewPenghuniList()} >
                   <View style={{ flexDirection: 'column' }} >
                     <Text style={{ color: 'white', fontSize: 35, fontFamily: 'PlusJakartaSans-Bold' }}>{data.DataOrder == null ? 0 : data.DataOrder.length}</Text>

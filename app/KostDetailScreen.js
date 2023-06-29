@@ -16,6 +16,7 @@ const KostDetailScreen = ({navigation, route}) => {
   const [nohp2, setNoHp2] = useState('')
   const [modal, setModal] = useState(false)
   const dataRumah = route.params.dataRumah
+  const role = route.params.role
 
   useEffect(() => {
     init()
@@ -80,7 +81,7 @@ const KostDetailScreen = ({navigation, route}) => {
                 <View style={styles.form}>
                   <Icon size={18} name='pound' color='black' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
                   <TextInput
-                    style={[styles.input, { borderLeftWidth: 1, borderColor: 'black', marginLeft: 5 }]}
+                    style={[styles.input, { borderLeftWidth: 1, borderColor: 'black', marginLeft: 5, height: 40, width: '80%' }]}
                     placeholder="Kode kost"
                     placeholderTextColor='#ccc'
                     onChangeText={kode => setKode(kode.toUpperCase())}
@@ -144,9 +145,13 @@ const KostDetailScreen = ({navigation, route}) => {
               </>
           }
         </View>
-        <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginVertical: 20 }} onPress={() => goToKostEdit()} >
-          <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Edit</Text>
-        </TouchableOpacity>
+        { role == 'Pengelola' ?
+            <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '35%', borderRadius: 7, marginTop: 20 }} onPress={() => goToKostEdit()} >
+              <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Edit</Text>
+            </TouchableOpacity>
+          :
+            null
+        }
         <Modal
         isVisible={modal}
         onBackdropPress={() => setModal(false)}
@@ -170,7 +175,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
+    paddingBottom: 20
     // justifyContent: 'center'
   },
   input: {

@@ -119,31 +119,32 @@ const CalendarScreen = ({navigation}) => {
                   dates[item.Event_Tanggal] = { marked: true }
                 })
                 
-                axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=pembayaranKamar&RumahID=${value.Rumah_ID}`)
-                .then(({data}) => {
-                  if (data.error.msg == '' && data.data != null) {
-                    
-                    data2 = data.data
-                    
-                    data.data.forEach((item) => {
-                      dates[item.Tanggal_Berakhir] = { marked: true }
+                if (role == 'Pengelola') {
+                  axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=pembayaranKamar&RumahID=${value.Rumah_ID}`)
+                    .then(({data}) => {
+                      if (data.error.msg == '' && data.data != null) {
+                        data2 = data.data
+                        data.data.forEach((item) => {
+                          dates[item.Tanggal_Berakhir] = { marked: true }
+                        })
+                      }
+                    }).catch((e) => {
+                      console.log(e, 'error get pembayaran')
                     })
-                    
-                    // setIsUpdate({
-                      //   ...isUpdate,
-                      //   updateCalendar: false
-                      // })
-                    }
-                  }).catch((e) => {
-                    console.log(e, 'error get event')
-                  })
-                  
-                setData([...data1, ...data2])
-                setMarkedDate(dates)
-                setIsUpdate({
-                  ...isUpdate,
-                  updateCalendar: false
-                })
+                    setData([...data1, ...data2])
+                    setMarkedDate(dates)
+                    setIsUpdate({
+                      ...isUpdate,
+                      updateCalendar: false
+                    })
+                } else {
+                  setData([...data1, ...data2])
+                    setMarkedDate(dates)
+                    setIsUpdate({
+                      ...isUpdate,
+                      updateCalendar: false
+                    })
+                }
               }
               setIsLoading(false)
             }).catch((e) => {
