@@ -87,12 +87,27 @@ const CalendarScreen = ({navigation}) => {
                   dates[item.Event_Tanggal] = { marked: true }
                 })
       
-                setData(data1)
-                setMarkedDate(dates)
-                setIsUpdate({
-                  ...isUpdate,
-                  updateCalendar: false
-                })
+                axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?find=kamar&PenghuniID=${value.Penghuni_ID}`)
+                  .then(({data}) => {
+                    if (data.error.msg == '' && data.data != null) {
+
+                      let data2 = [data.data]
+
+                      data2.forEach((item) => {
+                        dates[item.Tanggal_Berakhir] = { marked: true }
+                      })
+
+                      setData([...data1, ...data2])
+                      setMarkedDate(dates)
+                      setIsUpdate({
+                        ...isUpdate,
+                        updateCalendar: false
+                      })
+                    }
+                    setIsLoading(false)
+                  }).catch((e) => {
+                    console.log(e, 'error get event')
+                  })
               }
               setIsLoading(false)
             }).catch((e) => {
@@ -139,11 +154,11 @@ const CalendarScreen = ({navigation}) => {
                     })
                 } else {
                   setData([...data1, ...data2])
-                    setMarkedDate(dates)
-                    setIsUpdate({
-                      ...isUpdate,
-                      updateCalendar: false
-                    })
+                  setMarkedDate(dates)
+                  setIsUpdate({
+                    ...isUpdate,
+                    updateCalendar: false
+                  })
                 }
               }
               setIsLoading(false)
