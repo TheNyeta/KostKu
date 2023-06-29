@@ -110,12 +110,22 @@ const CreateLaporanScreen = ({navigation, route}) => {
   const validate = () => {
     let error = false
 
-    if (perihal == 'Pembayaran') {
+    if (perihal == '') {
+      setPerihalError('Pilih perihal laporan')
+      error = true
+    } else if (perihal == 'Pembayaran') {
       if (bulan == '') {
         setBulanError('Masukan bulan')
         error = true
       } else {
         setBulanError('')
+      }
+    } else if (perihal == 'Info Keluar Kost') {
+      if (tanggalKeluar == '') {
+        setTanggalKeluarError('Masukan tanggal keluar')
+        error = true
+      } else {
+        setTanggalKeluarError('')
       }
     }
 
@@ -127,15 +137,6 @@ const CreateLaporanScreen = ({navigation, route}) => {
       error = true
     } else {
       setLaporanError('')
-    }
-
-    if (perihal == 'Info Keluar Kost') {
-      if (tanggalKeluar == '') {
-        setTanggalKeluarError('Masukan tanggal keluar')
-        error = true
-      } else {
-        setTanggalKeluarError('')
-      }
     }
 
     if (!error) {
@@ -267,6 +268,7 @@ const CreateLaporanScreen = ({navigation, route}) => {
             selectedId={perihal}
             containerStyle={{ alignItems: 'flex-start', alignSelf: 'flex-start' }}
           />
+          { perihalError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{perihalError}</Text> : null }
           { perihal == 'Pembayaran' ?
               <>
                 <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Bulan pembayaran</Text>
