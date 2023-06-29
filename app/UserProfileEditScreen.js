@@ -86,7 +86,7 @@ const UserProfileEditScreen = ({navigation, route}) => {
           Pengelola_Name: nama,
           Pengelola_Image:  image == '' ? dataUser.Pengelola_Image : image
         }
-        url = 'https://api-kostku.pharmalink.id/skripsi/kostku?update=pengelola'
+        url = `https://api-kostku.pharmalink.id/skripsi/kostku?update=pengelola&PengelolaID=${dataUser.Pengelola_ID}`
         break;
       case 'Penghuni':
         data = {
@@ -97,11 +97,11 @@ const UserProfileEditScreen = ({navigation, route}) => {
         break;
       case 'Penjaga':
         data = {
-          Penjaga_ID : dataUser.Penjaga_ID,
+          // Penjaga_ID : dataUser.Penjaga_ID,
           Penjaga_Name: nama,
           Penjaga_Image:  image == '' ? dataUser.Penjaga_Image : image
         }
-        url = 'https://api-kostku.pharmalink.id/skripsi/kostku?update=penjaga'
+        url = `https://api-kostku.pharmalink.id/skripsi/kostku?update=penjaga&PenjagaID=${dataUser.Penjaga_ID}`
         break;
     
       default:

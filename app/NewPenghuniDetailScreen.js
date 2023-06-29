@@ -199,7 +199,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
         }
         setModal6(false)
       }).catch((e) => {
-        console.log(e, 'error get list kamar kosong')
+        console.log(e, 'error terima')
       })
   }
 
@@ -218,7 +218,7 @@ const NewPenghuniDetailScreen = ({navigation, route}) => {
         }
         setModal6(false)
       }).catch((e) => {
-        console.log(e, 'error get list kamar kosong')
+        console.log(e, 'error tolak')
       })
   }
 

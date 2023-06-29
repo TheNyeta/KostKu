@@ -12,7 +12,6 @@ const LaporanListScreen = ({navigation, route}) => {
   const [data2, setData2] = useState([])
   const [data3, setData3] = useState([])
   const [search, setSearch] = useState('')
-  const [modal, setModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   //react tab view
   const [index, setIndex] = useState(0);
@@ -135,9 +134,7 @@ const LaporanListScreen = ({navigation, route}) => {
             </View>
           </View>
         </View>
-        <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => setModal(true)} >
-          <Icon size={30} name='chevron-right' color='#FFB700' style={{ alignSelf: 'center' }} />
-        </TouchableOpacity>
+        <Icon size={30} name='chevron-right' color='#FFB700' style={{ alignSelf: 'center' }} />
       </TouchableOpacity>
     )
   }
@@ -272,22 +269,6 @@ const LaporanListScreen = ({navigation, route}) => {
         :
           null
       }
-      <Modal
-        isVisible={modal}
-        onBackdropPress={() => setModal(false)}
-      >
-        <View style={{flexDirection: 'column', alignSelf: 'center', alignItems: 'center', backgroundColor: 'white', paddingVertical: 30, paddingHorizontal: 20, borderRadius: 20, width: '90%' }}>
-          <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
-          <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Tandai sebagai selesai</Text>
-          <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Apakah Anda yakin untuk tandai keluhan ini telah selesai teratasi?</Text>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => {}}>
-            <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Ya</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: 'white', padding: 5, borderRadius: 7, borderColor: '#FFB700', borderWidth: 2, marginTop: 10, width: 150 }} onPress={() => {setModal(false)}}>
-            <Text style={{ fontSize: 18, color: '#FFB700', fontFamily: 'PlusJakartaSans-Bold' }} >Tidak</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
     </View>
   );
 };
