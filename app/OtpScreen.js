@@ -41,9 +41,9 @@ const OtpScreen = ({navigation, route}) => {
           let number = Math.floor((Math.random() * 900000) + 100000)
           setKodeOtp(String(number))
           DirectSms.sendDirectSms(nomor, `Kode OTP KostKu: ${number}`);
-          alert('SMS sent');
+          console.log('sms sent')
         } else {
-          alert('SMS permission denied');
+          console.log('error sms')
         }
       } catch (error) {
         console.log(error);
@@ -110,6 +110,7 @@ const OtpScreen = ({navigation, route}) => {
         </TouchableOpacity>
       </View>
       { imputKodeError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{imputKodeError}</Text> : null }
+      <Text style={{ alignSelf: 'flex-start', color: 'lightgray', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >Kirim ulang kode otp</Text>
       <Modal
         isVisible={modal}
         onBackdropPress={() => setModal(false)}
