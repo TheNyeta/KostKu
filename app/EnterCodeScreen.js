@@ -48,7 +48,7 @@ const EnterCodeScreen = ({navigation}) => {
         </View>
       </View>
       <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 20, fontFamily: 'PlusJakartaSans-Bold' }} >Masukan kode rumah kost</Text>
-      <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+      <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <View style={styles.form}>
           <Icon size={18} name='pound' color='black' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
           <TextInput
@@ -61,9 +61,45 @@ const EnterCodeScreen = ({navigation}) => {
             maxLength={6}
           />
         </View>
-        <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center', backgroundColor: kode.length == 6 ? '#FFB700' : 'lightgray' , width: '13%', height: 40, borderRadius: 5 }} onPress={() => checkKostCode()} disabled={ kode.length == 6 ? false : true}>
+        <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center', backgroundColor: kode.length >= 3 ? '#FFB700' : 'lightgray' , width: '13%', height: 40, borderRadius: 5 }} onPress={() => checkKostCode()} disabled={  kode.length >= 3 ? false : true}>
           <Icon size={25} name='arrow-right' color='white' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
         </TouchableOpacity>
+      </View>
+      <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 16, fontFamily: 'PlusJakartaSans-Bold' }} >Bagaimana cara masuk rumah kost?</Text>
+      <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >Panduan untuk masuk menjadi penghuni rumah kost</Text>
+      <View style={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+        <View style={{ flexDirection: 'row', width: '100%' }}>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '6%' }} >1. </Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '94%' }} >Pastikan kamu sudah menghubungi pengelola/penjaga rumah kost untuk mendapatkan kamar kost.</Text>
+        </View>
+        <View style={{ flexDirection: 'row', width: '100%' }}>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '6%' }} >2. </Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '94%' }} >Minta kode rumah kost dari pengelola/penjaga rumah kost yang dapat dilihat di aplikasi pengelola/penjaga rumah kost.</Text>
+        </View>
+        <View style={{ flexDirection: 'row', width: '100%' }}>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '6%' }} >3. </Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '94%' }} >Masukan kode rumah kost ke kolom kode rumah kost dan klik tanda panah.</Text>
+        </View>
+        <View style={{ flexDirection: 'row', width: '100%' }}>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '6%' }} >4. </Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '94%' }} >Pastikan rumah kost yang ditampilkan benar. Lalu klik Masuk Rumah Kost.</Text>
+        </View>
+        <View style={{ flexDirection: 'row', width: '100%' }}>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '6%' }} >5. </Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '94%' }} >Masukan data diri yang dibutuhkan untuk menjadi penghuni.</Text>
+        </View>
+        <View style={{ flexDirection: 'row', width: '100%' }}>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '6%' }} >6. </Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '94%' }} >Baca dan setujui peraturan rumah kost.</Text>
+        </View>
+        <View style={{ flexDirection: 'row', width: '100%' }}>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '6%' }} >7. </Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '94%' }} >Setelah data diri dikirim, tunggu konfirmasi dari pengelola/penjaga kost.</Text>
+        </View>
+        <View style={{ flexDirection: 'row', width: '100%' }}>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '6%' }} >8. </Text>
+          <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', width: '94%' }} >Jika ditolak, ulang kembali dan pastikan data diri yang dimasukan sesuai dan benar.</Text>
+        </View>
       </View>
       <Modal
         isVisible={modal}
