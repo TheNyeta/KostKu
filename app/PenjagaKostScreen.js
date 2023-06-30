@@ -42,9 +42,10 @@ const PenjagaKostScreen = ({navigation, route}) => {
   }
 
   const deletePenjaga = () => {
-    axios.get(`https://api-kostku.pharmalink.id/skripsi/kostku?update=penjaga&PenjagaID=${penjaga.Penjaga_ID}`)
+    axios.put(`https://api-kostku.pharmalink.id/skripsi/kostku?update=akses&PenjagaID=${penjaga.Penjaga_ID}`)
       .then(({data}) => {
-        if (data.error.msg == '' && data.data != null) {
+        if (data.error.msg == '') {
+          setModal(false)
           getDataPenjaga()
         }
       }).catch((e) => {

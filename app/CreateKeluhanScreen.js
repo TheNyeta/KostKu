@@ -128,8 +128,8 @@ const CreateKeluhanScreen = ({navigation, route}) => {
             <Text style={{ alignSelf: 'flex-end', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Regular' }} >{keluhan.length}/225</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', width: '100%', marginVertical: 10 }} >
-            <Icon size={25} name='playlist-edit' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
-            <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Isi keluhan</Text>
+            <Icon size={25} name='camera-outline' color='black' style={{ alignSelf: 'center', marginRight: 5 }} />
+            <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 15, fontFamily: 'PlusJakartaSans-Bold' }} >Foto keluhan</Text>
           </View>
           <TouchableOpacity style={{ width: '100%', height: 150, alignItems: 'center', justifyContent: 'center', marginTop: 5, borderWidth: 1, borderRadius: 5, backgroundColor: imageKeluhan == '' ? 'lightgray' : 'white' }} onPress={() => openLibrary()} >
             { imageKeluhan == '' ?

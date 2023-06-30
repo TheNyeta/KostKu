@@ -1,77 +1,83 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import Collapsible from 'react-native-collapsible';
 import Modal from 'react-native-modal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const ForgotPasswordScreen = ({navigation, route}) => {
+const ChangePasswordScreen = ({navigation, route}) => {
   const [image, setImage] = useState('')
   const [modal, setModal] = useState(false)
-  const [nomor, setNomor] = useState('')
-  const [nomorError, setNomorError] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   // const [role, setRole] = useState('')
   const role = route.params.role
+  const user = route.params.user
 
-  const goToOtp = (user) => {
-    navigation.navigate('Otp', {role: role, nomor: nomor, user: user})
+  const goBack = () => {
+    navigation.goBack()
   }
 
   const validate = () => {
     let error = false
 
-    let phonere = /^[0-9]*$/
-    if (nomor == '') {
-      setNomorError('Masukan nomor HP')
+    if (password == '') {
+      setPasswordError('Masukan password')
       error = true
-    } else if (!phonere.test(nomor)) {
-      setNomorError('Nomor HP hanya boleh angka')
-      error = true
-    } else if (nomor.length < 8) {
-      setNomorError('Minimal 8 digit')
-      error = true
-    } else if (nomor.length > 12) {
-      setNomorError('Maksimal 12 digit')
+    } else if (password.length < 8) {
+      setPasswordError('Minimal 8 karakter')
       error = true
     } else {
-      setNomorError('')
+      setPasswordError('')
     }
 
     if (!error) {
-      checkPhoneNumber()
+      updatePassword()
     }
 
   }
 
-  const checkPhoneNumber = () => {
+  const updatePassword = () => {
     let url = ''
+    let data = {}
     switch (role) {
       case 'Penghuni':
-        url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=forgetPass&PenghuniNumber=${nomor}`
+        data = {
+          Penghuni_Password_New: password,
+          Penghuni_ID: user.Penghuni_ID
+        }
+        url = `https://api-kostku.pharmalink.id/skripsi/kostku?forgetPass=penghuni`
         break;
 
       case 'Pengelola':
-        url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=forgetPass&PengelolaNumber=${nomor}`
+        data = {
+          Pengelola_Password_New: password,
+          Pengelola_ID: user.Pengelola_ID
+        }
+        url = `https://api-kostku.pharmalink.id/skripsi/kostku?forgetPass=pengelola`
         break;
 
       case 'Penjaga':
-        url = `https://api-kostku.pharmalink.id/skripsi/kostku?find=forgetPass&PenjagaNumber=${nomor}`
+        data = {
+          Penjaga_Password_New: password,
+          Penjaga_ID: user.Penjaga_ID
+        }
+        url = `https://api-kostku.pharmalink.id/skripsi/kostku?forgetPass=penjaga`
         break;
     
       default:
         break;
     }
-    axios.get(url)
+    axios.put(url, data)
     .then(({data}) => {
       console.log(data)
       if (data.error.msg == '') {
-        goToOtp(data.data)
+        goBack()
+        goBack()
       } else {
         setModal(true)
       }
     }).catch((e) => {
-      console.log(e, 'error check nomor')
+      console.log(e, 'error update password')
     })
   }
 
@@ -83,33 +89,31 @@ const ForgotPasswordScreen = ({navigation, route}) => {
           <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Reset password akun Anda</Text>
         </View>
       </View>
-      <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 20, fontFamily: 'PlusJakartaSans-Bold' }} >Masukan nomor hp akun Anda</Text>
+      <Text style={{ alignSelf: 'flex-start', color: 'black', fontSize: 20, fontFamily: 'PlusJakartaSans-Bold' }} >Masukan password baru</Text>
       <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-        <View style={[styles.form, { borderColor: nomorError ? 'red' : 'black' }]}>
-          <Icon size={18} name='cellphone' color='black' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
+        <View style={[styles.form, { borderColor: passwordError ? 'red' : 'black' }]}>
+          <Icon size={18} name='lock' color='black' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
           <TextInput
             style={styles.input}
-            placeholder="08XXXXXXXXXX"
+            placeholder="Password baru"
             placeholderTextColor='#ccc'
-            onChangeText={setNomor}
-            value={nomor}
-            keyboardType='numeric'
-            maxLength={12}
+            onChangeText={setPassword}
+            value={password}
           />
         </View>
-        <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', alignSelf: 'center', backgroundColor: nomor.length >= 8 ? '#FFB700' : 'lightgray' , width: '13%', height: 40, borderRadius: 5 }} onPress={() => validate()} disabled={ nomor.length >= 8 ? false : true}>
-          <Icon size={25} name='arrow-right' color='white' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
-        </TouchableOpacity>
       </View>
-      { nomorError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{nomorError}</Text> : null }
+      { passwordError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{passwordError}</Text> : null }
+      <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '50%', borderRadius: 5, marginTop: 20 }} onPress={() => validate()} >
+        <Text style={{ fontSize: 17, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }}>Simpan</Text>
+      </TouchableOpacity>
       <Modal
         isVisible={modal}
         onBackdropPress={() => setModal(false)}
       >
         <View style={{flexDirection: 'column', alignSelf: 'center', alignItems: 'center', backgroundColor: 'white', paddingVertical: 30, paddingHorizontal: 20, borderRadius: 20, width: '90%' }}>
           <Icon size={50} name='alert-outline' color='#FFB700' style={{ alignSelf: 'center' }} />
-          <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Akun tidak ditemukan</Text>
-          <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >{`Tidak menemukan akun ${role} dengan nomor hp yang dimasukan. Pastikan kembali nomor hp yang dimasukan sudah benar.`}</Text>
+          <Text style={{fontSize: 30, fontFamily: 'PlusJakartaSans-SemiBold', color: '#FFB700', textAlign: 'center' }} >Kode otp salah</Text>
+          <Text style={{fontSize: 15, fontFamily: 'PlusJakartaSans-Regular', color: 'black', textAlign: 'center' }} >Kode otp yang Anda masukan salah. Mohok periksa kembali kode otp yang Anda masukan sudah benar.</Text>
           <TouchableOpacity style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, borderRadius: 7, marginTop: 10, width: 150 }} onPress={() => setModal(false)}>
             <Text style={{ fontSize: 18, color: 'white', fontFamily: 'PlusJakartaSans-Bold' }} >Mengerti</Text>
           </TouchableOpacity>
@@ -128,7 +132,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: '80%',
+    width: '90%',
     marginVertical: 10,
     padding: 10,
     alignSelf:  'center',
@@ -137,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   form: {
-    width: '85%',
+    width: '100%',
     height: 40,
     marginVertical: 5,
     padding: 10,
@@ -148,4 +152,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPasswordScreen;
+export default ChangePasswordScreen;

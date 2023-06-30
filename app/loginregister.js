@@ -409,7 +409,7 @@ const RegisterScreen = ({navigation, route}) => {
             <Icon size={18} name='pencil' color='#FFB700' style={{ alignSelf: 'center', marginLeft: 5, marginRight: 5 }} />
             <TextInput
               style={styles.input}
-              placeholder="Username"
+              placeholder="Nama"
               placeholderTextColor='#ccc'
               onChangeText={setUsername}
               value={username}

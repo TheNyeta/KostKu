@@ -137,7 +137,7 @@ const BroadcastScreen = ({navigation, route}) => {
   //react tab view
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'first', title: '7 Hari terahkir ' },
+    { key: 'first', title: '7 Hari terakhir ' },
     { key: 'second', title: 'Riwayat' },
   ]);
 
@@ -173,7 +173,7 @@ const BroadcastScreen = ({navigation, route}) => {
           </TouchableOpacity>
           <View style={{ flexDirection: 'column' }}>
             <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Broadcast</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Kirim pesan broadcast untuk penghuni</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >{role == 'Penghuni' ? 'Pesan broadcast dari pengelola kost' : 'Kirim pesan broadcast untuk penghuni'}</Text>
           </View>
         </View>
         { role == 'Penghuni' ?

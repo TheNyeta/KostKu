@@ -230,7 +230,7 @@ const LaporanListScreen = ({navigation, route}) => {
           </TouchableOpacity>
           <View style={{ flexDirection: 'column' }}>
             <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 31, color: 'black'}} >Laporan kost</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >Klik nomor untuk melihat detail</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Regular', fontSize: 15, color: 'black'}} >{role == 'Penghuni' ? 'Kirim laporan ke pengelola kost' : 'Klik nomor untuk melihat detail'}</Text>
           </View>
         </View>
         { role == 'Penghuni' ?
