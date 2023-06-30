@@ -43,6 +43,8 @@ import CreateKeluhanScreen from './app/CreateKeluhanScreen';
 import CreateLaporanScreen from './app/CreateLaporanScreen';
 import PaymentLogListScreen from './app/PaymentLogListScreen';
 import RoomDetailEditScreen from './app/RoomDetailEditScreen';
+import ForgotPasswordScreen from './app/ForgotPasswordScreen';
+import OtpScreen from './app/OtpScreen';
 
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -114,6 +116,8 @@ function App() {
           <Stack.Screen name="CreateLaporan" component={CreateLaporanScreen} />
           <Stack.Screen name="PaymentLogList" component={PaymentLogListScreen} />
           <Stack.Screen name="RoomDetailEdit" component={RoomDetailEditScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen name="Otp" component={OtpScreen} />
 
 
 

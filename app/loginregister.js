@@ -181,14 +181,14 @@ const LoginScreen = ({navigation, route}) => {
     // })
   }
 
-  const forgotPassword = () => {
+  const goToForgotPassword = () => {
     // Code to handle login
-    ToastAndroid.show('forgor', 1)
+    navigation.navigate('ForgotPassword', {role: role})
   }
 
   const goToRegister = () => {
     // Code to handle login
-    navigation.navigate('Register', {role})
+    navigation.navigate('Register', {role: role})
   }
 
   return (
@@ -224,7 +224,7 @@ const LoginScreen = ({navigation, route}) => {
         </View>
         <View style={{ flexDirection: 'row', justifyContent: passwordError ? 'space-between' : 'flex-end', width: '100%' }}>
           { passwordError ? <Text style={{ color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{passwordError}</Text> : null }
-          <TouchableOpacity onPress={() => forgotPassword()}>
+          <TouchableOpacity onPress={() => goToForgotPassword()}>
             <Text style={{ color: '#cccccc', fontSize: 13, textAlign: 'right', marginTop: -5, fontFamily: 'PlusJakartaSans-Regular', alignSelf: 'flex-end' }}>Lupa Password</Text>
           </TouchableOpacity>
         </View>
@@ -500,7 +500,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     padding: 10,
     alignSelf:  'center',
-    fontFamily: 'PlusJakartaSans-Regular'
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: 'black'
   },
   form: {
     width: '100%',

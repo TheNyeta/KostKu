@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Switch, Dimensions, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Switch, Dimensions, ActivityIndicator, Linking} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Collapsible from 'react-native-collapsible';
 import Modal from 'react-native-modal';
@@ -83,6 +83,16 @@ const SettingPage = ({navigation, route}) => {
     navigation.navigate('PenjagaKost')
   }
 
+  const bantuan = async () => {
+    let supported = await Linking.canOpenURL('https://drive.google.com/drive/folders/1ZWi-aC8J-KGbQ4Ebbs7Y2cXG1qFOK7ef?usp=drive_link');
+
+    if (supported) {
+      await Linking.openURL('https://drive.google.com/drive/folders/1ZWi-aC8J-KGbQ4Ebbs7Y2cXG1qFOK7ef?usp=drive_link');
+    } else {
+      console.log('error bantuan');
+    }
+  }
+
   return (
     <View style={styles.container}>
       { isLoading ?
@@ -127,7 +137,7 @@ const SettingPage = ({navigation, route}) => {
               :
                 null
             }
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} >
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingVertical: 10 }} onPress={() => bantuan()} >
               <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                 <Icon size={25} name='help-circle-outline' color='black' style={{ alignSelf: 'center', paddingHorizontal: 10 }} />
                 <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontSize: 18, color: 'black' }} >Bantuan</Text>
