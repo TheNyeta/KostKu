@@ -124,7 +124,7 @@ const NewPenghuniListScreen = ({navigation, route}) => {
         </View>
         <Image source={kostImage == '' ? require('../assets/image/RumahKost_Default.png') : { uri: kostImage }} style={{ height: 50, width: 50, borderRadius: 100}} />
       </View>
-      <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginTop: 20, borderRadius: 100 }} >
+      {/* <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginTop: 20, borderRadius: 100 }} >
         <View style={{ flexDirection: 'row' }} >
           <Icon size={25} name='magnify' color='black' style={{ alignSelf: 'center', paddingLeft: 15 }} />
           <TextInput
@@ -138,7 +138,7 @@ const NewPenghuniListScreen = ({navigation, route}) => {
         <TouchableOpacity style={{ alignSelf: 'center', padding: 5 }} onPress={() => setSearch('')}>
           <Icon size={20} name='close' color='#ccc' style={{ alignSelf: 'center' }} />
         </TouchableOpacity>
-      </View>
+      </View> */}
       { isLoading ? 
           <ActivityIndicator color={'#FFB700'} size={50} style={{ alignSelf: 'center', marginTop: 50 }} />
         :

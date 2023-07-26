@@ -222,12 +222,12 @@ const LoginScreen = ({navigation, route}) => {
             <Icon size={18} name={`eye${secure ? '' : '-off'}`} color='#FFB700' />
           </TouchableOpacity>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: passwordError ? 'space-between' : 'flex-end', width: '100%' }}>
-          { passwordError ? <Text style={{ color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{passwordError}</Text> : null }
+        { passwordError ? <Text style={{ alignSelf: 'flex-start', color: 'red', margin: 5, marginTop: -5, fontFamily: 'PlusJakartaSans-Regular' }} >{passwordError}</Text> : null }
+        {/* <View style={{ flexDirection: 'row', justifyContent: passwordError ? 'space-between' : 'flex-end', width: '100%' }}>
           <TouchableOpacity onPress={() => goToForgotPassword()}>
             <Text style={{ color: '#cccccc', fontSize: 13, textAlign: 'right', marginTop: -5, fontFamily: 'PlusJakartaSans-Regular', alignSelf: 'flex-end' }}>Lupa Password</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
       {/* <Button style={{ borderRadius: 10 }} title="Masuk" onPress={handleLogin} /> */}
       <TouchableOpacity onPress={() => handleLogin()} style={{ alignItems: 'center' ,backgroundColor: '#FFB700', padding: 5, width: '40%', borderRadius: 5, marginTop: 30 }}>

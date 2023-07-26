@@ -184,7 +184,7 @@ const KeluhanListScreen = ({navigation, route}) => {
             <Image source={dataRumah.Rumah_Image == '' ? require('../assets/image/RumahKost_Default.png') : { uri: dataRumah.Rumah_Image }} style={{ height: 50, width: 50, borderRadius: 100}} />
         }
       </View>
-      <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginVertical: 20, borderRadius: 100 }} >
+      {/* <View style={{ flexDirection: 'row', backgroundColor: '#E8EAED', width: '100%', marginVertical: 20, borderRadius: 100 }} >
         <View style={{ flexDirection: 'row' }} >
           <Icon size={25} name='magnify' color='black' style={{ alignSelf: 'center', paddingLeft: 15 }} />
           <TextInput
@@ -198,7 +198,7 @@ const KeluhanListScreen = ({navigation, route}) => {
         <TouchableOpacity style={{ alignSelf: 'center', padding: 5 }} onPress={() => setSearch('')}>
           <Icon size={20} name='close' color='#ccc' style={{ alignSelf: 'center' }} />
         </TouchableOpacity>
-      </View>
+      </View> */}
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}

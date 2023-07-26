@@ -12,6 +12,7 @@ const CreateBroadcastScreen = ({navigation, route}) => {
   const [pesanError, setPesanError] = useState('');
   const [modal, setModal] = useState(false)
   const dataRumah = route.params.dataRumah
+  const role = route.params.role
 
   const goBack = () => {
     navigation.goBack()
@@ -44,7 +45,7 @@ const CreateBroadcastScreen = ({navigation, route}) => {
 
       let data = {
         Rumah_ID:dataRumah.Rumah_ID,
-        Pengirim_Broadcast: "Pengelola",
+        Pengirim_Broadcast: role,
         Judul_Broadcast: judul,
         Pesan_Broadcast: pesan
       }

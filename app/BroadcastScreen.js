@@ -56,7 +56,7 @@ const BroadcastScreen = ({navigation, route}) => {
 
   const goToCreateBroadcast = () => {
     // Code to handle login
-    navigation.navigate('CreateBroadcast', {dataRumah: dataRumah})
+    navigation.navigate('CreateBroadcast', {dataRumah: dataRumah, role: role})
   }
 
   const goToBroadcastDetail = (item) => {
